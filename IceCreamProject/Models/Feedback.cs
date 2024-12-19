@@ -11,8 +11,8 @@ public class Feedback
 	public DateTime SubmittedDate { get; set; }
 
 	// Foreign keys
-	public string UserId { get; set; } // Liên kết đến User.Id
+	public string? UserId { get; set; } // Liên kết đến User.Id
 
 	// Navigation properties
-	public User User { get; set; }
+	public User? User { get; set; }
 }

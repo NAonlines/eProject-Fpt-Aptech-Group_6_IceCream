@@ -9,7 +9,7 @@ public class Recipe
     public string Name { get; set; }
     public string Ingredients { get; set; }
     public string Procedure { get; set; }
-    public string ImageUrl { get; set; }
+    public string? ImageUrl { get; set; }
     public bool IsApproved { get; set; } = false; // Needs admin approval
     public int? CategoryId { get; set; }
     public Category? Category { get; set; } // Navigation property (nullable)
