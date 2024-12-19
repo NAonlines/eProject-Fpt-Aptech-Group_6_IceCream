@@ -23,9 +23,14 @@ namespace IceCreamProject.Controllers
             _roleManager = roleManager;
         }
 
-        [HttpGet("/login")]
+        [HttpGet("/login",Name = "Login")]
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+
+            }
             // This will simply return the login view for GET requests
             return View();
         }
@@ -50,7 +55,7 @@ namespace IceCreamProject.Controllers
 
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Index", "Web");
+                        return RedirectToAction("Index", "Home");
                     }
                     else if (result.IsLockedOut)
                     {
@@ -119,6 +124,17 @@ namespace IceCreamProject.Controllers
 
             }
             return View(model);
+        }
+        [HttpGet("/access-denied")]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+        [HttpGet("/logout",Name = "Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

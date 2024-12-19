@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,21 +11,56 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ShopContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//Cấu hình identity sử dụng db context
 
-builder.Services.AddIdentity<User, IdentityRole>()
-	.AddEntityFrameworkStores<ShopContext>()
-	.AddDefaultTokenProviders();
+// Cấu hình Identity sử dụng ShopContext
+builder.Services.AddIdentity<User, IdentityRole>(options => {
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+    options.Lockout.MaxFailedAccessAttempts = 2;
+    options.Lockout.AllowedForNewUsers = true;
+})
+.AddEntityFrameworkStores<ShopContext>()
+.AddDefaultTokenProviders();
 
-//Cấu hình lại identity
+
+
+// Cấu hình Identity
 builder.Services.Configure<IdentityOptions>(options =>
 {
-	options.Password.RequireDigit = true;
-	options.Password.RequiredLength = 6;
-	options.Password.RequireNonAlphanumeric = false;
-	options.Password.RequireUppercase = true;
-	options.Password.RequireLowercase = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
 });
+
+
+//Cấu hình phần quyền 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CheckAdmin", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+});
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options => 
+{
+	options.LoginPath = "/Login";
+	options.AccessDeniedPath = "/";
+	options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+	options.SlidingExpiration = true;
+ });
+
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 
 var app = builder.Build();
 
@@ -39,8 +76,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
 	name: "default",

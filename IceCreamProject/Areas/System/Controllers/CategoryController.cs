@@ -1,16 +1,15 @@
 ﻿using IceCreamProject.Models;
 using IceCreamProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace IceCreamProject.Areas.System.Controllers
 {
     [Area("System")]
     [Route("System/[controller]")]
-
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
 	{
 		private readonly ShopContext db;

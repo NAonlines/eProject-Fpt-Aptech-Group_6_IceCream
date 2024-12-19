@@ -22,4 +22,11 @@
     <Folder Include="Areas\System\Models\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Sucre\AccessDenied.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
