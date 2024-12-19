@@ -1,5 +1,6 @@
 ﻿using IceCreamProject.Models;
 
+namespace IceCreamProject.Models;
 public class Book
 {
     public int BookId { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace IceCreamProject.Models
+namespace IceCreamProject.ViewModels
 {
     public class RegisterViewModel
     {
@@ -22,6 +22,10 @@ namespace IceCreamProject.Models
 
         [Required(ErrorMessage = "Delivery address is required.")]
         public string? Address { get; set; }
+
+        [Phone(ErrorMessage = "Invalid phone number.")]
+        [StringLength(15, ErrorMessage = "Phone number can't be longer than 15 characters.")]
+        public string? PhoneNumber { get; set; }
 
         public string? ProfileImageUrl { get; set; }
     }

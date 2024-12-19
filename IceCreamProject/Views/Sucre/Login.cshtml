@@ -1,0 +1,41 @@
+﻿@model IceCreamProject.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Frontend.cshtml";
+}
+
+<div class="container-fluid py-5 mt-5">
+    <div class="container py-5">
+        <form asp-action="Login" method="post" novalidate>
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="Email" class="form-label">Email</label>
+                <input type="email" asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label for="Password" class="form-label">Password</label>
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Remember Me (Optional) -->
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" asp-for="RememberMe" />
+                <label class="form-check-label" for="RememberMe">Remember me</label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+
+            <!-- Registration Link -->
+            <div class="mt-3 text-center">
+                <p>Don't have an account? <a href="@Url.Action("Register", "Account")">Register here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
