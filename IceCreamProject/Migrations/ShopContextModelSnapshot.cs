@@ -352,6 +352,9 @@ namespace IceCreamProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecipeId"));
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
@@ -380,6 +383,9 @@ namespace IceCreamProject.Migrations
 
                     b.HasKey("RecipeId");
 
+                    b.HasIndex("BookId")
+                        .IsUnique();
+
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("CreatedById");
@@ -394,6 +400,10 @@ namespace IceCreamProject.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -431,6 +441,9 @@ namespace IceCreamProject.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfileImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -573,6 +586,12 @@ namespace IceCreamProject.Migrations
 
             modelBuilder.Entity("Recipe", b =>
                 {
+                    b.HasOne("Book", "Book")
+                        .WithOne("Recipe")
+                        .HasForeignKey("Recipe", "BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("IceCreamProject.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
@@ -583,9 +602,17 @@ namespace IceCreamProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Book");
+
                     b.Navigation("Category");
 
                     b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("Book", b =>
+                {
+                    b.Navigation("Recipe")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>
