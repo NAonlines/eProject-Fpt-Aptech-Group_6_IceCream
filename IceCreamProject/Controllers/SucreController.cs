@@ -41,37 +41,42 @@ namespace IceCreamProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                    var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "Invalid email.");
+                    ModelState.AddModelError("Email", "Email not found.");
+                    return View(model);
+                }
+
+                //start check and lock
+                var result = await _signInManager.PasswordSignInAsync(
+                    user, model.Password, model.RememberMe, lockoutOnFailure: true);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError("", "Your account is locked. Please try again later.");
+                    return View(model);
+                }
+                else if (!await _userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    ModelState.AddModelError("Password", "Incorrect password.");
                     return View(model);
                 }
                 else
                 {
-                    var remember = model.RememberMe;
-                    var result = await _signInManager.PasswordSignInAsync(
-                        user, model.Password, remember, lockoutOnFailure: true);
-
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else if (result.IsLockedOut)
-                    {
-                        ModelState.AddModelError("", "Your account is locked. Please try again later.");
-                        return View(model);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Invalid password.");
-                        return View(model);
-                    }
+                    ModelState.AddModelError("", "Login failed. Please try again.");
+                    return View(model);
                 }
             }
 
             return View(model);
         }
+
+
 
         [HttpGet("/register")]
         public IActionResult Register()

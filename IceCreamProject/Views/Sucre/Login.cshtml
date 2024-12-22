@@ -7,6 +7,13 @@
 <div class="container-fluid py-5 mt-5">
     <div class="container py-5">
         <form asp-action="Login" method="post" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- Hiển thị lỗi chung ở đầu trang -->
+            <div class="text-danger text-center mb-3">
+                <div asp-validation-summary="ModelOnly"></div>
+            </div>
+
             <!-- Email -->
             <div class="mb-3">
                 <label for="Email" class="form-label">Email</label>
@@ -21,7 +28,7 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <!-- Remember Me (Optional) -->
+            <!-- Remember Me -->
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" asp-for="RememberMe" />
                 <label class="form-check-label" for="RememberMe">Remember me</label>
@@ -39,3 +46,4 @@
         </form>
     </div>
 </div>
+``

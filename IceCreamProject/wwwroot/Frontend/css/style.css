@@ -13615,6 +13615,7 @@ textarea {
 
 /* *************** */
 /* Navbar chính */
+
 .site-nav {
     margin-top: 1rem;
     position: fixed;
@@ -13639,6 +13640,14 @@ textarea {
         border-radius: 12px; /* Bo góc khi cuộn */
         transition: all 0.8s ease; /* Chỉ áp dụng hiệu ứng khi vào trạng thái scrolled */
     }
+        .site-nav.scrolled.text-navcolor {
+           
+        }
+
+        .site-nav.scrolled .text-username {
+            color: rgba(0, 0, 0, 0.7) !important;
+        }
+
 
 /* Logo */
 .logo {

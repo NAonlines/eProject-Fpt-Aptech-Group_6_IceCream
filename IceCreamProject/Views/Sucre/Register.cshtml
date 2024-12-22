@@ -7,6 +7,7 @@
 <div class="container-fluid py-5 mt-5">
     <div class="container py-5">
         <form asp-action="Register" method="post" novalidate>
+            @Html.AntiForgeryToken()
             <!-- Username -->
             <div class="mb-3">
                 <label for="Username" class="form-label">Username</label>
