@@ -78,7 +78,7 @@ namespace IceCreamProject.Controllers
 
 
 
-        [HttpGet("/register")]
+        [HttpGet("/register",Name = "Register")]
         public IActionResult Register()
         {
             return View();

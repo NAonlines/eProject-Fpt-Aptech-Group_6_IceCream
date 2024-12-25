@@ -13615,7 +13615,6 @@ textarea {
 
 /* *************** */
 /* Navbar chính */
-
 .site-nav {
     margin-top: 1rem;
     position: fixed;
@@ -13623,6 +13622,7 @@ textarea {
     left: 50%; /* Căn giữa theo chiều ngang */
     transform: translateX(-50%); /* Đảm bảo luôn ở giữa */
     width: 100%; /* Ban đầu rộng toàn trang */
+    max-width: 1200px; /* Giới hạn kích thước tối đa của navbar */
     z-index: 1000;
     background-color: transparent;
     padding: 20px 0;
@@ -13632,21 +13632,26 @@ textarea {
 }
 
     .site-nav.scrolled {
-        width: 80%; /* Thu hẹp xuống 80% */
+        width: 90%; /* Giữ nguyên width để tránh đột ngột */
+        max-width: 1200px; /* Thu hẹp max-width khi cuộn */
         top: 10px; /* Cách top một khoảng khi cuộn */
         background-color: rgba(252, 255, 255, 1); /* Nền trắng */
         padding: 6px 0; /* Giảm chiều cao */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Tăng độ rộng và độ mờ của bóng */
         border-radius: 12px; /* Bo góc khi cuộn */
         transition: all 0.8s ease; /* Chỉ áp dụng hiệu ứng khi vào trạng thái scrolled */
     }
+
+
         .site-nav.scrolled.text-navcolor {
-           
+            /* Tùy chỉnh màu chữ nếu cần */
         }
 
         .site-nav.scrolled .text-username {
-            color: rgba(0, 0, 0, 0.7) !important;
+            color: #8e8f90 !important;
+            transition: color 0.3s ease; /* Hiệu ứng chuyển màu */
         }
+
 
 
 /* Logo */

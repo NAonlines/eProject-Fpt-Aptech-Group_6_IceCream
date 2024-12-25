@@ -9,5 +9,15 @@ namespace IceCreamProject.Controllers
 		{
 			return View();
 		}
+		[HttpGet("/about-us",Name = "AboutUs")]
+		public IActionResult AboutUs()
+		{
+			return View();
+		}
+		[HttpGet("/contact-us",Name = "ContactUs")]
+		public IActionResult ContactUs()
+		{
+			return View();
+		}
 	}
 }
