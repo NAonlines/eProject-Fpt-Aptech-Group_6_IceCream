@@ -1,61 +1,82 @@
 ﻿@model IceCreamProject.ViewModels.RegisterViewModel
 @{
     ViewData["Title"] = "Register";
-    Layout = "~/Views/Frontend.cshtml";
+    Layout = "~/Views/Secure.cshtml";
 }
 
-<div class="container-fluid py-5 mt-5">
-    <div class="container py-5">
-        <form asp-action="Register" method="post" novalidate>
-            @Html.AntiForgeryToken()
-            <!-- Username -->
-            <div class="mb-3">
-                <label for="Username" class="form-label">Username</label>
-                <input type="text" asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
+<section class="register-section">
+    <div class="register-container py-4">
+        <div class="row g-0 align-items-center position-relative">
+            <!-- Left: Image -->
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <img src="~/Frontend/images/ice_cream_banner_register.jpg" class="register-image"
+                     alt="Sample image" />
             </div>
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="Email" class="form-label">Email</label>
-                <input type="email" asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            <!-- Right: Form -->
+            <div class="col-lg-6 position-absolute register-form-container">
+                <div class="register-card">
+                    <div class="register-card-body text-center">
+                        <h2 class="register-title">Sign up now</h2>
+                        <form asp-action="Register" method="post" novalidate>
+                            @Html.AntiForgeryToken()
+                          
+                            <!-- Username input -->
+                            <div class="form-floating mb-4">
+                                <input type="text" asp-for="Username" class="form-control" placeholder="Username" />
+                                <label for="Username">Username</label>
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+
+                            <!-- Email input -->
+                            <div class="form-floating mb-4">
+                                <input type="email" asp-for="Email" class="form-control" placeholder="Email" />
+                                <label for="Email">Email address</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <!-- Password input -->
+                            <div class="form-floating mb-4">
+                                <input type="password" asp-for="Password" class="form-control" placeholder="Password" />
+                                <label for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="form-floating mb-4">
+                                <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                                <label for="ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                            <!-- Delivery Address -->
+                            <div class="form-floating mb-4">
+                                <input type="text" asp-for="Address" class="form-control" placeholder="Delivery Address" />
+                                <label for="Address">Delivery Address</label>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="form-floating mb-4">
+                                <input type="text" asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" />
+                                <label for="PhoneNumber">Phone Number</label>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+
+                       
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-block mb-4">
+                                Register
+                            </button>
+                            <a asp-route="Home" class="btn btn-dark btn-block mb-4">
+                                Cancel
+                            </a>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="Password" class="form-label">Password</label>
-                <input type="password" asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="mb-3">
-                <label for="ConfirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-
-            <!-- Delivery Address -->
-            <div class="mb-3">
-                <label for="Address" class="form-label">Delivery Address</label>
-                <input type="text" asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-
-            <!-- Phone Number -->
-            <div class="mb-3">
-                <label for="PhoneNumber" class="form-label">Phone Number</label>
-                <input type="text" asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-
-
-
-            <!-- Submit Button -->
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Register</button>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+</section>
+
