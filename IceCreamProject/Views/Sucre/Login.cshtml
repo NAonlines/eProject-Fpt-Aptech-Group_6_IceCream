@@ -4,13 +4,31 @@
     Layout = "~/Views/Secure.cshtml";
 }
 <section class="vh-100">
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-container position-fixed  p-3" style="position: fixed; bottom: 1rem ; right: 1rem; z-index:1050" id="toast-container">
+            @if (TempData["Success"] != null)
+            {
+                <div class="toast align-items-center  border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Notification</strong>
+                        <small>just now</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        @TempData["Success"]
+                    </div>
+                </div>
+            }
+        </div>
+    }
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col col-xl-10">
                 <div class="card card-custom">
                     <div class="row g-0">
                         <div class="col-md-6 col-lg-5 d-none d-md-block">
-                            <img src="~/Frontend/images/Login_ice_cream.jpg" alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+                            <img src="~/Frontend/images/Login_ice_cream.jpg" alt="login form" class="img-fluid custom-image" />
                         </div>
                         <div class="col-md-6 col-lg-7 d-flex align-items-center">
                             <div class="card-body p-4 p-lg-5 text-black">
@@ -53,7 +71,7 @@
 
                                     </div>
 
-                                    <a class="small text-muted" href="#!">Forgot password?</a>
+                                    <a class="small text-muted" asp-route="ForgotPassword">Forgot password?</a>
                                     <p class="mb-5 pb-lg-2">
                                         Don't have an account? <a asp-route="Register">Register here</a>
                                     </p>

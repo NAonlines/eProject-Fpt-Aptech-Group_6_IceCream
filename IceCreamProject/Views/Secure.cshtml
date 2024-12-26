@@ -46,7 +46,13 @@
 		<script src="~/Frontend/js/glightbox.min.js" asp-append-version="true"></script>
 		<script src="~/Frontend/js/custom.js" asp-append-version="true"></script>
 
-
+		<script>
+			document.addEventListener('DOMContentLoaded', (event) => {
+				var toastEL = document.querySelector('.toast');
+				var loadtoast = new bootstrap.Toast(toastEL);
+				loadtoast.show();
+			});
+		</script>
 
 	</body>
 	</html>

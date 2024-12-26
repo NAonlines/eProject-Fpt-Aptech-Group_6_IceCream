@@ -21,6 +21,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
 .AddEntityFrameworkStores<ShopContext>()
 .AddDefaultTokenProviders();
 
+// Cấu hình Email
+builder.Services.AddScoped<EmailService>();
 
 
 // Cấu hình Identity

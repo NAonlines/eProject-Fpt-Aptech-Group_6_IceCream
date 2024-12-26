@@ -234,7 +234,13 @@
 		</script>
 		
 		@RenderSection("Scripts", required: false)
-
+	<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			var toastEL = document.querySelector('.toast');
+			var loadtoast = new bootstrap.Toast(toastEL);
+			loadtoast.show();
+		});
+	</script>
 
 	</body>
 	</html>
