@@ -1,23 +1,23 @@
 ﻿@model IceCreamProject.ViewModels.BookViewModel
 @{
-    ViewData["Title"] = "Create book";
+    ViewData["Title"] = "Create Book";
     Layout = "~/Areas/System/Views/backend.cshtml";
 }
 
 <div class="content">
     <div class="container">
         <div class="page-title">
-            <h3>Forms</h3>
+            <h3>Create New Book</h3>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header">Book List</div>
+                    <div class="card-header">Book Information</div>
                     <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        <form asp-action="Create" method="post" novalidate enctype="multipart/form-data">
+                        <form asp-action="Create" method="post" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
-                            <div asp-validation-summary="ModelOnly" class="textdanger"></div>@* chỉ hiển thị lỗi liên quan model *@
+
+                            <div asp-validation-summary="All" class="text-danger"></div>
 
                             <div class="mb-3 row">
                                 <label class="col-sm-2">Title</label>
@@ -26,18 +26,14 @@
                                     <span asp-validation-for="Title" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="line"></div>
-                            <br />
 
                             <div class="mb-3 row">
                                 <label class="col-sm-2">Description</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="Description" class="form-control" />
+                                    <textarea asp-for="Description" class="form-control"></textarea>
                                     <span asp-validation-for="Description" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="line"></div>
-                            <br />
 
                             <div class="mb-3 row">
                                 <label class="col-sm-2">Price</label>
@@ -46,8 +42,6 @@
                                     <span asp-validation-for="Price" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="line"></div>
-                            <br />
 
                             <div class="mb-3 row">
                                 <label class="col-sm-2">Image</label>
@@ -56,39 +50,23 @@
                                     <span asp-validation-for="ImageUrl" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="line"></div>
-                            <br />
-
 
                             <div class="mb-3 row">
-                            <label class="col-sm-2">Parent</label>
-                            <div class="col-sm-10">
-                                <select asp-for="Categories" class="form-control"
-                                            asp-items="Model.Categories">
-                                    <option value="">-- Select Parent --</option>
-                                </select>
-                                    <span asp-validation-for="Categories" class="text-danger"></span>
-                            </div>
-                            <div class="line"></div>
-                            <br />
-
-
-                            <div class="mb-3 row">
-                                <label class="col-sm-2">Recipe</label>
+                                <label class="col-sm-2">Category</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="Recipe" class="form-control" />
-                                    <span asp-validation-for="Recipe" class="text-danger"></span>
+                                    <select asp-for="CategoryId" class="form-control" asp-items="Model.Categories">
+                                        <option value="">-- Select Category --</option>
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="line"></div>
-                            <br />
 
                             <div class="mb-3 row">
                                 <div class="col-sm-4 offset-sm-2">
-                                    <button type="submit" class="btn btn-primary mb2">
+                                    <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-save"></i> Create
                                     </button>
-                                    <a asp-action="index" class="btn btn-secondary mb2">
+                                    <a asp-action="Index" class="btn btn-secondary">
                                         <i class="fas fa-times"></i> Cancel
                                     </a>
                                 </div>
@@ -100,4 +78,3 @@
         </div>
     </div>
 </div>
-

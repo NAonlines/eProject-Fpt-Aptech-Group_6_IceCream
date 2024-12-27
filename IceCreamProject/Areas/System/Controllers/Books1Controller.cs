@@ -23,75 +23,92 @@ namespace IceCreamProject.Areas.System.Controllers
             _context = context;
         }
 
-        // GET: System/Books1
-        [HttpGet("Index")]
-        public async Task<IActionResult> Index()
-        {
-            var shopContext = _context.Books.Include(b => b.Category);
-            return View(await shopContext.ToListAsync());
-        }
+		// GET: System/Books1
+		[HttpGet("Index")]
+		public async Task<IActionResult> Index()
+		{
+			var books = await _context.Books
+				.Include(b => b.Category) // Gọi navigation property để lấy CategoryName
+				.ToListAsync();
+
+			return View(books);
+		}
+
+
+
+
+		// GET: System/Books1/Create
+		[HttpGet("Create")]
+		public IActionResult Create()
+		{
+			var viewModel = new BookViewModel
+			{
+				Categories = _context.Categories.Select(c => new SelectListItem
+				{
+					Value = c.CategoryId.ToString(),
+					Text = c.Name // Lấy tên từ bảng Category
+				}).ToList()
+			};
+			return View(viewModel);
+		}
+
+
+		[HttpPost("Create")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create(BookViewModel viewModel)
+		{
+			if (ModelState.IsValid)
+			{
+				string imagePath = string.Empty;
+
+				// Xử lý upload ảnh
+				if (viewModel.ImageUrl != null)
+				{
+					string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
+					string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
+					imagePath = fileName + "_" + Guid.NewGuid().ToString() + extension;
+					string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl", imagePath);
+
+					using (var stream = new FileStream(filePath, FileMode.Create))
+					{
+						await viewModel.ImageUrl.CopyToAsync(stream);
+					}
+				}
+
+				// Lưu thông tin sách
+				var book = new Book
+				{
+					Title = viewModel.Title,
+					Description = viewModel.Description,
+					Price = viewModel.Price,
+					ImageUrl = imagePath,
+					CategoryId = viewModel.CategoryId // Lưu CategoryId
+				};
+
+				_context.Books.Add(book);
+				await _context.SaveChangesAsync();
+				return RedirectToAction(nameof(Index));
+			}
+
+			// Nạp lại dropdown nếu ModelState không hợp lệ
+			viewModel.Categories = _context.Categories.Select(c => new SelectListItem
+			{
+				Value = c.CategoryId.ToString(),
+				Text = c.Name
+			}).ToList();
+
+			return View(viewModel);
+		}
 
 
 
 
 
-        // GET: System/Books1/Create
-        [HttpGet("Create")]
-        public IActionResult Create()
-        {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
-            return View();
-        }
-
-        [HttpPost("Create")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( BookViewModel book)
-        {
-            if (ModelState.IsValid)
-            {
-                // Xử lý upload ảnh
-                string imagePath = string.Empty;
-                if (book.ImageUrl != null)
-                {
-                    // Lấy tên file và lưu vào thư mục wwwroot/images
-                    string fileName = Path.GetFileNameWithoutExtension(book.ImageUrl.FileName); //lấy tên file ảnh upload
-                    string extension = Path.GetExtension(book.ImageUrl.FileName); //lấy định dạng file ảnh
-                    imagePath = fileName + "_" + Guid.NewGuid().ToString() + extension; // tên file ảnh + chuỗi ngẫu nhiên + định dạng tấm ảnh => tên ảnh + 62521 + .jpg
-                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl", imagePath); //wwwroot/images/tên ảnh + 62521 + .jpg
-
-
-                    // Lưu ảnh vào thư mục
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await book.ImageUrl.CopyToAsync(stream);
-                    }
-                }
-
-                // Tạo đối tượng Product từ Viewbook
-                var books = new Book
-                {
-                    Title = book.Title,
-                    Description = book.Description,
-                    Price = book.Price,
-                    ImageUrl = imagePath,
-                    CategoryId = book.CategoryId,
-                };
-
-                _context.Books.Add(books);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", book.CategoryId);
-            return View(book);
-        }
 
 
 
-
-
-
-        // GET: System/Books1/Edit/5
-        [HttpGet("Edit/{id:int}")]
+		// GET: System/Books1/Edit/5
+		[HttpGet("Edit/{id:int}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

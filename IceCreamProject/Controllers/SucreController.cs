@@ -173,7 +173,6 @@ namespace IceCreamProject.Controllers
                     return View(model);
                 }
 
-                // Kiểm tra nếu yêu cầu quên mật khẩu đã được gửi trong vòng 3 phút
                 if (user.LastForgotPasswordRequest.HasValue &&
                     user.LastForgotPasswordRequest.Value.AddMinutes(3) > DateTime.UtcNow)
                 {
@@ -181,7 +180,7 @@ namespace IceCreamProject.Controllers
                     return View(model);
                 }
 
-                // Cập nhật thời gian yêu cầu
+                // Cập nhật thời gian forgetpassword
                 user.LastForgotPasswordRequest = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
 
