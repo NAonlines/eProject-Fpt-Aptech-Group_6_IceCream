@@ -47,7 +47,7 @@
                                     <th>Price</th>
                                     <th>Image</th>
                                     <th>Category</th>
-                                    <th>Recippe</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -58,11 +58,12 @@
                                         <td>@item.Title</td>
                                         <td>@item.Description</td>
                                         <td>@item.Price</td>
-                                        <td>@item.ImageUrl</td>
-                                        <td>@(item.Category?.Name ?? "No category")</td>
-                                        <td>@item.Recipe</td>
                                         <td>
-                                            <a asp-action="Update" asp-route-id="@item.BookId" class="btn btn-sm  btn-outline-primary">Update</a>
+                                            <img src="/ImageUrl/@item.ImageUrl" alt="Image" style="width:100px; height:auto;" />
+                                        </td>
+                                        <td>@(item.Category?.Name ?? "No category")</td>
+                                        <td>
+                                            <a asp-action="Update" asp-route-id="@item.BookId" class="btn btn-sm  btn-outline-primary">Edit</a>
                                             <a asp-action="Delete" asp-route-id="@item.BookId" class="btn btn-sm  btn-outline-danger">Delete</a>
                                         </td>
                                     </tr>

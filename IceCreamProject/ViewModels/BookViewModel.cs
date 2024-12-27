@@ -23,6 +23,7 @@ namespace IceCreamProject.ViewModels
 		[Display(Name = "Upload Image")]
 		public IFormFile? ImageUrl { get; set; }
 
+
 		// To store the path of the uploaded image
 		public string? ImagePath { get; set; }
 
