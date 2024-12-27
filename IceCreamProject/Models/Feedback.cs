@@ -2,18 +2,24 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace IceCreamProject.Models;
-public class Feedback
+namespace IceCreamProject.Models
 {
-	public int FeedbackId { get; set; }
+    public class Feedback
+    {
+        public int FeedbackId { get; set; }
 
-	public string Content { get; set; }
+        public string Name { get; set; } // Thêm Name vào đây
 
-	public DateTime SubmittedDate { get; set; }
+        public string Content { get; set; }
 
-	// Foreign keys
-	public string? UserId { get; set; } // Liên kết đến User.Id
+        public DateTime SubmittedDate { get; set; }
 
-	// Navigation properties
-	public User? User { get; set; }
+        // Foreign keys
+        public string? UserId { get; set; } // Liên kết đến User.Id
+
+        public string? Email { get; set; } // Email của người gửi
+
+        // Navigation properties
+        public User? User { get; set; }
+    }
 }

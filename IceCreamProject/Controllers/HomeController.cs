@@ -53,10 +53,13 @@ namespace IceCreamProject.Controllers
                 return View(model);
             }
 
+            // Create Feedback instance
             var feedback = new Feedback
             {
+                Name = model.Name, 
                 Content = model.Message,
                 SubmittedDate = DateTime.UtcNow,
+                Email = model.Email, 
                 UserId = User.Identity.IsAuthenticated ? _userManager.GetUserId(User) : null,
                 User = User.Identity.IsAuthenticated ? await _userManager.GetUserAsync(User) : null
             };
@@ -64,8 +67,10 @@ namespace IceCreamProject.Controllers
             _db.Feedbacks.Add(feedback);
             await _db.SaveChangesAsync();
 
+            // Notify user
             TempData["Success"] = "Thank you for your feedback! We will get back to you soon.";
             return RedirectToAction("ContactUs");
         }
+
     }
 }

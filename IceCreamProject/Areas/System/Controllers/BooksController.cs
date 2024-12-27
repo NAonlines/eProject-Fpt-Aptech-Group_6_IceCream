@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using IceCreamProject.Models;
 using IceCreamProject.ViewModels;
 using IOFile = System.IO.File;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IceCreamProject.Areas.System.Controllers
 {
     [Area("System")]
     [Route("System/Books")]
+    [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {
         private readonly ShopContext _context;
@@ -25,7 +27,7 @@ namespace IceCreamProject.Areas.System.Controllers
         }
 
         // GET: System/Books1/Index
-        [HttpGet("Index")]
+        [HttpGet("", Name = "Book")]
         public async Task<IActionResult> Index()
         {
             var books = await _context.Books
@@ -162,12 +164,12 @@ namespace IceCreamProject.Areas.System.Controllers
                 CategoryId = book.CategoryId,
             };
 
-            model.Categories = _context.Categories.Select(c => new SelectListItem
+            model.Categories = await _context.Categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),
                 Text = c.Name,
                 Selected = c.CategoryId == book.CategoryId
-            }).ToList();
+            }).ToListAsync();
 
             return View(model);
         }
@@ -176,109 +178,85 @@ namespace IceCreamProject.Areas.System.Controllers
 
 
 
-        //[HttpPost("Edit/{id:int}")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, BookViewModel viewModel)
-        //{
-        //    if (id != viewModel.BookId)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost("Edit/{id:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, BookViewModel viewModel)
+        {
+            if (id != viewModel.BookId)
+            {
+                return RedirectToAction("Index");
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        var book = await _context.Books.FindAsync(id);
-        //        if (book == null)
-        //        {
-        //            return RedirectToAction("Index");
-        //        }
+            if (ModelState.IsValid)
+            {
+                var book = await _context.Books.FindAsync(id);
 
-        //        // Cập nhật thông tin sách
-        //        book.Title = viewModel.Title;
-        //        book.Description = viewModel.Description;
-        //        book.Price = viewModel.Price;
-        //        book.CategoryId = viewModel.CategoryId;
+                if (book == null)
+                {
+                    return RedirectToAction("Index");
+                }
 
-        //        // Xử lý cập nhật ảnh
-        //        if (viewModel.ImageUrl != null)
-        //        {
-        //            // Xóa ảnh cũ nếu có
-        //            if (!string.IsNullOrEmpty(book.ImageUrl))
-        //            {
-        //                string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl", book.ImageUrl);
-        //                if (IOFile.Exists(oldImagePath))
-        //                {
-        //                    IOFile.Delete(oldImagePath);
-        //                }
-        //            }
+                string imagePath = book.ImageUrl;
 
-        //            // Lưu ảnh mới
-        //            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
-        //            if (!Directory.Exists(uploadsFolder))
-        //            {
-        //                Directory.CreateDirectory(uploadsFolder); // Tạo thư mục nếu chưa tồn tại
-        //            }
+                // Xử lý cập nhật ảnh nếu có
+                if (viewModel.ImageUrl != null)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
 
-        //            string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
-        //            string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
-        //            string newImagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
+                    // Xóa ảnh cũ nếu có
+                    if (!string.IsNullOrEmpty(book.ImageUrl))
+                    {
+                        string oldImagePath = Path.Combine(uploadsFolder, book.ImageUrl);
+                        if (IOFile.Exists(oldImagePath))
+                        {
+                            IOFile.Delete(oldImagePath);
+                        }
+                    }
 
-        //            string filePath = Path.Combine(uploadsFolder, newImagePath);
+                    // Tạo đường dẫn ảnh mới
+                    string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
+                    string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
+                    imagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
+                    string filePath = Path.Combine(uploadsFolder, imagePath);
 
-        //            // Lưu ảnh vào thư mục
-        //            using (var stream = new FileStream(filePath, FileMode.Create))
-        //            {
-        //                await viewModel.ImageUrl.CopyToAsync(stream);
-        //            }
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewModel.ImageUrl.CopyToAsync(stream);
+                    }
+                }
 
-        //            book.ImageUrl = newImagePath; // Cập nhật đường dẫn ảnh
-        //        }
+                // Cập nhật thông tin sách
+                book.Title = viewModel.Title;
+                book.Description = viewModel.Description;
+                book.Price = viewModel.Price;
+                book.ImageUrl = imagePath;
+                book.CategoryId = viewModel.CategoryId;
 
-        //        // Lưu thay đổi vào cơ sở dữ liệu
-        //        _context.Books.Update(book);
-        //        await _context.SaveChangesAsync();
+                _context.Books.Update(book);
+                await _context.SaveChangesAsync();
 
-        //        TempData["Note"] = "Cập nhật sách thành công!";
-        //        return RedirectToAction(nameof(Index));
-        //    }
+                TempData["Note"] = "Update book successfully";
+                return RedirectToAction("Index");
+            }
 
-        //    // Nạp lại danh sách danh mục khi có lỗi trong ModelState
-        //    viewModel.Categories = _context.Categories.Select(c => new SelectListItem
-        //    {
-        //        Value = c.CategoryId.ToString(),
-        //        Text = c.Name,
-        //        Selected = c.CategoryId == viewModel.CategoryId
-        //    }).ToList();
+            // Nạp lại dropdown nếu ModelState không hợp lệ
+            viewModel.Categories = await _context.Categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.Name,
+                Selected = c.CategoryId == viewModel.CategoryId
+            }).ToListAsync();
 
-        //    return View(viewModel);
-        //}
-
-
-
-
-
-
+            return View(viewModel);
+        }
 
 
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

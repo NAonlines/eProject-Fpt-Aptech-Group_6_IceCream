@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="Areas\System\Data\" />
     <Folder Include="Areas\System\Models\" />
+    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\ImageUrl\" />
   </ItemGroup>
 

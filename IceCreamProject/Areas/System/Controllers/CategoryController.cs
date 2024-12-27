@@ -16,6 +16,7 @@ namespace IceCreamProject.Areas.System.Controllers
 		public CategoryController(ShopContext context) {
 			db = context;
         }
+        [HttpGet("", Name = "Category")]
 		public  async Task<IActionResult> Index()
 		{
 			return View(await db.Categories.ToListAsync());

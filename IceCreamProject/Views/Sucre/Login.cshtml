@@ -47,14 +47,14 @@
                                     <!-- Email -->
                                     <div class="form-floating mb-4">
                                         <input type="email" asp-for="Email" class="form-control form-control-lg" placeholder="Email address" />
-                                        <label for="Email">Email address</label>
+                                        <label for="Email">Email address<span class="text-danger">*</span></label>
                                         <span asp-validation-for="Email" class="text-danger"></span>
                                     </div>
 
                                     <!-- Password -->
                                     <div class="form-floating mb-4">
                                         <input type="password" asp-for="Password" class="form-control form-control-lg" placeholder="Password" />
-                                        <label for="Password">Password</label>
+                                        <label for="Password">Password<span class="text-danger">*</span></label>
                                         <span asp-validation-for="Password" class="text-danger"></span>
                                     </div>
 
