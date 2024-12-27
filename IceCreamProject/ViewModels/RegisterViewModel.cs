@@ -14,7 +14,9 @@ namespace IceCreamProject.ViewModels
 
         [Required(ErrorMessage = "Password is required.")]
         [StringLength(100, ErrorMessage = "Password must be at least {2} characters long.", MinimumLength = 6)]
+        [RegularExpression(@"^(?=.*[A-Z]).{6,}$", ErrorMessage = "Password must contain at least one uppercase letter.")]
         public string Password { get; set; }
+
 
         [Required(ErrorMessage = "Confirm password is required.")]
         [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]

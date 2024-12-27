@@ -8,5 +8,7 @@ public class User : IdentityUser
     public bool IsRegistered { get; set; }
     public string? Address { get; set; } // Address for order delivery
     public string? ProfileImageUrl { get; set; } // URL for user's profile image
+    public DateTime? LastForgotPasswordRequest { get; set; } // block spam
+
     public ICollection<MembershipPayment> MembershipPayments { get; set; } = new List<MembershipPayment>(); // Navigation property for membership payments
 }

@@ -21,7 +21,7 @@ namespace IceCreamProject.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Book", b =>
+            modelBuilder.Entity("IceCreamProject.Models.Book", b =>
                 {
                     b.Property<int>("BookId")
                         .ValueGeneratedOnAdd()
@@ -54,31 +54,6 @@ namespace IceCreamProject.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Feedback", b =>
-                {
-                    b.Property<int>("FeedbackId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SubmittedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("FeedbackId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Feedbacks");
-                });
-
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -105,6 +80,31 @@ namespace IceCreamProject.Migrations
                     b.HasIndex("ParentCategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("IceCreamProject.Models.Feedback", b =>
+                {
+                    b.Property<int>("FeedbackId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SubmittedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FeedbackId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.MembershipPayment", b =>
@@ -142,6 +142,37 @@ namespace IceCreamProject.Migrations
                     b.ToTable("MembershipPayments");
                 });
 
+            modelBuilder.Entity("IceCreamProject.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<string>("DeliveryAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("OrderId");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("IceCreamProject.Models.OrderDetail", b =>
                 {
                     b.Property<int>("OrderDetailId")
@@ -177,6 +208,54 @@ namespace IceCreamProject.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("IceCreamProject.Models.Recipe", b =>
+                {
+                    b.Property<int>("RecipeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecipeId"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ingredients")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Procedure")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RecipeId");
+
+                    b.HasIndex("BookId")
+                        .IsUnique();
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.ToTable("Recipes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -312,85 +391,6 @@ namespace IceCreamProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Order", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<string>("DeliveryAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("OrderId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Recipe", b =>
-                {
-                    b.Property<int>("RecipeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecipeId"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedById")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Ingredients")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Procedure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RecipeId");
-
-                    b.HasIndex("BookId")
-                        .IsUnique();
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.ToTable("Recipes");
-                });
-
             modelBuilder.Entity("User", b =>
                 {
                     b.Property<string>("Id")
@@ -415,6 +415,9 @@ namespace IceCreamProject.Migrations
 
                     b.Property<bool>("IsRegistered")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastForgotPasswordRequest")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -465,22 +468,13 @@ namespace IceCreamProject.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Book", b =>
+            modelBuilder.Entity("IceCreamProject.Models.Book", b =>
                 {
                     b.HasOne("IceCreamProject.Models.Category", "Category")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Feedback", b =>
-                {
-                    b.HasOne("User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>
@@ -490,6 +484,15 @@ namespace IceCreamProject.Migrations
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("IceCreamProject.Models.Feedback", b =>
+                {
+                    b.HasOne("User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.MembershipPayment", b =>
@@ -505,7 +508,7 @@ namespace IceCreamProject.Migrations
 
             modelBuilder.Entity("IceCreamProject.Models.OrderDetail", b =>
                 {
-                    b.HasOne("Book", "Book")
+                    b.HasOne("IceCreamProject.Models.Book", "Book")
                         .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -515,7 +518,7 @@ namespace IceCreamProject.Migrations
                         .WithMany()
                         .HasForeignKey("MembershipPaymentId");
 
-                    b.HasOne("Order", "Order")
+                    b.HasOne("IceCreamProject.Models.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -526,6 +529,31 @@ namespace IceCreamProject.Migrations
                     b.Navigation("MembershipPayment");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("IceCreamProject.Models.Recipe", b =>
+                {
+                    b.HasOne("IceCreamProject.Models.Book", "Book")
+                        .WithOne("Recipe")
+                        .HasForeignKey("IceCreamProject.Models.Recipe", "BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IceCreamProject.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -579,32 +607,7 @@ namespace IceCreamProject.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Recipe", b =>
-                {
-                    b.HasOne("Book", "Book")
-                        .WithOne("Recipe")
-                        .HasForeignKey("Recipe", "BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("IceCreamProject.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
-                    b.HasOne("User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("CreatedBy");
-                });
-
-            modelBuilder.Entity("Book", b =>
+            modelBuilder.Entity("IceCreamProject.Models.Book", b =>
                 {
                     b.Navigation("Recipe")
                         .IsRequired();
@@ -617,7 +620,7 @@ namespace IceCreamProject.Migrations
                     b.Navigation("ChildCategories");
                 });
 
-            modelBuilder.Entity("Order", b =>
+            modelBuilder.Entity("IceCreamProject.Models.Order", b =>
                 {
                     b.Navigation("OrderDetails");
                 });

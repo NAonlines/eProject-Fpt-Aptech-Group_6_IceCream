@@ -1,41 +1,88 @@
 ﻿@model IceCreamProject.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Login";
-    Layout = "~/Views/Frontend.cshtml";
+    Layout = "~/Views/Secure.cshtml";
 }
+<section class="vh-100">
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-container position-fixed  p-3" style="position: fixed; bottom: 1rem ; right: 1rem; z-index:1050" id="toast-container">
+            @if (TempData["Success"] != null)
+            {
+                <div class="toast align-items-center  border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Notification</strong>
+                        <small>just now</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        @TempData["Success"]
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-xl-10">
+                <div class="card card-custom">
+                    <div class="row g-0">
+                        <div class="col-md-6 col-lg-5 d-none d-md-block">
+                            <img src="~/Frontend/images/Login_ice_cream.jpg" alt="login form" class="img-fluid custom-image" />
+                        </div>
+                        <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                            <div class="card-body p-4 p-lg-5 text-black">
+                                <!-- Form with ASP.NET MVC Razor Syntax -->
+                                <form asp-action="Login" method="post" novalidate>
+                                    @Html.AntiForgeryToken()
+                                    <div class="text-danger text-center mb-3">
+                                        <div asp-validation-summary="ModelOnly"></div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3 pb-1">
+                                        <i class="fas fa-cubes fa-2x me-3 custom-icon"></i>
+                                        <span class="h1 fw-bold mb-0">Ice Cream</span>
+                                    </div>
+                                    <h5 class="fw-normal mb-3 pb-3">Sign into your account</h5>
 
-<div class="container-fluid py-5 mt-5">
-    <div class="container py-5">
-        <form asp-action="Login" method="post" novalidate>
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="Email" class="form-label">Email</label>
-                <input type="email" asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+                                    <!-- Email -->
+                                    <div class="form-floating mb-4">
+                                        <input type="email" asp-for="Email" class="form-control form-control-lg" placeholder="Email address" />
+                                        <label for="Email">Email address</label>
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
 
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="Password" class="form-label">Password</label>
-                <input type="password" asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                                    <!-- Password -->
+                                    <div class="form-floating mb-4">
+                                        <input type="password" asp-for="Password" class="form-control form-control-lg" placeholder="Password" />
+                                        <label for="Password">Password</label>
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
 
-            <!-- Remember Me (Optional) -->
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" asp-for="RememberMe" />
-                <label class="form-check-label" for="RememberMe">Remember me</label>
-            </div>
+                                    <!-- Remember Me -->
+                                    <div class="form-check mb-4">
+                                        <input type="checkbox" class="form-check-input" asp-for="RememberMe" id="RememberMe" />
+                                        <label class="form-check-label" for="RememberMe">Remember me</label>
+                                    </div>
 
-            <!-- Submit Button -->
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
+                                    <!-- Submit Button -->
+                                    <div class="pt-1 mb-4">
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+                                        <a asp-route="Home" class="btn btn-dark btn-lg btn-block">Cancel</a>
 
-            <!-- Registration Link -->
-            <div class="mt-3 text-center">
-                <p>Don't have an account? <a href="@Url.Action("Register", "Account")">Register here</a></p>
+                                    </div>
+
+                                    <a class="small text-muted" asp-route="ForgotPassword">Forgot password?</a>
+                                    <p class="mb-5 pb-lg-2">
+                                        Don't have an account? <a asp-route="Register">Register here</a>
+                                    </p>
+                                    <a href="#!" class="small text-muted">Terms of use.</a>
+                                    <a href="#!" class="small text-muted">Privacy policy</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</section>
