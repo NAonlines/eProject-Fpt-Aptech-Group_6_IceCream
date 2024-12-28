@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IceCreamProject.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20241227083149_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241228053324_Database")]
+    partial class Database
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,42 @@ namespace IceCreamProject.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("IceCreamProject.Models.CartItem", b =>
+                {
+                    b.Property<int>("CartItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrdersId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("CartItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("CartItem");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>
@@ -138,14 +174,26 @@ namespace IceCreamProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrdersId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("MembershipPaymentId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("UserId");
 
@@ -160,64 +208,33 @@ namespace IceCreamProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<string>("DeliveryAddress")
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("OrderId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("IceCreamProject.Models.OrderDetail", b =>
-                {
-                    b.Property<int>("OrderDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MembershipPaymentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("OrderDetailId");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("MembershipPaymentId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Recipe", b =>
@@ -228,14 +245,13 @@ namespace IceCreamProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecipeId"));
 
-                    b.Property<int>("BookId")
+                    b.Property<int?>("BookId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedById")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ImageUrl")
@@ -252,14 +268,11 @@ namespace IceCreamProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Procedure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("RecipeId");
 
                     b.HasIndex("BookId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[BookId] IS NOT NULL");
 
                     b.HasIndex("CategoryId");
 
@@ -487,6 +500,13 @@ namespace IceCreamProject.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("IceCreamProject.Models.CartItem", b =>
+                {
+                    b.HasOne("IceCreamProject.Models.Order", null)
+                        .WithMany("CartItems")
+                        .HasForeignKey("OrderId");
+                });
+
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>
                 {
                     b.HasOne("IceCreamProject.Models.Category", "ParentCategory")
@@ -507,8 +527,25 @@ namespace IceCreamProject.Migrations
 
             modelBuilder.Entity("IceCreamProject.Models.MembershipPayment", b =>
                 {
+                    b.HasOne("IceCreamProject.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("User", "User")
                         .WithMany("MembershipPayments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("IceCreamProject.Models.Order", b =>
+                {
+                    b.HasOne("User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -516,38 +553,11 @@ namespace IceCreamProject.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("IceCreamProject.Models.OrderDetail", b =>
-                {
-                    b.HasOne("IceCreamProject.Models.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("IceCreamProject.Models.MembershipPayment", "MembershipPayment")
-                        .WithMany()
-                        .HasForeignKey("MembershipPaymentId");
-
-                    b.HasOne("IceCreamProject.Models.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("MembershipPayment");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("IceCreamProject.Models.Recipe", b =>
                 {
                     b.HasOne("IceCreamProject.Models.Book", "Book")
                         .WithOne("Recipe")
-                        .HasForeignKey("IceCreamProject.Models.Recipe", "BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IceCreamProject.Models.Recipe", "BookId");
 
                     b.HasOne("IceCreamProject.Models.Category", "Category")
                         .WithMany()
@@ -555,9 +565,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasOne("User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatedById");
 
                     b.Navigation("Book");
 
@@ -632,7 +640,7 @@ namespace IceCreamProject.Migrations
 
             modelBuilder.Entity("IceCreamProject.Models.Order", b =>
                 {
-                    b.Navigation("OrderDetails");
+                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("User", b =>

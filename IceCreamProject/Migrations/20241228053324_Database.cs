@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IceCreamProject.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Database : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -73,23 +73,6 @@ namespace IceCreamProject.Migrations
                         column: x => x.ParentCategoryId,
                         principalTable: "Categories",
                         principalColumn: "CategoryId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    OrderId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeliveryAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.OrderId);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,23 +204,23 @@ namespace IceCreamProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MembershipPayments",
+                name: "Orders",
                 columns: table => new
                 {
-                    MembershipPaymentId = table.Column<int>(type: "int", nullable: false)
+                    OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    MembershipType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MembershipStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MembershipEndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MembershipPayments", x => x.MembershipPaymentId);
+                    table.PrimaryKey("PK_Orders", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_MembershipPayments_AspNetUsers_UserId",
+                        name: "FK_Orders_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -267,38 +250,59 @@ namespace IceCreamProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderDetails",
+                name: "CartItem",
                 columns: table => new
                 {
-                    OrderDetailId = table.Column<int>(type: "int", nullable: false)
+                    CartItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    BookId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MembershipPaymentId = table.Column<int>(type: "int", nullable: true)
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrdersId = table.Column<int>(type: "int", nullable: true),
+                    OrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderDetails", x => x.OrderDetailId);
+                    table.PrimaryKey("PK_CartItem", x => x.CartItemId);
                     table.ForeignKey(
-                        name: "FK_OrderDetails_Books_BookId",
-                        column: x => x.BookId,
-                        principalTable: "Books",
-                        principalColumn: "BookId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderDetails_MembershipPayments_MembershipPaymentId",
-                        column: x => x.MembershipPaymentId,
-                        principalTable: "MembershipPayments",
-                        principalColumn: "MembershipPaymentId");
-                    table.ForeignKey(
-                        name: "FK_OrderDetails_Orders_OrderId",
+                        name: "FK_CartItem_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "OrderId",
+                        principalColumn: "OrderId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MembershipPayments",
+                columns: table => new
+                {
+                    MembershipPaymentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MembershipType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MembershipStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MembershipEndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OrdersId = table.Column<int>(type: "int", nullable: true),
+                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MembershipPayments", x => x.MembershipPaymentId);
+                    table.ForeignKey(
+                        name: "FK_MembershipPayments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MembershipPayments_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderId");
                 });
 
             migrationBuilder.CreateTable(
@@ -309,12 +313,11 @@ namespace IceCreamProject.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Ingredients = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Procedure = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BookId = table.Column<int>(type: "int", nullable: false)
+                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    BookId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -323,14 +326,12 @@ namespace IceCreamProject.Migrations
                         name: "FK_Recipes_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Recipes_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
-                        principalColumn: "BookId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BookId");
                     table.ForeignKey(
                         name: "FK_Recipes_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -383,6 +384,11 @@ namespace IceCreamProject.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartItem_OrderId",
+                table: "CartItem",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Categories_ParentCategoryId",
                 table: "Categories",
                 column: "ParentCategoryId");
@@ -393,30 +399,26 @@ namespace IceCreamProject.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MembershipPayments_OrderId",
+                table: "MembershipPayments",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MembershipPayments_UserId",
                 table: "MembershipPayments",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderDetails_BookId",
-                table: "OrderDetails",
-                column: "BookId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderDetails_MembershipPaymentId",
-                table: "OrderDetails",
-                column: "MembershipPaymentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderDetails_OrderId",
-                table: "OrderDetails",
-                column: "OrderId");
+                name: "IX_Orders_UserId",
+                table: "Orders",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_BookId",
                 table: "Recipes",
                 column: "BookId",
-                unique: true);
+                unique: true,
+                filter: "[BookId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_CategoryId",
@@ -448,19 +450,19 @@ namespace IceCreamProject.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CartItem");
+
+            migrationBuilder.DropTable(
                 name: "Feedbacks");
 
             migrationBuilder.DropTable(
-                name: "OrderDetails");
+                name: "MembershipPayments");
 
             migrationBuilder.DropTable(
                 name: "Recipes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "MembershipPayments");
 
             migrationBuilder.DropTable(
                 name: "Orders");

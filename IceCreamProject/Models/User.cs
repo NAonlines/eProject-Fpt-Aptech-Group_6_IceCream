@@ -1,4 +1,4 @@
-﻿using IceCreamProject.Models;
+﻿    using IceCreamProject.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -10,5 +10,5 @@ public class User : IdentityUser
     public string? ProfileImageUrl { get; set; } // URL for user's profile image
     public DateTime? LastForgotPasswordRequest { get; set; } // block spam
 
-    public ICollection<MembershipPayment> MembershipPayments { get; set; } = new List<MembershipPayment>(); // Navigation property for membership payments
+	public ICollection<MembershipPayment> MembershipPayments { get; set; } = new List<MembershipPayment>(); // Navigation property for membership payments
 }

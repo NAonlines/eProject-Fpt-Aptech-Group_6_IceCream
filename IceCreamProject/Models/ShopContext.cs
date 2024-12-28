@@ -18,7 +18,6 @@ public class ShopContext : IdentityDbContext<User, IdentityRole, string>
 	public DbSet<Recipe> Recipes { get; set; }
 	public DbSet<Book> Books { get; set; }
 	public DbSet<Order> Orders { get; set; }
-	public DbSet<OrderDetail> OrderDetails { get; set; }
 	public DbSet<Feedback> Feedbacks { get; set; }
 	public DbSet<MembershipPayment> MembershipPayments { get; set; }
 
@@ -28,26 +27,22 @@ public class ShopContext : IdentityDbContext<User, IdentityRole, string>
 		base.OnModelCreating(modelBuilder);
 
 		modelBuilder.Entity<Book>()
-	   .Property(b => b.Price)
-	   .HasColumnType("decimal(18,2)");
-
-		modelBuilder.Entity<OrderDetail>()
-			.Property(od => od.Price)
-			.HasColumnType("decimal(18,2)");
-
-		modelBuilder.Entity<OrderDetail>()
-			.Property(od => od.Total)
-			.HasColumnType("decimal(18,2)"); 
+		   .Property(b => b.Price)
+		   .HasColumnType("decimal(18,2)");
 
 		modelBuilder.Entity<Order>()
-			.Property(o => o.TotalPrice)
+			.Property(o => o.TotalAmount)
 			.HasColumnType("decimal(18,2)");
 
 		modelBuilder.Entity<MembershipPayment>()
 			.Property(mp => mp.Amount)
 			.HasColumnType("decimal(18,2)");
 
+		modelBuilder.Entity<CartItem>()
+			.Property(ci => ci.Price)
+			.HasColumnType("decimal(18,2)");
 	}
+
 
 }
 

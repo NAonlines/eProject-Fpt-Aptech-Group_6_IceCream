@@ -17,13 +17,18 @@ namespace IceCreamProject.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("/", Name = "Home")]
-        public IActionResult Index()
-        {
-            return View();
-        }
+		[HttpGet("/", Name = "Home")]
+		public IActionResult Index()
+		{
+			// Fetch the first 8 books from the database
+			var books = _db.Books.Take(8).ToList();
 
-        [HttpGet("/about-us", Name = "AboutUs")]
+			// Pass the books collection to the View
+			return View(books);
+		}
+
+
+		[HttpGet("/about-us", Name = "AboutUs")]
         public IActionResult AboutUs()
         {
             return View();
