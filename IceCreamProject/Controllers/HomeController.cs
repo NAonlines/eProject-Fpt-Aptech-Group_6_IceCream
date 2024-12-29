@@ -107,6 +107,7 @@ namespace IceCreamProject.Controllers
 					ProductId = BookId,
                     Name = book.Title,
 					Price = book.Price,
+                    Description = book.Description,
 					Image = book.ImageUrl,
 					Quantity = 1
 				});
@@ -133,5 +134,102 @@ namespace IceCreamProject.Controllers
 			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 			return View(cart);
 		}
-	}
+
+        [HttpPost("/remove-from-cart", Name = "RemoveFromCart")]
+        public IActionResult RemoveFromCart(int productId)
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+            var item = cart.FirstOrDefault(p => p.ProductId == productId);
+            if (item != null)
+            {
+                cart.Remove(item);
+            }
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+            return RedirectToAction("Cart");
+        }
+        [HttpPost("/update-cart", Name = "UpdateCart")]
+        public IActionResult UpdateCart(int productId, int quantity)
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+            var item = cart.FirstOrDefault(p => p.ProductId == productId);
+            if (item != null)
+            {
+                item.Quantity = quantity;
+            }
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost("/check-out", Name = "CheckOut")]
+        public async Task<IActionResult> CheckOut()
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+            if (cart.Any())
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    var newOrder = new Order
+                    {
+                        CustomerName = currentUser.UserName,
+                        Address = currentUser.Address,
+                        PhoneNumber = currentUser.PhoneNumber,
+                        TotalAmount = cart.Sum(p => p.Quantity * p.Price),
+                        PaymentMethod = "Cash on Delivery",
+                        OrderDate = DateTime.UtcNow,
+                        UserId = currentUser.Id
+                    };
+
+                    // Save the Order to generate the OrderId
+                    _db.Orders.Add(newOrder);
+                    await _db.SaveChangesAsync();
+
+                    // Add CartItems with the new OrderId
+                    foreach (var item in cart)
+                    {
+                        var newCartItem = new CartItem
+                        {
+                            ProductId = item.ProductId,
+                            Name = item.Name,
+                            Price = item.Price,
+                            Description = item.Description,
+                            Image = item.Image,
+                            Quantity = item.Quantity,
+                            OrdersId = newOrder.OrderId // Use the generated OrderId
+                        };
+                        _db.CartItems.Add(newCartItem);
+                    }
+
+                    await _db.SaveChangesAsync();
+
+                    // Clear the cart after checkout
+                    HttpContext.Session.Remove("Cart");
+
+                    // Redirect to order confirmation page
+                    return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
+                }
+                else
+                {
+                    // If the user is not logged in, redirect to login page
+                    return RedirectToAction("Login", "Sucre");
+                }
+            }
+            else
+            {
+                // If the cart is empty, redirect to the home page
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult OrderConfirmation(int orderId)
+        {
+            var order = _db.Orders.Include(o => o.CartItems).FirstOrDefault(o => o.OrderId == orderId);
+            if (order == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View(order);
+        }
+
+    }
 }

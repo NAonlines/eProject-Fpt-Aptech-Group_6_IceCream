@@ -1,4 +1,4 @@
-﻿
+﻿@model List<IceCreamProject.Models.CartItem>
 @{
     ViewData["Title"] = "Cart";
     Layout = "~/Views/Secure.cshtml";
@@ -16,78 +16,75 @@
                                 <th scope="col" class="h5">Shopping Bag</th>
                                 <th scope="col">Format</th>
                                 <th scope="col">Quantity</th>
-                                <th scope="col">Price</th>
+                                <th scope="col">Total Price</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://i.imgur.com/2DsA49b.webp" class="img-fluid rounded-3"
-                                             style="width: 120px;" alt="Book">
-                                        <div class="flex-column ms-4">
-                                            <p class="mb-2">Thinking, Fast and Slow</p>
-                                            <p class="mb-0">Daniel Kahneman</p>
-                                        </div>
-                                    </div>
-                                </th>
-                                <td class="align-middle">
-                                    <p class="mb-0" style="font-weight: 500;">Digital</p>
-                                </td>
-                                <td class="align-middle">
-                                    <div class="d-flex flex-row">
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                                onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
 
-                                        <input id="form1" min="0" name="quantity" value="2" type="number"
-                                               class="form-control form-control-sm" style="width: 50px;" />
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach(var item in Model){
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="d-flex align-items-center">
+                                                <img src="~/ImageUrl/@item.Image" class="img-fluid rounded-3"
+                                                     style="width: 120px;" alt="@item.Name">
+                                                <div class="flex-column ms-4">
+                                                    <p class="mb-2">@item.Name</p>
+                                                    <p class="mb-0">@item.Description</p>
+                                                    <small>@item.Price.ToString("C")</small>
 
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                                onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                <td class="align-middle">
-                                    <p class="mb-0" style="font-weight: 500;">$9.99</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="border-bottom-0">
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://i.imgur.com/Oj1iQUX.webp" class="img-fluid rounded-3"
-                                             style="width: 120px;" alt="Book">
-                                        <div class="flex-column ms-4">
-                                            <p class="mb-2">Homo Deus: A Brief History of Tomorrow</p>
-                                            <p class="mb-0">Yuval Noah Harari</p>
-                                        </div>
-                                    </div>
-                                </th>
-                                <td class="align-middle border-bottom-0">
-                                    <p class="mb-0" style="font-weight: 500;">Paperback</p>
-                                </td>
-                                <td class="align-middle border-bottom-0">
-                                    <div class="d-flex flex-row">
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                                onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <td class="align-middle">
+                                            <p class="mb-0" style="font-weight: 500;">Digital</p>
+                                        </td>
+                                        <td class="align-middle">
+                                            <form method="post" action="/update-cart" class="d-flex flex-row align-items-center">
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
 
-                                        <input id="form1" min="0" name="quantity" value="1" type="number"
-                                               class="form-control form-control-sm" style="width: 50px;" />
+                                                <!-- Nút giảm số lượng -->
+                                                <button type="button" class="btn btn-link px-2 quantity-decrease" onclick="updateQuantity(this, -1)">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
 
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                                onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                <td class="align-middle border-bottom-0">
-                                    <p class="mb-0" style="font-weight: 500;">$13.50</p>
-                                </td>
-                            </tr>
+                                                <!-- Input số lượng -->
+                                                <input min="1" name="quantity" value="@item.Quantity" type="number"
+                                                       class="form-control form-control-sm quantity-input" style="width: 50px;" onchange="submitForm(this)" />
+
+                                                <!-- Nút tăng số lượng -->
+                                                <button type="button" class="btn btn-link px-2 quantity-increase" onclick="updateQuantity(this, 1)">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+
+                                        <td class="align-middle">
+                                            <p class="mb-0" style="font-weight: 500;">$@(item.Quantity * item.Price)</p>
+                                        </td>
+                                        <td class="align-middle" style="position: relative; width: 50px;">
+                                            <form method="post" asp-route="RemoveFromCart" style="position: absolute; top: 5px; right: 5px;">
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <button type="submit" class="btn btn-link btn-sm p-0 text-danger" title="Remove" style="font-size: 14px;">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="align-middle">
+                                        <p class="mb-0" style="font-weight: 500;">No items in cart</p>
+                                    </td>
+                                </tr>
+                            }
+                 
+                           
                         </tbody>
                     </table>
                 </div>
@@ -140,31 +137,38 @@
                                 </div>
                             </div>
                             <div class="col-lg-4 col-xl-3">
+                                <!-- Subtotal -->
                                 <div class="d-flex justify-content-between" style="font-weight: 500;">
                                     <p class="mb-2">Subtotal</p>
-                                    <p class="mb-2">$23.49</p>
+                                    <p class="mb-2">$4</p>
                                 </div>
 
+                                <!-- Shipping -->
                                 <div class="d-flex justify-content-between" style="font-weight: 500;">
                                     <p class="mb-0">Shipping</p>
-                                    <p class="mb-0">$2.99</p>
+                                    <p class="mb-0">$4</p>
                                 </div>
 
+                                <!-- Divider -->
                                 <hr class="my-4">
 
+                                <!-- Total -->
                                 <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
                                     <p class="mb-2">Total (tax included)</p>
-                                    <p class="mb-2">$26.48</p>
+                                    <p class="mb-2">$4</p>
                                 </div>
 
-                                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block btn-lg">
-                                    <div class="d-flex justify-content-between">
-                                        <span>Checkout</span>
-                                        <span>$26.48</span>
-                                    </div>
-                                </button>
-
+                                <!-- Checkout Button -->
+                                <form method="post" asp-controller="Home" asp-action="CheckOut">
+                                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Checkout</span>
+                                            <span>$4</span>
+                                        </div>
+                                    </button>
+                                </form>
                             </div>
+
                         </div>
 
                     </div>
@@ -173,4 +177,22 @@
             </div>
         </div>
     </div>
+    <script>
+        function updateQuantity(button, delta) {
+            const form = button.closest('form');
+            const input = form.querySelector('.quantity-input');
+            let newValue = parseInt(input.value) + delta;
+
+            if (newValue < 1) newValue = 1;
+            input.value = newValue;
+
+            form.submit();
+        }
+
+        function submitForm(input) {
+            const form = input.closest('form');
+            form.submit();
+        }
+    </script>
 </section>
+

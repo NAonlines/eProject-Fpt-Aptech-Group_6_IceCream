@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IceCreamProject.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    partial class ShopContextModelSnapshot : ModelSnapshot
+    [Migration("20241229133833_UpdateCartItem")]
+    partial class UpdateCartItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +65,6 @@ namespace IceCreamProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
 
-                    b.Property<int?>("CheckoutId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -91,11 +91,9 @@ namespace IceCreamProject.Migrations
 
                     b.HasKey("CartItemId");
 
-                    b.HasIndex("CheckoutId");
-
                     b.HasIndex("OrderId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItem");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>
@@ -124,38 +122,6 @@ namespace IceCreamProject.Migrations
                     b.HasIndex("ParentCategoryId");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("IceCreamProject.Models.Checkout", b =>
-                {
-                    b.Property<int>("CheckoutId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CheckoutId"));
-
-                    b.Property<string>("AvailablePaymentMethods")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShippingAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("CheckoutId");
-
-                    b.ToTable("Checkouts");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Feedback", b =>
@@ -257,10 +223,6 @@ namespace IceCreamProject.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -543,10 +505,6 @@ namespace IceCreamProject.Migrations
 
             modelBuilder.Entity("IceCreamProject.Models.CartItem", b =>
                 {
-                    b.HasOne("IceCreamProject.Models.Checkout", null)
-                        .WithMany("CartItems")
-                        .HasForeignKey("CheckoutId");
-
                     b.HasOne("IceCreamProject.Models.Order", null)
                         .WithMany("CartItems")
                         .HasForeignKey("OrderId");
@@ -681,11 +639,6 @@ namespace IceCreamProject.Migrations
                     b.Navigation("Books");
 
                     b.Navigation("ChildCategories");
-                });
-
-            modelBuilder.Entity("IceCreamProject.Models.Checkout", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Order", b =>

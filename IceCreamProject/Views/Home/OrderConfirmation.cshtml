@@ -1,0 +1,38 @@
+﻿@model IceCreamProject.Models.Order
+
+@{
+    ViewData["Title"] = "OrderConfirmation";
+    Layout = "~/Views/Frontend.cshtml";
+}
+<h1>Order Confirmation</h1>
+<p>Thank you, @Model.CustomerName, for your order!</p>
+<p>Order Number: @Model.OrderId</p>
+<p>Total Amount: @Model.TotalAmount.ToString("C")</p>
+
+<h3>Order Details</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CartItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@(item.Quantity * item.Price).ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>Shipping Address: @Model.Address</p>
+<p>Payment Method: @Model.PaymentMethod</p>
