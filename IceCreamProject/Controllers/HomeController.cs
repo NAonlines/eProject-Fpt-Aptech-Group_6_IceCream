@@ -3,7 +3,9 @@ using IceCreamProject.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-
+using IceCreamProject.Extensions;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 namespace IceCreamProject.Controllers
 {
     public class HomeController : Controller
@@ -49,6 +51,8 @@ namespace IceCreamProject.Controllers
             return View(model);
         }
 
+
+
         [HttpPost("/contact-us")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ContactUs(FeedbackViewModel model)
@@ -77,5 +81,57 @@ namespace IceCreamProject.Controllers
             return RedirectToAction("ContactUs");
         }
 
-    }
+
+        [HttpPost("/add-cart",Name ="AddCart")]
+		public async Task<IActionResult> AddToCart(int BookId)
+		{
+			var book = await _db.Books.FirstOrDefaultAsync(b => b.BookId == BookId);
+
+			if (book == null)
+			{
+				return Json(new { success = false, message = "Book not found." }); // Return JSON response();
+			}
+            //get session
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+            //check if book is already in cart
+
+            var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
+			if (cartItem != null)
+			{
+                cartItem.Quantity++;
+            }
+            else
+            {
+				cart.Add(new CartItem
+				{
+					ProductId = BookId,
+                    Name = book.Title,
+					Price = book.Price,
+					Image = book.ImageUrl,
+					Quantity = 1
+				});
+            }
+            //save to session
+
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+            int totalItems = cart.Sum(p => p.Quantity);
+			return Json(new { success = true,totalItems, message = "Book added to cart." });
+        }
+
+        [HttpGet("/count-cart", Name = "CountCart")]
+		public IActionResult GetCountCart()
+		{
+			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart")?? new List<CartItem>();
+
+            int totalItems = cart.Sum(p => p.Quantity);
+			return Json(new { totalItems });
+		}
+
+        [HttpGet("/cart", Name = "Cart")]
+        public IActionResult Cart()
+		{
+			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+			return View(cart);
+		}
+	}
 }
