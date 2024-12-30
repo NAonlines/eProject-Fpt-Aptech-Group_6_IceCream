@@ -97,7 +97,10 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="users.html"><i class="fas fa-user-friends"></i>Users</a>
+                    <a asp-area="System" asp-controller="Order" asp-action="Index"><i class="fas fa-user-friends"></i> Order</a>
+                </li>
+                <li>
+                    <a asp-area="System" asp-controller="Users" asp-action="Index"><i class="fas fa-user-friends"></i> Users</a>
                 </li>
                 <li>
                     <a href="settings.html"><i class="fas fa-cog"></i>Settings</a>
@@ -167,6 +170,7 @@
     <script src="~/Backend/assets/js/dashboard-charts.js"></script>
     <script src="~/Backend/assets/js/script.js"></script>
     <script src="~/Backend/toastify/toastify.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded',(event)=>{
             var toastEL=document.querySelector('.toast');

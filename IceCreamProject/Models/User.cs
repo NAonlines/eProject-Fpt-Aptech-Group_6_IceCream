@@ -1,14 +1,17 @@
-﻿    using IceCreamProject.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
+using IceCreamProject.Models;
+using Microsoft.EntityFrameworkCore;
 
-public class User : IdentityUser
+
+namespace IceCreamProject.Models
 {
-    public bool IsRegistered { get; set; }
-    public string? Address { get; set; } // Address for order delivery
-    public string? ProfileImageUrl { get; set; } // URL for user's profile image
-    public DateTime? LastForgotPasswordRequest { get; set; } // block spam
+    public class User : IdentityUser
+    {
+        public bool IsRegistered { get; set; }
+        public string? Address { get; set; }
+        public string? ProfileImageUrl { get; set; }
+        public DateTime? LastForgotPasswordRequest { get; set; }
 
-	public ICollection<MembershipPayment> MembershipPayments { get; set; } = new List<MembershipPayment>(); // Navigation property for membership payments
+        public ICollection<MembershipPayment> MembershipPayments { get; set; } = new List<MembershipPayment>();
+    }
 }

@@ -9,9 +9,10 @@ public class Order
 	public decimal TotalAmount { get; set; }
 	public string PaymentMethod { get; set; }
 	public DateTime OrderDate { get; set; }
+    public string OrderStatus { get; set; } = "Processing";
 
-	// Foreign key to link with User (Account)
-	public string UserId { get; set; }
+    // Foreign key to link with User (Account)
+    public string UserId { get; set; }
 	public User User { get; set; }
 
 	// List of items in the cart

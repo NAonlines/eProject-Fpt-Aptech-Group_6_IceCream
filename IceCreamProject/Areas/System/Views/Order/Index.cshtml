@@ -1,0 +1,104 @@
+﻿@model IEnumerable<IceCreamProject.Models.Order>
+@{
+    ViewData["Title"] = "Order List";
+
+    Layout = "~/Areas/System/Views/backend.cshtml";
+}
+
+<div class="content">
+    <div class="container">
+        <div class="page-title">
+            <h3>Order List</h3>
+        </div>
+
+        @if (TempData["Message"] != null)
+
+        {
+            <div class="toast-container position-fixed p-3" style="position: fixed; bottom: 1rem; right: 1rem; z-index: 1050" id="toast-container">
+                <div class="toast align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Notification</strong>
+                        <small>just now</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        @TempData["Message"]
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-hover" id="dataTables-example" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>User ID</th>
+                                    <th>Order Date</th>
+                                    <th>Address</th>
+                                    <th>Payment Method</th>
+                                    <th>Status</th>
+                                    <th>Total Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+
+                                {
+                                    <tr>
+                                        <td>@order.OrderId</td>
+                                        <td>@order.CustomerName</td>
+                                        <td>@order.UserId</td>
+                                        <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                        <td>@order.Address</td>
+                                        <td>@order.PaymentMethod</td>
+                                        <td>@order.OrderStatus</td>
+                                        <td>@order.TotalAmount.ToString("C")</td>
+                                        <td>
+                                            <a asp-controller="Order" asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-info">View</a>
+                                            <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">Edit</a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOrder(@order.OrderId)">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteOrder(orderId) {
+        if (!orderId) {
+            Swal.fire('Warning!', 'Order ID is missing.', 'warning');
+            return;
+        }
+
+        $.ajax({
+            url: "/System/Order/Delete",
+            data: {
+                orderId: orderId
+            },
+            type: "POST",
+            success: function (data) {
+                if (data.error != null) {
+                    Swal.fire('Warning!', data.content, 'warning');
+                    return;
+                }
+                Swal.fire('Success!', 'Order deleted successfully.', 'success').then(() => location.reload());
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: ", xhr.responseText || error);
+                Swal.fire('Error!', 'An error occurred while deleting the order.', 'error');
+            }
+        });
+    }
+</script>
