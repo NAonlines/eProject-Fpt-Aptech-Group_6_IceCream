@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using IceCreamProject.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
