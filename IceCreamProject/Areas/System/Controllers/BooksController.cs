@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace IceCreamProject.Areas.System.Controllers
 {
     [Area("System")]
-    [Route("System/Books")]
+    [Route("System/[controller]")]
     [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {

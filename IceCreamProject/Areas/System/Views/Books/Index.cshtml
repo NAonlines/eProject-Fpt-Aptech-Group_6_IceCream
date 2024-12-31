@@ -64,7 +64,11 @@
                                         <td>@(item.Category?.Name ?? "No category")</td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.BookId" class="btn btn-sm  btn-outline-primary">Edit</a>
-                                            <a asp-action="Delete" asp-route-id="@item.BookId" class="btn btn-sm  btn-outline-danger">Delete</a>
+                                            <a asp-action="Delete" asp-route-id="@item.BookId"
+                                               class="btn btn-sm btn-outline-danger"
+                                               onclick="return confirm('Are you sure you want to delete this book and its recipes?');">
+                                                Delete
+                                            </a>
                                         </td>
                                     </tr>
                                 }

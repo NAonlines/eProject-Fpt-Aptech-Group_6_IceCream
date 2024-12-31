@@ -1,48 +1,44 @@
-﻿@model IceCreamProject.ViewModels.BookViewModel
+﻿@model IceCreamProject.ViewModels.RecipeViewModel
+
 @{
-    ViewData["Title"] = "Create Book";
+    ViewData["Title"] = "Create Recipe";
     Layout = "~/Areas/System/Views/backend.cshtml";
 }
 
 <div class="content">
     <div class="container">
         <div class="page-title">
-            <h3>Create New Book</h3>
+            <h3>Create New Recipe</h3>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header">Book Information</div>
+                    <div class="card-header">Recipe Information</div>
                     <div class="card-body">
                         <form asp-action="Create" method="post" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
 
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                            <!-- Recipe Name -->
                             <div class="mb-3 row">
-                                <label class="col-sm-2"> <span class="text-danger">*</span>Title</label>
+                                <label class="col-sm-2"> <span class="text-danger">*</span>Name</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="Title" class="form-control" />
-                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
                                 </div>
                             </div>
 
+                            <!-- Ingredients -->
                             <div class="mb-3 row">
-                                <label class="col-sm-2"><span class="text-danger">*</span>Description</label>
+                                <label class="col-sm-2"><span class="text-danger">*</span>Ingredients</label>
                                 <div class="col-sm-10">
-                                    <textarea asp-for="Description" class="form-control"></textarea>
-                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                    <textarea asp-for="Ingredients" class="form-control"></textarea>
+                                    <span asp-validation-for="Ingredients" class="text-danger"></span>
                                 </div>
                             </div>
 
-                            <div class="mb-3 row">
-                                <label class="col-sm-2">Price</label>
-                                <div class="col-sm-10">
-                                    <input asp-for="Price" class="form-control" />
-                                    <span asp-validation-for="Price" class="text-danger"></span>
-                                </div>
-                            </div>
-
+                            <!-- Image -->
                             <div class="mb-3 row">
                                 <label class="col-sm-2">Image</label>
                                 <div class="col-sm-10">
@@ -51,6 +47,7 @@
                                 </div>
                             </div>
 
+                            <!-- Category -->
                             <div class="mb-3 row">
                                 <label class="col-sm-2"><span class="text-danger">*</span>Category</label>
                                 <div class="col-sm-10">
@@ -61,6 +58,27 @@
                                 </div>
                             </div>
 
+                            <!-- Book -->
+                            <div class="mb-3 row">
+                                <label class="col-sm-2">Book</label>
+                                <div class="col-sm-10">
+                                    <select asp-for="BookId" class="form-control" asp-items="Model.Books">
+                                        <option value="">-- Select Book (Optional) --</option>
+                                    </select>
+                                    <span asp-validation-for="BookId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Approval -->
+                            <div class="mb-3 row">
+                                <label class="col-sm-2">Approved</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="IsApproved" type="checkbox" />
+                                    <span asp-validation-for="IsApproved" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
                             <div class="mb-3 row">
                                 <div class="col-sm-4 offset-sm-2">
                                     <button type="submit" class="btn btn-primary">
@@ -71,6 +89,7 @@
                                     </a>
                                 </div>
                             </div>
+
                         </form>
                     </div>
                 </div>
@@ -78,3 +97,4 @@
         </div>
     </div>
 </div>
+
