@@ -21,7 +21,7 @@ public class ShopContext : IdentityDbContext<User, IdentityRole, string>
 	public DbSet<Feedback> Feedbacks { get; set; }
 	public DbSet<MembershipPayment> MembershipPayments { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
-    public DbSet<Checkout> Checkouts { get; set; }
+    //public DbSet<Checkout> Checkouts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,9 +43,10 @@ public class ShopContext : IdentityDbContext<User, IdentityRole, string>
            .Property(ci => ci.Price)
            .HasColumnType("decimal(18,2)");
 
-        modelBuilder.Entity<Checkout>()
-            .Property(c => c.TotalAmount)
-            .HasColumnType("decimal(18,2)");
+
+        //modelBuilder.Entity<Checkout>()
+        //    .Property(c => c.TotalAmount)
+        //    .HasColumnType("decimal(18,2)");
     }
 
 

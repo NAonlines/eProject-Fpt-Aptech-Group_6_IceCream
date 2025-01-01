@@ -5,7 +5,7 @@
 namespace IceCreamProject.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateV7 : Migration
+    public partial class DatabaseNewV1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

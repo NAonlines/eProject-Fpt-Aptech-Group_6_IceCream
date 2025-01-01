@@ -16,7 +16,7 @@ builder.Services.AddDbContext<ShopContext>(options =>
 // Cấu hình Identity sử dụng ShopContext
 builder.Services.AddIdentity<User, IdentityRole>(options => {
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
-    options.Lockout.MaxFailedAccessAttempts = 2;
+    options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 })
 .AddEntityFrameworkStores<ShopContext>()
@@ -52,14 +52,14 @@ builder.Services.AddAuthentication(options =>
 {
 	options.LoginPath = "/Login";
 	options.AccessDeniedPath = "/";
-	options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+	options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 	options.SlidingExpiration = true;
  });
 
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

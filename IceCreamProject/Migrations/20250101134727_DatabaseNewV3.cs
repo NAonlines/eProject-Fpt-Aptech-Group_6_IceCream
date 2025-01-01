@@ -5,24 +5,24 @@
 namespace IceCreamProject.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateCartItem : Migration
+    public partial class DatabaseNewV3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "CartItem",
-                type: "nvarchar(max)",
+            migrationBuilder.AddColumn<int>(
+                name: "OrderId",
+                table: "CartItems",
+                type: "int",
                 nullable: true);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Description",
-                table: "CartItem");
+                name: "OrderId",
+                table: "CartItems");
         }
+
     }
 }

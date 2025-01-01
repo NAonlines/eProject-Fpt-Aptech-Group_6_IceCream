@@ -25,14 +25,27 @@ namespace IceCreamProject.Areas.System.Controllers
         }
 
         [HttpGet("", Name = "Recipe")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search = null)
         {
-            var recipes = await _context.Recipes
-                .Include(r => r.CreatedBy) 
-                .Include(r => r.Book) 
-                .Include(r => r.Category) 
-                .ToListAsync();
+            var recipesQuery = _context.Recipes
+                .Include(r => r.CreatedBy)
+                .Include(r => r.Book)
+                .Include(r => r.Category)
+                .AsQueryable();
 
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower(); 
+                recipesQuery = recipesQuery.Where(r =>
+                    r.Name.ToLower().Contains(search) ||
+                    r.Ingredients.ToLower().Contains(search) ||
+                    (r.Book != null && r.Book.Title.ToLower().Contains(search)) ||
+                    (r.Category != null && r.Category.Name.ToLower().Contains(search)));
+            }
+
+            var recipes = await recipesQuery.ToListAsync();
+
+            ViewBag.SearchQuery = search;
             return View(recipes);
         }
 
@@ -236,13 +249,12 @@ namespace IceCreamProject.Areas.System.Controllers
                     }
                 }
 
-                // Cập nhật các thuộc tính của Recipe
                 recipe.Name = viewModel.Name;
                 recipe.Ingredients = viewModel.Ingredients;
                 recipe.IsApproved = viewModel.IsApproved;
                 recipe.ImageUrl = imagePath;
                 recipe.CategoryId = viewModel.CategoryId;
-                recipe.BookId = viewModel.BookId; // Thêm dòng này để cập nhật BookId
+                recipe.BookId = viewModel.BookId; 
 
                 _context.Recipes.Update(recipe);
                 await _context.SaveChangesAsync();
@@ -251,7 +263,6 @@ namespace IceCreamProject.Areas.System.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Nếu có lỗi, nạp lại danh sách Categories và Books
             viewModel.Categories = await _context.Categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),
@@ -279,17 +290,16 @@ namespace IceCreamProject.Areas.System.Controllers
             var recipe = await _context.Recipes.FindAsync(id);
             if (recipe != null)
             {
-                // 
+             
                 if (!string.IsNullOrEmpty(recipe.ImageUrl))
                 {
                     string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", recipe.ImageUrl);
-                    if (IOFile.Exists(imagePath)) // 
+                    if (IOFile.Exists(imagePath)) 
                     {
-                        IOFile.Delete(imagePath); // 
+                        IOFile.Delete(imagePath);
                     }
                 }
 
-                //
                 _context.Recipes.Remove(recipe);
                 await _context.SaveChangesAsync();
                 TempData["Note"] = "Delete recipe successfully";
@@ -301,13 +311,6 @@ namespace IceCreamProject.Areas.System.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-
-
-
-
-
-
 
     }
 }

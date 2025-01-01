@@ -10,3 +10,4 @@ public class Book
     public Category? Category { get; set; } // Navigation property (nullable)
     public Recipe Recipe { get; set; } // Navigation property for Recipe
 }
+    

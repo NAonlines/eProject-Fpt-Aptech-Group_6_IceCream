@@ -4,35 +4,35 @@
     ViewData["Title"] = "OrderConfirmation";
     Layout = "~/Views/Frontend.cshtml";
 }
-<h1>Order Confirmation</h1>
-<p>Thank you, @Model.CustomerName, for your order!</p>
-<p>Order Number: @Model.OrderId</p>
-<p>Total Amount: @Model.TotalAmount.ToString("C")</p>
+<div class="container">
+    <main>
+        <div class="py-5 text-center">
+            <h2>Order Confirmation</h2>
+            <p class="lead">Thank you for your order!</p>
+        </div>
 
-<h3>Order Details</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Description</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.CartItems)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>@item.Quantity</td>
-                <td>@item.Price.ToString("C")</td>
-                <td>@(item.Quantity * item.Price).ToString("C")</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
+        <div class="row g-5">
+            <div class="col-md-12">
+                <h4 class="mb-3">Order Details</h4>
+                <ul class="list-group mb-3">
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">@item.Name</h6>
+                                <small class="text-muted">@item.Description</small>
+                            </div>
+                            <span class="text-muted">@item.Quantity x @item.Price.ToString("C")</span>
+                        </li>
+                    }
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total</span>
+                        <strong>@Model.TotalAmount.ToString("C")</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</div>
 <p>Shipping Address: @Model.Address</p>
 <p>Payment Method: @Model.PaymentMethod</p>

@@ -9,7 +9,7 @@
 		public decimal Price { get; set; }
 		public int Quantity { get; set; }
 		public string? Image { get; set; }
-		public int? OrdersId { get; set; } // Link to the order
+		public int? OrderId { get; set; } // Link to the order
 
     }
 }

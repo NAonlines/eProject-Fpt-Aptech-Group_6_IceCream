@@ -26,16 +26,29 @@ namespace IceCreamProject.Areas.System.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        // GET: System/Books1/Index
         [HttpGet("", Name = "Book")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search = null)
         {
-            var books = await _context.Books
-                .Include(b => b.Category) // Gọi navigation property để lấy CategoryName
-                .ToListAsync();
+            var booksQuery = _context.Books
+                .Include(b => b.Category)
+                .AsQueryable();
 
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                booksQuery = booksQuery.Where(b =>
+                    b.Title.ToLower().Contains(search) ||
+                    b.Description.ToLower().Contains(search));
+            }
+
+            var books = await booksQuery.ToListAsync();
+
+            ViewBag.SearchQuery = search;
             return View(books);
         }
+
+
+
 
         // GET: System/Books1/Create
         [HttpGet("Create")]
@@ -46,7 +59,7 @@ namespace IceCreamProject.Areas.System.Controllers
                 Categories = _context.Categories.Select(c => new SelectListItem
                 {
                     Value = c.CategoryId.ToString(),
-                    Text = c.Name // Lấy tên từ bảng Category
+                    Text = c.Name 
                 }).ToList()
             };
             return View(viewModel);
@@ -61,14 +74,12 @@ namespace IceCreamProject.Areas.System.Controllers
             {
                 string imagePath = string.Empty;
 
-                // Xử lý upload ảnh
                 if (viewModel.ImageUrl != null)
                 {
-                    // Tạo đường dẫn thư mục và tệp
                     string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
                     if (!Directory.Exists(uploadsFolder))
                     {
-                        Directory.CreateDirectory(uploadsFolder); // Tạo thư mục nếu chưa tồn tại
+                        Directory.CreateDirectory(uploadsFolder); 
                     }
 
                     string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
@@ -84,14 +95,13 @@ namespace IceCreamProject.Areas.System.Controllers
                     }
                 }
 
-                // Lưu thông tin sách vào cơ sở dữ liệu
                 var book = new Book
                 {
                     Title = viewModel.Title,
                     Description = viewModel.Description,
                     Price = viewModel.Price,
-                    ImageUrl = imagePath, // Đường dẫn tương đối
-                    CategoryId = viewModel.CategoryId // Lưu CategoryId
+                    ImageUrl = imagePath, 
+                    CategoryId = viewModel.CategoryId
                 };
 
                 _context.Books.Add(book);
@@ -99,7 +109,6 @@ namespace IceCreamProject.Areas.System.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Nạp lại dropdown nếu ModelState không hợp lệ
             viewModel.Categories = _context.Categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),

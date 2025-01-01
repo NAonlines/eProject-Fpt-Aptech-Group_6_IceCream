@@ -22,10 +22,8 @@ namespace IceCreamProject.Controllers
 		[HttpGet("/", Name = "Home")]
 		public IActionResult Index()
 		{
-			// Fetch the first 8 books from the database
 			var books = _db.Books.Take(8).ToList();
 
-			// Pass the books collection to the View
 			return View(books);
 		}
 
@@ -130,10 +128,20 @@ namespace IceCreamProject.Controllers
 
         [HttpGet("/cart", Name = "Cart")]
         public IActionResult Cart()
-		{
-			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-			return View(cart);
-		}
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+
+            decimal totalPrice = cart.Sum(p => p.Quantity * p.Price);
+
+            decimal totalWithShipping = totalPrice + 5;
+
+            ViewData["TotalPrice"] = totalPrice; 
+            ViewData["TotalWithShipping"] = totalWithShipping; 
+
+            return View(cart);
+        }
+
+
 
         [HttpPost("/remove-from-cart", Name = "RemoveFromCart")]
         public IActionResult RemoveFromCart(int productId)
@@ -160,66 +168,90 @@ namespace IceCreamProject.Controllers
             return RedirectToAction("Cart");
         }
 
+        [HttpGet("/check-out", Name = "CheckOut")]
+public async Task<IActionResult> CheckOut()
+{
+    var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+    var currentUser = await _userManager.GetUserAsync(User);
+
+    if (!cart.Any())
+    {
+        TempData["Error"] = "Your cart is empty.";
+        return RedirectToAction("Cart");
+    }
+
+    var model = new CheckoutViewModel
+    {
+        CartItems = cart,
+        ShippingCost = 5,
+        TotalAmount = cart.Sum(p => p.Quantity * p.Price) + 5,
+        ShippingAddress = currentUser?.Address,
+        PhoneNumber = currentUser?.PhoneNumber
+    };
+
+    return View(model);
+}
+
+
+
         [HttpPost("/check-out", Name = "CheckOut")]
-        public async Task<IActionResult> CheckOut()
+        public async Task<IActionResult> CheckOut(CheckoutViewModel checkoutViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(checkoutViewModel);
+            }
+
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-            if (cart.Any())
+            if (!cart.Any())
             {
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser != null)
-                {
-                    var newOrder = new Order
-                    {
-                        CustomerName = currentUser.UserName,
-                        Address = currentUser.Address,
-                        PhoneNumber = currentUser.PhoneNumber,
-                        TotalAmount = cart.Sum(p => p.Quantity * p.Price),
-                        PaymentMethod = "Cash on Delivery",
-                        OrderDate = DateTime.UtcNow,
-                        UserId = currentUser.Id
-                    };
-
-                    // Save the Order to generate the OrderId
-                    _db.Orders.Add(newOrder);
-                    await _db.SaveChangesAsync();
-
-                    // Add CartItems with the new OrderId
-                    foreach (var item in cart)
-                    {
-                        var newCartItem = new CartItem
-                        {
-                            ProductId = item.ProductId,
-                            Name = item.Name,
-                            Price = item.Price,
-                            Description = item.Description,
-                            Image = item.Image,
-                            Quantity = item.Quantity,
-                            OrdersId = newOrder.OrderId // Use the generated OrderId
-                        };
-                        _db.CartItems.Add(newCartItem);
-                    }
-
-                    await _db.SaveChangesAsync();
-
-                    // Clear the cart after checkout
-                    HttpContext.Session.Remove("Cart");
-
-                    // Redirect to order confirmation page
-                    return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
-                }
-                else
-                {
-                    // If the user is not logged in, redirect to login page
-                    return RedirectToAction("Login", "Sucre");
-                }
+                TempData["Error"] = "Your cart is empty.";
+                return RedirectToAction("Cart");
             }
-            else
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
             {
-                // If the cart is empty, redirect to the home page
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Account");
             }
+
+            // Tạo đơn hàng mới
+            var newOrder = new Order
+            {
+                CustomerName = currentUser.UserName,
+                Address = checkoutViewModel.ShippingAddress,
+                PhoneNumber = checkoutViewModel.PhoneNumber,
+                TotalAmount = cart.Sum(p => p.Quantity * p.Price) + checkoutViewModel.ShippingCost,
+                PaymentMethod = checkoutViewModel.PaymentMethod,
+                OrderDate = DateTime.UtcNow,
+                UserId = currentUser.Id,
+                OrderStatus = "Completed"
+            };
+
+            _db.Orders.Add(newOrder);
+            await _db.SaveChangesAsync();
+
+            foreach (var item in cart)
+            {
+                var newCartItem = new CartItem
+                {
+                    ProductId = item.ProductId,
+                    Name = item.Name,
+                    Price = item.Price,
+                    Quantity = item.Quantity,
+                    Image = item.Image,
+                    OrderId = newOrder.OrderId // Sửa thành OrdersId
+                };
+
+                _db.CartItems.Add(newCartItem);
+            }
+
+            await _db.SaveChangesAsync();
+            HttpContext.Session.Remove("Cart");
+            TempData["Success"] = "Your order has been placed successfully!";
+            return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
         }
+
 
         public IActionResult OrderConfirmation(int orderId)
         {

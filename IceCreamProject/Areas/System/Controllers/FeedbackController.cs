@@ -18,23 +18,34 @@ namespace IceCreamProject.Areas.System.Controllers
         }
 
         [HttpGet("", Name = "Feedback")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search = null)
         {
-            var feedbacks = await db.Feedbacks
+            var feedbacksQuery = db.Feedbacks
                 .Include(f => f.User)
                 .Select(f => new Feedback
                 {
                     FeedbackId = f.FeedbackId,
                     Content = f.Content,
                     SubmittedDate = f.SubmittedDate,
-                    Email = f.User != null ? f.User.Email : f.Email, 
+                    Email = f.User != null ? f.User.Email : f.Email,
                     Name = f.User != null ? f.User.UserName : f.Name,
-                    User = f.User 
-                })
-                .ToListAsync();
+                    User = f.User
+                });
 
+            if (!string.IsNullOrEmpty(search))
+            {
+                feedbacksQuery = feedbacksQuery.Where(f =>
+                    f.Name.Contains(search) ||
+                    f.Email.Contains(search) ||
+                    f.Content.Contains(search));
+            }
+
+            var feedbacks = await feedbacksQuery.ToListAsync();
+
+            ViewBag.SearchQuery = search; 
             return View(feedbacks);
         }
+
 
 
 
@@ -56,7 +67,6 @@ namespace IceCreamProject.Areas.System.Controllers
                 TempData["Message"] = "Feedback not found.";
             }
 
-            // Redirect lại danh sách Feedback
             return RedirectToAction(nameof(Index));
         }
 

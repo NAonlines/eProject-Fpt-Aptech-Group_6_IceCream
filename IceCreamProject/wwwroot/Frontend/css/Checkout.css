@@ -1,5 +1,6 @@
-body{margin-top:20px;
-background-color: #f1f3f7;
+﻿body {
+    margin-top: 20px;
+    background-color: #f1f3f7;
 }
 
 .card {
@@ -7,6 +8,7 @@ background-color: #f1f3f7;
     -webkit-box-shadow: 0 2px 3px #e4e8f0;
     box-shadow: 0 2px 3px #e4e8f0;
 }
+
 .card {
     position: relative;
     display: -webkit-box;
@@ -23,44 +25,45 @@ background-color: #f1f3f7;
     border: 1px solid #eff0f2;
     border-radius: 1rem;
 }
+
 .activity-checkout {
     list-style: none
 }
 
-.activity-checkout .checkout-icon {
-    position: absolute;
-    top: -4px;
-    left: -24px
-}
+    .activity-checkout .checkout-icon {
+        position: absolute;
+        top: -4px;
+        left: -24px
+    }
 
-.activity-checkout .checkout-item {
-    position: relative;
-    padding-bottom: 24px;
-    padding-left: 35px;
-    border-left: 2px solid #f5f6f8
-}
+    .activity-checkout .checkout-item {
+        position: relative;
+        padding-bottom: 24px;
+        padding-left: 35px;
+        border-left: 2px solid #f5f6f8
+    }
 
-.activity-checkout .checkout-item:first-child {
-    border-color: #3b76e1
-}
+        .activity-checkout .checkout-item:first-child {
+            border-color: #3b76e1
+        }
 
-.activity-checkout .checkout-item:first-child:after {
-    background-color: #3b76e1
-}
+            .activity-checkout .checkout-item:first-child:after {
+                background-color: #3b76e1
+            }
 
-.activity-checkout .checkout-item:last-child {
-    border-color: transparent
-}
+        .activity-checkout .checkout-item:last-child {
+            border-color: transparent
+        }
 
-.activity-checkout .checkout-item.crypto-activity {
-    margin-left: 50px
-}
+        .activity-checkout .checkout-item.crypto-activity {
+            margin-left: 50px
+        }
 
-.activity-checkout .checkout-item .crypto-date {
-    position: absolute;
-    top: 3px;
-    left: -65px
-}
+        .activity-checkout .checkout-item .crypto-date {
+            position: absolute;
+            top: 3px;
+            left: -65px
+        }
 
 
 
@@ -120,19 +123,19 @@ background-color: #f1f3f7;
     padding-left: 8px
 }
 
-.avatar-group .avatar-group-item {
-    margin-left: -8px;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    -webkit-transition: all .2s;
-    transition: all .2s
-}
+    .avatar-group .avatar-group-item {
+        margin-left: -8px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        -webkit-transition: all .2s;
+        transition: all .2s
+    }
 
-.avatar-group .avatar-group-item:hover {
-    position: relative;
-    -webkit-transform: translateY(-2px);
-    transform: translateY(-2px)
-}
+        .avatar-group .avatar-group-item:hover {
+            position: relative;
+            -webkit-transform: translateY(-2px);
+            transform: translateY(-2px)
+        }
 
 .card-radio {
     background-color: #fff;
@@ -145,9 +148,9 @@ background-color: #f1f3f7;
     display: block
 }
 
-.card-radio:hover {
-    cursor: pointer
-}
+    .card-radio:hover {
+        cursor: pointer
+    }
 
 .card-radio-label {
     display: block
@@ -167,14 +170,15 @@ background-color: #f1f3f7;
     display: none
 }
 
-.card-radio-input:checked+.card-radio {
-    border-color: #3b76e1!important
-}
+    .card-radio-input:checked + .card-radio {
+        border-color: #3b76e1 !important
+    }
 
 
 .font-size-16 {
-    font-size: 16px!important;
+    font-size: 16px !important;
 }
+
 .text-truncate {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -182,7 +186,7 @@ background-color: #f1f3f7;
 }
 
 a {
-    text-decoration: none!important;
+    text-decoration: none !important;
 }
 
 

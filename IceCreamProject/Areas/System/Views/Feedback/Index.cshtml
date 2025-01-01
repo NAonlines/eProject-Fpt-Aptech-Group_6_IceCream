@@ -3,7 +3,6 @@
     ViewData["Title"] = "Feedback List";
     Layout = "~/Areas/System/Views/backend.cshtml";  // Đảm bảo layout chính xác
 }
-
 <div class="content">
     <div class="container">
         <div class="page-title">
@@ -24,6 +23,18 @@
                 </div>
             </div>
         }
+
+        <form method="get" action="@Url.Action("Index", "Feedback", new { area = "System" })" class="mb-4">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="search" class="form-control" placeholder="Search by name, email, or content"
+                       value="@ViewBag.SearchQuery">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+
 
         <div class="row">
             <div class="col-md-12 col-lg-12">
@@ -48,7 +59,7 @@
                                 {
                                     <tr>
                                         <td>@item.FeedbackId</td>
-                                        <td>@item.Name</td> 
+                                        <td>@item.Name</td>
                                         <td>@item.Content</td>
                                         <td>@item.SubmittedDate.ToShortDateString()</td>
                                         <td>@(item.Email ?? "N/A")</td>
