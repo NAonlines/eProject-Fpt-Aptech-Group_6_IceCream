@@ -45,8 +45,11 @@
 		<script src="~/Frontend/js/flatpickr.js" asp-append-version="true"></script>
 		<script src="~/Frontend/js/glightbox.min.js" asp-append-version="true"></script>
 		<script src="~/Frontend/js/custom.js" asp-append-version="true"></script>
-	@RenderSection("Scripts", required: false)
-
+		<script src="~/Frontend/js/jquery.validate.min.js" asp-append-version="true"></script>
+		<script src="~/Frontend/js/jquery-3.6.0.min.js" asp-append-version="true"></script>
+		<script src="~/frontend/js/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
+		@RenderSection("Scripts", required: false)
+	
 		<script>
 			document.addEventListener('DOMContentLoaded', (event) => {
 				var toastEL = document.querySelector('.toast');

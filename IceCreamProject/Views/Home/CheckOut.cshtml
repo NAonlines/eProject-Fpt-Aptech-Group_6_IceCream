@@ -1,5 +1,4 @@
-﻿@model IceCreamProject.Models.CheckoutViewModel
-
+﻿@model IceCreamProject.ViewModels.CheckoutViewModel
 @{
     ViewData["Title"] = "CheckOut";
     Layout = "~/Views/Secure.cshtml";
@@ -49,13 +48,13 @@
                     <div class="row g-3">
                         <div class="col-sm-12">
                             <label for="address" class="form-label">Shipping Address</label>
-                            <input asp-for="ShippingAddress" class="form-control" value="@Model.ShippingAddress">
+                            <input asp-for="ShippingAddress" class="form-control">
                             <span asp-validation-for="ShippingAddress" class="text-danger"></span>
                         </div>
 
                         <div class="col-sm-12">
                             <label for="phone" class="form-label">Phone Number</label>
-                            <input asp-for="PhoneNumber" class="form-control" value="@Model.PhoneNumber">
+                            <input asp-for="PhoneNumber" class="form-control">
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
 
@@ -76,3 +75,4 @@
         </div>
     </main>
 </div>
+

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using IceCreamProject.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 namespace IceCreamProject.Controllers
 {
     public class HomeController : Controller
@@ -80,44 +82,44 @@ namespace IceCreamProject.Controllers
         }
 
 
-        [HttpPost("/add-cart",Name ="AddCart")]
-		public async Task<IActionResult> AddToCart(int BookId)
+		[HttpPost("/add-cart", Name = "AddCart")]
+		public async Task<IActionResult> AddToCart(int BookId, int quantity)
 		{
 			var book = await _db.Books.FirstOrDefaultAsync(b => b.BookId == BookId);
-
 			if (book == null)
 			{
-				return Json(new { success = false, message = "Book not found." }); // Return JSON response();
+				return Json(new { success = false, message = "Book not found." });
 			}
-            //get session
-            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-            //check if book is already in cart
 
-            var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
+			// Get session
+			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+
+			// Check if the book is already in the cart
+			var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
 			if (cartItem != null)
 			{
-                cartItem.Quantity++;
-            }
-            else
-            {
+				cartItem.Quantity += quantity; // Update quantity based on input
+			}
+			else
+			{
 				cart.Add(new CartItem
 				{
 					ProductId = BookId,
-                    Name = book.Title,
+					Name = book.Title,
 					Price = book.Price,
-                    Description = book.Description,
 					Image = book.ImageUrl,
-					Quantity = 1
+					Quantity = quantity
 				});
-            }
-            //save to session
+			}
 
-            HttpContext.Session.SetObjectAsJson("Cart", cart);
-            int totalItems = cart.Sum(p => p.Quantity);
-			return Json(new { success = true,totalItems, message = "Book added to cart." });
-        }
+			// Save to session
+			HttpContext.Session.SetObjectAsJson("Cart", cart);
+			int totalItems = cart.Sum(p => p.Quantity);
+			return Json(new { success = true, totalItems, message = "Book added to cart." });
+		}
 
-        [HttpGet("/count-cart", Name = "CountCart")]
+
+		[HttpGet("/count-cart", Name = "CountCart")]
 		public IActionResult GetCountCart()
 		{
 			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart")?? new List<CartItem>();
@@ -167,33 +169,55 @@ namespace IceCreamProject.Controllers
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             return RedirectToAction("Cart");
         }
+        [HttpGet("/cart-info", Name = "CartInfo")]
+        public IActionResult GetCartInfo()
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
+            if (cart.Any())
+            {
+                return Json(new
+                {
+                    success = true,
+                    totalItems = cart.Sum(p => p.Quantity),
+                    cartItems = cart
+                });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Cart is empty." });
+            }
+        }
+
+
+        [Authorize]
         [HttpGet("/check-out", Name = "CheckOut")]
-public async Task<IActionResult> CheckOut()
-{
-    var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-    var currentUser = await _userManager.GetUserAsync(User);
+        public async Task<IActionResult> CheckOut()
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
-    if (!cart.Any())
-    {
-        TempData["Error"] = "Your cart is empty.";
-        return RedirectToAction("Cart");
-    }
+            if (cart == null || !cart.Any())
+            {
+                TempData["Error"] = "Your cart is empty.";
+                return RedirectToAction("Cart");
+            }
 
-    var model = new CheckoutViewModel
-    {
-        CartItems = cart,
-        ShippingCost = 5,
-        TotalAmount = cart.Sum(p => p.Quantity * p.Price) + 5,
-        ShippingAddress = currentUser?.Address,
-        PhoneNumber = currentUser?.PhoneNumber
-    };
+            var model = new CheckoutViewModel
+            {
+                CartItems = cart,
+                TotalAmount = cart.Sum(item => item.Quantity * item.Price) + 5,
+                ShippingCost = 5 // Giá trị mặc định
+            };
 
-    return View(model);
-}
+            return View(model);
+        }
 
 
 
+
+
+
+        [Authorize]
         [HttpPost("/check-out", Name = "CheckOut")]
         public async Task<IActionResult> CheckOut(CheckoutViewModel checkoutViewModel)
         {
@@ -203,56 +227,60 @@ public async Task<IActionResult> CheckOut()
             }
 
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-            if (!cart.Any())
-            {
-                TempData["Error"] = "Your cart is empty.";
-                return RedirectToAction("Cart");
-            }
 
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null)
+            if (cart.Any())
             {
-                return RedirectToAction("Login", "Account");
-            }
-
-            // Tạo đơn hàng mới
-            var newOrder = new Order
-            {
-                CustomerName = currentUser.UserName,
-                Address = checkoutViewModel.ShippingAddress,
-                PhoneNumber = checkoutViewModel.PhoneNumber,
-                TotalAmount = cart.Sum(p => p.Quantity * p.Price) + checkoutViewModel.ShippingCost,
-                PaymentMethod = checkoutViewModel.PaymentMethod,
-                OrderDate = DateTime.UtcNow,
-                UserId = currentUser.Id,
-                OrderStatus = "Completed"
-            };
-
-            _db.Orders.Add(newOrder);
-            await _db.SaveChangesAsync();
-
-            foreach (var item in cart)
-            {
-                var newCartItem = new CartItem
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
                 {
-                    ProductId = item.ProductId,
-                    Name = item.Name,
-                    Price = item.Price,
-                    Quantity = item.Quantity,
-                    Image = item.Image,
-                    OrderId = newOrder.OrderId // Sửa thành OrdersId
+                    return RedirectToAction("Login", "Account");
+                }
+
+                var newOrder = new Order
+                {
+                    CustomerName = currentUser.UserName,
+                    Address = checkoutViewModel.ShippingAddress,
+                    PhoneNumber = checkoutViewModel.PhoneNumber,
+                    TotalAmount = cart.Sum(p => p.Quantity * p.Price) + checkoutViewModel.ShippingCost,
+                    PaymentMethod = checkoutViewModel.PaymentMethod,
+                    OrderDate = DateTime.UtcNow,
+                    UserId = currentUser.Id,
+                    OrderStatus = "Completed"
                 };
 
-                _db.CartItems.Add(newCartItem);
-            }
+                _db.Orders.Add(newOrder);
+                await _db.SaveChangesAsync();
 
-            await _db.SaveChangesAsync();
-            HttpContext.Session.Remove("Cart");
-            TempData["Success"] = "Your order has been placed successfully!";
-            return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
+                foreach (var item in cart)
+                {
+                    var newCartItem = new CartItem
+                    {
+                        ProductId = item.ProductId,
+                        Name = item.Name,
+                        Price = item.Price,
+                        Quantity = item.Quantity,
+                        Image = item.Image,
+                        OrderId = newOrder.OrderId
+                    };
+
+                    _db.CartItems.Add(newCartItem);
+                }
+
+                await _db.SaveChangesAsync();
+
+                HttpContext.Session.Remove("Cart");
+
+                TempData["Success"] = "Your order has been placed successfully!";
+                return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
 
+        [Authorize]
         public IActionResult OrderConfirmation(int orderId)
         {
             var order = _db.Orders.Include(o => o.CartItems).FirstOrDefault(o => o.OrderId == orderId);

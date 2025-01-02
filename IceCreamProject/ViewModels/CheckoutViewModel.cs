@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using IceCreamProject.Models;
 
-namespace IceCreamProject.Models
+namespace IceCreamProject.ViewModels
 {
     public class CheckoutViewModel
     {

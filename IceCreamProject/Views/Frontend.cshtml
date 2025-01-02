@@ -249,29 +249,38 @@
 		<script>
 			$(document).ready(function () {
 				function updateCartCount() {
-					$.get("/count-cart", function (data) {
-						$(".count-item-only").text(data.totalItems);
-					});
-				}
-
-				$(".add-to-cart").click(function () {
-					console.log("Add to Cart clicked");
-					const BookId = $(this).data("id");
-					const url = $(this).data("url");
-					$.post(url, { bookId: BookId }, function (response) {
-						console.log("Response received:", response);
-						if (response.success) {
-							updateCartCount();
-							alert("Product added to cart successfully!");
-						} else {
-							alert(response.message || "An error occurred!");
-						}
-					}).fail(function (jqXHR, textStatus, errorThrown) {
-						console.error("AJAX failed:", textStatus, errorThrown);
-					});
+				$.get("/count-cart", function (data) {
+					$(".count-item-only").text(data.totalItems);
 				});
-				updateCartCount();
+			}
+
+			$(".add-to-cart").click(function () {
+				const BookId = $(this).data("id");
+				const quantity = $("#quantity-" + BookId).val(); // Get the quantity from the input field
+				const url = $(this).data("url");
+
+					// Ensure quantity is a valid number
+					if (isNaN(quantity) || quantity <= 0) {
+						alert("Quantiy must be a number greater than 0.");
+						return;
+					}
+
+						$.post(url, { bookId: BookId, quantity: quantity }, function (response) {
+							if (response.success) {
+								updateCartCount();
+								alert(response.message || "Product added to cart successfully!");
+							} else {
+								alert(response.message || "An error occurred!");
+							}
+						}).fail(function (jqXHR, textStatus, errorThrown) {
+							console.error("AJAX failed:", textStatus, errorThrown);
+						});
 			});
+
+			updateCartCount();
+		});
+
+
 		</script>
 
 	
