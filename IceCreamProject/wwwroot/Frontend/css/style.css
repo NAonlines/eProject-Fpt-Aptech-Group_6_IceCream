@@ -15509,3 +15509,122 @@ textarea {
                 background: #f59b74;
                 color: #fff;
             }
+.profile-container {
+    max-width: 900px;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.profile-header h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+.profile-header p {
+    font-size: 16px;
+    color: #777;
+}
+
+.profile-info p {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0;
+}
+
+.profile-header button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 10px 5px;
+}
+
+    .profile-header button:hover {
+        background-color: #0056b3;
+    }
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: #fff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+    .modal-body .form-group {
+        margin-bottom: 20px;
+    }
+
+    .modal-body input[type="password"],
+    .modal-body input[type="file"],
+    .modal-body .form-control {
+        border-radius: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    .modal-body button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .modal-body button:hover {
+            background-color: #218838;
+        }
+
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 15px;
+    }
+
+    .profile-header h1 {
+        font-size: 22px;
+    }
+
+    .profile-header p {
+        font-size: 14px;
+    }
+
+    .profile-info p {
+        font-size: 14px;
+    }
+
+    .profile-header button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}

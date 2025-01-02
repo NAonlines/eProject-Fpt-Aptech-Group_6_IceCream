@@ -1,37 +1,38 @@
-﻿	<!doctype html>
-	<html lang="en">
-	<head>
-		<!-- Required meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+﻿<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<meta name="author" content="Untree.co">
-		<link rel="shortcut icon" href="favicon.png">
+	<meta name="author" content="Untree.co">
+	<link rel="shortcut icon" href="favicon.png">
 
-		<meta name="description" content="" />
-		<meta name="keywords" content="bootstrap, bootstrap5" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap5" />
 
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Brygada+1918:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Brygada+1918:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-		<link rel="stylesheet" href="~/Frontend/fonts/icomoon/style.css" asp-append-version="true">
-		<link rel="stylesheet" href="~/Frontend/fonts/flaticon/font/flaticon.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/Frontend/fonts/icomoon/style.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/Frontend/fonts/flaticon/font/flaticon.css" asp-append-version="true">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-		<link rel="stylesheet" href="~/Frontend/css/tiny-slider.css" asp-append-version="true">
-		<link rel="stylesheet" href="~/Frontend/css/aos.css">
-		<link rel="stylesheet" href="~/Frontend/css/flatpickr.min.css" asp-append-version="true">
-		<link rel="stylesheet" href="~/Frontend/css/glightbox.min.css" asp-append-version="true">
-		<link rel="stylesheet" href="~/Frontend/css/style.css" asp-append-version="true">
-		<link rel="stylesheet" href="~/Frontend/css/site.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/Frontend/css/tiny-slider.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/Frontend/css/aos.css">
+	<link rel="stylesheet" href="~/Frontend/css/flatpickr.min.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/Frontend/css/glightbox.min.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/Frontend/css/style.css" asp-append-version="true">
+	<link rel="stylesheet" href="~/Frontend/css/site.css" asp-append-version="true">
 
-
-		<link rel="stylesheet" href="~/Frontend/css/site.css">
-		<title>Ice Cream </title>
-	</head>
-	<body>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="~/Frontend/css/site.css">
+	<link rel="stylesheet" href="~/Frontend/css/site.css">
+	<title>Ice Cream </title>
+</head>
+<body>
 
 	<div class="site-mobile-menu site-navbar-target">
 		<div class="site-mobile-menu-header">
@@ -42,7 +43,7 @@
 		<div class="site-mobile-menu-body"></div>
 	</div>
 
-		<!-- Navbar -->
+	<!-- Navbar -->
 	<nav class="site-nav mt-3">
 		<div class="container">
 			<div class="site-navigation">
@@ -55,17 +56,17 @@
 							<li class="@((ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index") ? "active home-navbar" : "")">
 								<a asp-route="Home">Home</a>
 							</li>
-					
+
 							<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "FreeRecipes") ? "active" : "")">
 								<a asp-controller="Home" asp-action="FreeRecipes">Free Recipes</a>
 							</li>
 							<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "AboutUs") ? "active" : "")">
 								<a asp-route="AboutUs">About Us</a>
-							</li> 
+							</li>
 							<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs") ? "active" : "")">
 								<a asp-route="ContactUs">Contact Us</a>
 							</li>
-							
+
 
 						</ul>
 					</div>
@@ -74,7 +75,7 @@
 							<li>
 								<a href="/cart" id="cart-link">
 									<i class="fa fa-shopping-cart text-username"></i>
-									<span  class="cart-item-count count-item-only text-username"></span>
+									<span class="cart-item-count count-item-only text-username"></span>
 
 								</a>
 
@@ -86,7 +87,7 @@
 										@User.Identity.Name
 									</a>
 									<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-										<li><a class="dropdown-item" href="#">Profile</a></li>
+										<li><a class="dropdown-item" asp-controller="Home" asp-action="Profile">Profile</a></li>
 										<li><a class="dropdown-item" href="#">Settings</a></li>
 										<li><hr class="dropdown-divider"></li>
 										<li><a class="dropdown-item" asp-route="Logout">Logout</a></li>
@@ -99,7 +100,7 @@
 								<li class="cta-button-login"><a asp-route="Login">Sign In</a></li>
 							}
 						</ul>
-						
+
 						<a href="#" class="burger ms-auto float-end site-menu-toggle js-menu-toggle d-inline-block d-lg-none light" data-toggle="collapse" data-target="#main-navbar">
 							<span></span>
 						</a>
@@ -110,143 +111,151 @@
 	</nav>
 
 
-		<!-- Main Content -->
-		<main role="main" class="pb-3">
-			@RenderBody()
-		</main>
+	<!-- Main Content -->
+	<main role="main" class="pb-3">
+		@RenderBody()
+	</main>
 
-		<!-- Footer -->
-		<footer class="site-footer">
-			<div class="container">
-				<div class="row">
-					<!-- Footer content -->
-					<div class="col-lg-4">
-						<h3>About Passport</h3>
-						<p>Far far away, behind the word mountains...</p>
-					</div>
+	<!-- Footer -->
+	<footer class="site-footer">
+		<div class="container">
+			<div class="row">
+				<!-- Footer content -->
+				<div class="col-lg-4">
+					<h3>About Passport</h3>
+					<p>Far far away, behind the word mountains...</p>
 				</div>
 			</div>
-		</footer>
+		</div>
+	</footer>
 
 
 
 
 
-		<div class="site-footer">
-			<div class="container">
+	<div class="site-footer">
+		<div class="container">
 
-				<div class="row">
-					<div class="col-lg-4">
-						<div class="widget">
-							<h3>Ice Cream<span class="text-primary">.</span> </h3>
-							<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-						</div> <!-- /.widget -->
-						<div class="widget">
-							<h3>Connect</h3>
-							<ul class="list-unstyled social">
-								<li><a href="#"><span class="icon-instagram"></span></a></li>
-								<li><a href="#"><span class="icon-twitter"></span></a></li>
-								<li><a href="#"><span class="icon-facebook"></span></a></li>
-								<li><a href="#"><span class="icon-linkedin"></span></a></li>
-								<li><a href="#"><span class="icon-pinterest"></span></a></li>
-								<li><a href="#"><span class="icon-dribbble"></span></a></li>
-							</ul>
-						</div> <!-- /.widget -->
-					</div> <!-- /.col-lg-3 -->
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="widget">
+						<h3>Ice Cream<span class="text-primary">.</span> </h3>
+						<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+					</div> <!-- /.widget -->
+					<div class="widget">
+						<h3>Connect</h3>
+						<ul class="list-unstyled social">
+							<li><a href="#"><span class="icon-instagram"></span></a></li>
+							<li><a href="#"><span class="icon-twitter"></span></a></li>
+							<li><a href="#"><span class="icon-facebook"></span></a></li>
+							<li><a href="#"><span class="icon-linkedin"></span></a></li>
+							<li><a href="#"><span class="icon-pinterest"></span></a></li>
+							<li><a href="#"><span class="icon-dribbble"></span></a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-3 -->
 
-					<div class="col-lg-2 ml-auto">
-						<div class="widget">
-							<h3>Links</h3>
-							<ul class="list-unstyled float-left links">
-								<li><a href="#">About us</a></li>
-								<li><a href="#">Services</a></li>
-								<li><a href="#">News</a></li>
-								<li><a href="#">Careers</a></li>
-								<li><a href="#">Contact</a></li>
-							</ul>
-						</div> <!-- /.widget -->
-					</div> <!-- /.col-lg-3 -->
+				<div class="col-lg-2 ml-auto">
+					<div class="widget">
+						<h3>Links</h3>
+						<ul class="list-unstyled float-left links">
+							<li><a href="#">About us</a></li>
+							<li><a href="#">Services</a></li>
+							<li><a href="#">News</a></li>
+							<li><a href="#">Careers</a></li>
+							<li><a href="#">Contact</a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-3 -->
 
-					<div class="col-lg-2">
-						<div class="widget">
-							<h3>Company</h3>
-							<ul class="list-unstyled float-left links">
-								<li><a href="#">About us</a></li>
-								<li><a href="#">Services</a></li>
-								<li><a href="#">News</a></li>
-								<li><a href="#">Careers</a></li>
-								<li><a href="#">Contact</a></li>
-							</ul>
-						</div> <!-- /.widget -->
-					</div> <!-- /.col-lg-3 -->
+				<div class="col-lg-2">
+					<div class="widget">
+						<h3>Company</h3>
+						<ul class="list-unstyled float-left links">
+							<li><a href="#">About us</a></li>
+							<li><a href="#">Services</a></li>
+							<li><a href="#">News</a></li>
+							<li><a href="#">Careers</a></li>
+							<li><a href="#">Contact</a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-3 -->
 
 
-					<div class="col-lg-3">
-						<div class="widget">
-							<h3>Contact</h3>
-							<address>43 Raymouth Rd. Baltemoer, London 3910</address>
-							<ul class="list-unstyled links mb-4">
-								<li><a href="tel://11234567890">+1(123)-456-7890</a></li>
-								<li><a href="tel://11234567890">+1(123)-456-7890</a></li>
-								<li><a href="mailto:info@mydomain.com">info@mydomain.com</a></li>
-							</ul>
-						</div> <!-- /.widget -->
-					</div> <!-- /.col-lg-3 -->
+				<div class="col-lg-3">
+					<div class="widget">
+						<h3>Contact</h3>
+						<address>43 Raymouth Rd. Baltemoer, London 3910</address>
+						<ul class="list-unstyled links mb-4">
+							<li><a href="tel://11234567890">+1(123)-456-7890</a></li>
+							<li><a href="tel://11234567890">+1(123)-456-7890</a></li>
+							<li><a href="mailto:info@mydomain.com">info@mydomain.com</a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-3 -->
 
-				</div> <!-- /.row -->
+			</div> <!-- /.row -->
 
-				<div class="row mt-5">
-					<div class="col-12 text-center">
-						<p class="mb-0">
-							Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed with love by <a href="https://untree.co">Untree.co</a> <!-- License information: https://untree.co/license/ --> Distributed By <a href="https:/themewagon.com" target="_blank">ThemeWagon</a>
-						</p>
-					</div>
-				</div> <!-- /.container -->
-				</div> <!-- /.container -->
-			</div> <!-- /.site-footer -->
-			<!-- Preloader -->
-			<div id="overlayer"></div>
-			<div class="loader">
-				<div class="spinner-border text-primary" role="status">
-					<span class="visually-hidden">Loading...</span>
+			<div class="row mt-5">
+				<div class="col-12 text-center">
+					<p class="mb-0">
+						Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed with love by <a href="https://untree.co">Untree.co</a> <!-- License information: https://untree.co/license/ --> Distributed By <a href="https:/themewagon.com" target="_blank">ThemeWagon</a>
+					</p>
 				</div>
-			</div>
+			</div> <!-- /.container -->
+		</div> <!-- /.container -->
+	</div> <!-- /.site-footer -->
+	<!-- Preloader -->
+	<div id="overlayer"></div>
+	<div class="loader">
+		<div class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
 
 
-		<script src="~/Frontend/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/tiny-slider.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/aos.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/navbar.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/counter.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/rellax.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/flatpickr.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/glightbox.min.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/custom.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/jquery.validate.min.js" asp-append-version="true"></script>
-		<script src="~/Frontend/js/jquery-3.6.0.min.js" asp-append-version="true"></script>
-		<script src="~/frontend/js/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
-		<script>
-			window.addEventListener('scroll', function () {
-				var nav = document.querySelector('.site-nav');
-				if (window.scrollY > 0) {
-					nav.classList.add('scrolled');
-				} else {
-					nav.classList.remove('scrolled');
-				}
-			});
+	<script src="~/Frontend/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/tiny-slider.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/aos.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/navbar.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/counter.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/rellax.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/flatpickr.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/glightbox.min.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/custom.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/jquery.validate.min.js" asp-append-version="true"></script>
+	<script src="~/Frontend/js/jquery-3.6.0.min.js" asp-append-version="true"></script>
+	<script src="~/frontend/js/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.1/js/swiper.min.js'></script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+	<script>
+		window.addEventListener('scroll', function () {
+			var nav = document.querySelector('.site-nav');
+			if (window.scrollY > 0) {
+				nav.classList.add('scrolled');
+			} else {
+				nav.classList.remove('scrolled');
+			}
+		});
 
 
-		</script>
-		
-		@RenderSection("Scripts", required: false)
-		<script>
-			document.addEventListener('DOMContentLoaded', (event) => {
-				var toastEL = document.querySelector('.toast');
-				var loadtoast = new bootstrap.Toast(toastEL);
-				loadtoast.show();
-			});
-		</script>
-		<script>
+	</script>
+
+	@RenderSection("Scripts", required: false)
+	<script>
+		document.addEventListener('DOMContentLoaded', (event) => {
+			var toastEL = document.querySelector('.toast');
+			var loadtoast = new bootstrap.Toast(toastEL);
+			loadtoast.show();
+		});
+	</script>
+	<script>
 			$(document).ready(function () {
 				function updateCartCount() {
 				$.get("/count-cart", function (data) {
@@ -281,9 +290,9 @@
 		});
 
 
-		</script>
+	</script>
 
-	
 
-	</body>
-	</html>
+
+</body>
+</html>

@@ -8,29 +8,128 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 namespace IceCreamProject.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ShopContext _db;
         private readonly UserManager<User> _userManager;
-
-        public HomeController(ShopContext db, UserManager<User> userManager)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public HomeController(ShopContext db, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-		[HttpGet("/", Name = "Home")]
+        [HttpGet("/", Name = "Home")]
 		public IActionResult Index()
 		{
 			var books = _db.Books.Take(8).ToList();
 
 			return View(books);
 		}
+        public IActionResult Profile()
+        {
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Sucre", "Login");
+            }
+
+            var user = _db.Users
+                          .FirstOrDefault(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeProfileImage(IFormFile profileImage)
+        {
+            if (profileImage != null && profileImage.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
+                string filePath = Path.Combine(uploadsFolder, profileImage.FileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    profileImage.CopyTo(fileStream);
+                }
+
+                var userId = HttpContext.Session.GetString("UserId");
+                var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user != null)
+                {
+                    user.ProfileImageUrl = profileImage.FileName;
+                    _db.SaveChanges();
+                }
+            }
+
+            return Json(new { success = true, message = "Image updated successfully." });
+        }
+
+        [HttpPost]
+        public IActionResult ChangeAddress(string Address)
+        {
+            if (Address != null && Address.Length > 0)
+            {
+
+                var userId = HttpContext.Session.GetString("UserId");
+                var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user != null)
+                {
+                    user.Address = Address;
+                    _db.SaveChanges();
+                }
+            }
+
+            return Json(new { success = true, message = "Address updated successfully." });
+        }
 
 
-		[HttpGet("/about-us", Name = "AboutUs")]
+        [HttpPost]
+        public IActionResult ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+        {
+            if (newPassword != confirmPassword)
+            {
+                return Json(new { success = false, message = "New password and confirmation do not match." });
+            }
+
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "User not logged in." });
+            }
+
+            var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found." });
+            }
+
+            var passwordHasher = new PasswordHasher<IdentityUser>();
+            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, currentPassword);
+
+            if (verificationResult != PasswordVerificationResult.Success)
+            {
+                return Json(new { success = false, message = "Current password is incorrect." });
+            }
+
+            user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Password updated successfully." });
+        }
+
+        [HttpGet("/about-us", Name = "AboutUs")]
         public IActionResult AboutUs()
         {
             return View();

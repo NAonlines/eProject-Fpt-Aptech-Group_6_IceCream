@@ -57,6 +57,9 @@ namespace IceCreamProject.Controllers
 
                 if (result.Succeeded)
                 {
+                    HttpContext.Session.SetString("UserId", user.Id);
+                    HttpContext.Session.SetString("UserName", user.UserName ?? string.Empty);
+                    HttpContext.Session.SetString("Email", user.Email ?? string.Empty);
                     return RedirectToAction("Index", "Home");
                 }
                 else if (result.IsLockedOut)
