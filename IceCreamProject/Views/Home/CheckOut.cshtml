@@ -1,70 +1,101 @@
-﻿@model IceCreamProject.ViewModels.CheckoutViewModel
+﻿@model CheckoutDTO
+
 @{
     ViewData["Title"] = "CheckOut";
     Layout = "~/Views/Secure.cshtml";
 }
-
+<link href="~/Frontend/css/Cartcheckout.css" rel="stylesheet" />
 <div class="container">
     <main>
         <div class="py-5 text-center">
-            <h2>Checkout form</h2>
-            <p class="lead">Review your order and provide your details to complete the purchase.</p>
+            <h2>Checkout</h2>
+            <p class="lead">Review your order and provide the required information to complete your purchase.</p>
         </div>
 
         <div class="row g-5">
-            <div class="col-md-5 col-lg-4 order-md-last">
-                <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">Your cart</span>
-                    <span class="badge bg-primary rounded-pill">@Model.CartItems.Count</span>
-                </h4>
+            <!-- Cart Details -->
+            <div class="col-md-6 col-lg-6 order-md-last">
+                <div class="card">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h4 class="card-title">Your Cart</h4>
+                        <span class="badge bg-primary rounded-pill">@Model.Cart.Count</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th scope="col" style="width: 20%;">Product</th>
+                                    <th scope="col">Product Description</th>
+                                    <th scope="col" style="width: 20%;" class="text-end">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Cart)
+                                {
+                                    <tr>
+                                        <!-- Product Image -->
+                                        <td>
+                                            <img src="~/ImageUrl/@item.Image" alt="@item.Name" class="product-image">
+                                        </td>
+                                        <!-- Product Description -->
+                                        <td>
+                                            <strong>@item.Name</strong><br>
+                                            <small class="text-muted">@item.Description</small><br>
+                                            <span class="text-muted">@item.Price.ToString("C") x @item.Quantity</span>
+                                        </td>
+                                        <!-- Product Price -->
+                                        <td class="text-end">@((item.Quantity * item.Price).ToString("C"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
 
-                <ul class="list-group mb-3">
-                    @foreach (var item in Model.CartItems)
-                    {
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">@item.Name</h6>
-                                <small class="text-muted">@item.Description</small>
+                        <div class="row mt-4">
+                            <!-- Order Summary -->
+                            <div class="col-6 text-end">
+                                <p>Shipping Charge:</p>
+                                <h5>Total:</h5>
                             </div>
-                            <span class="text-muted">
-                                @item.Quantity x @item.Price.ToString("C") = @(item.Quantity * item.Price).ToString("C")
-                            </span>
-                        </li>
-                    }
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Shipping Fee</span>
-                        <strong>@Model.ShippingCost.ToString("C")</strong>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Total (USD)</span>
-                        <strong>@Model.TotalAmount.ToString("C")</strong>
-                    </li>
-                </ul>
+                            <div class="col-6 text-end">
+                                <p>@Model.ShippingCost.ToString("C")</p>
+                                <h5>@Model.TotalAmount.ToString("C")</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-7 col-lg-8">
-                <h4 class="mb-3">Billing address</h4>
-                <form asp-action="CheckOut" asp-controller="Home" method="post">
+            <!-- Billing Details -->
+            <div class="col-md-6 col-lg-6">
+                <h4 class="mb-3">Billing Details</h4>
+                <form asp-action="CheckOut" method="post">
                     <div class="row g-3">
                         <div class="col-sm-12">
-                            <label for="address" class="form-label">Shipping Address</label>
-                            <input asp-for="ShippingAddress" class="form-control">
-                            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                            <label for="shippingAddress" class="form-label">Shipping Address</label>
+                            <input name="shippingAddress"
+                                   id="shippingAddress"
+                                   class="form-control"
+                                   value="@Model.User.Address"
+                                   placeholder="Enter your shipping address"
+                                   required>
                         </div>
 
                         <div class="col-sm-12">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input asp-for="PhoneNumber" class="form-control">
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input name="phoneNumber"
+                                   id="phoneNumber"
+                                   class="form-control"
+                                   value="@Model.User.PhoneNumber"
+                                   placeholder="Enter your phone number"
+                                   required>
                         </div>
 
                         <div class="col-sm-12">
                             <label for="paymentMethod" class="form-label">Payment Method</label>
-                            <select asp-for="PaymentMethod" class="form-select">
+                            <select name="paymentMethod" id="paymentMethod" class="form-select">
                                 <option value="Cash on Delivery">Cash on Delivery</option>
                                 <option value="Bank Transfer">Bank Transfer</option>
                             </select>
-                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -75,4 +106,3 @@
         </div>
     </main>
 </div>
-

@@ -1,5 +1,4 @@
-﻿using IceCreamProject.Models;
-using IceCreamProject.ViewModels;
+﻿using IceCreamProject.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -8,126 +7,45 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
+using System.Dynamic;
+using IceCreamProject.Models;
 namespace IceCreamProject.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ShopContext _db;
         private readonly UserManager<User> _userManager;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        public HomeController(ShopContext db, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
+
+        public HomeController(ShopContext db, UserManager<User> userManager)
         {
             _db = db;
             _userManager = userManager;
-            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet("/", Name = "Home")]
-		public IActionResult Index()
-		{
-			var books = _db.Books.Take(8).ToList();
-
-			return View(books);
-		}
-        public IActionResult Profile()
+        public IActionResult Index()
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var books = _db.Books.Take(8).ToList();
 
-            if (string.IsNullOrEmpty(userId))
+            return View(books);
+        }
+        [HttpGet("/product-details/{id}", Name = "ProductDetails")]
+        public async Task<IActionResult> ProductDetails(int id)
+        {
+            // Lấy sản phẩm từ cơ sở dữ liệu, bao gồm thông tin liên quan
+            var product = await _db.Books
+                .Include(b => b.Category)  // Include Category
+                .Include(b => b.Recipe)    // Include Recipe
+                .FirstOrDefaultAsync(b => b.BookId == id);
+
+            if (product == null)
             {
-                return RedirectToAction("Sucre", "Login");
+                return NotFound("Product not found.");
             }
 
-            var user = _db.Users
-                          .FirstOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
+            return View(product); // Truyền trực tiếp model Book vào View
         }
 
-        [HttpPost]
-        public IActionResult ChangeProfileImage(IFormFile profileImage)
-        {
-            if (profileImage != null && profileImage.Length > 0)
-            {
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
-                string filePath = Path.Combine(uploadsFolder, profileImage.FileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    profileImage.CopyTo(fileStream);
-                }
-
-                var userId = HttpContext.Session.GetString("UserId");
-                var user = _db.Users.FirstOrDefault(u => u.Id == userId);
-
-                if (user != null)
-                {
-                    user.ProfileImageUrl = profileImage.FileName;
-                    _db.SaveChanges();
-                }
-            }
-
-            return Json(new { success = true, message = "Image updated successfully." });
-        }
-
-        [HttpPost]
-        public IActionResult ChangeAddress(string Address)
-        {
-            if (Address != null && Address.Length > 0)
-            {
-
-                var userId = HttpContext.Session.GetString("UserId");
-                var user = _db.Users.FirstOrDefault(u => u.Id == userId);
-
-                if (user != null)
-                {
-                    user.Address = Address;
-                    _db.SaveChanges();
-                }
-            }
-
-            return Json(new { success = true, message = "Address updated successfully." });
-        }
-
-
-        [HttpPost]
-        public IActionResult ChangePassword(string currentPassword, string newPassword, string confirmPassword)
-        {
-            if (newPassword != confirmPassword)
-            {
-                return Json(new { success = false, message = "New password and confirmation do not match." });
-            }
-
-            var userId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Json(new { success = false, message = "User not logged in." });
-            }
-
-            var user = _db.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null)
-            {
-                return Json(new { success = false, message = "User not found." });
-            }
-
-            var passwordHasher = new PasswordHasher<IdentityUser>();
-            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, currentPassword);
-
-            if (verificationResult != PasswordVerificationResult.Success)
-            {
-                return Json(new { success = false, message = "Current password is incorrect." });
-            }
-
-            user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
-            _db.SaveChanges();
-
-            return Json(new { success = true, message = "Password updated successfully." });
-        }
 
         [HttpGet("/about-us", Name = "AboutUs")]
         public IActionResult AboutUs()
@@ -164,10 +82,10 @@ namespace IceCreamProject.Controllers
             // Create Feedback instance
             var feedback = new Feedback
             {
-                Name = model.Name, 
+                Name = model.Name,
                 Content = model.Message,
                 SubmittedDate = DateTime.UtcNow,
-                Email = model.Email, 
+                Email = model.Email,
                 UserId = User.Identity.IsAuthenticated ? _userManager.GetUserId(User) : null,
                 User = User.Identity.IsAuthenticated ? await _userManager.GetUserAsync(User) : null
             };
@@ -181,51 +99,51 @@ namespace IceCreamProject.Controllers
         }
 
 
-		[HttpPost("/add-cart", Name = "AddCart")]
-		public async Task<IActionResult> AddToCart(int BookId, int quantity)
-		{
-			var book = await _db.Books.FirstOrDefaultAsync(b => b.BookId == BookId);
-			if (book == null)
-			{
-				return Json(new { success = false, message = "Book not found." });
-			}
+        [HttpPost("/add-cart", Name = "AddCart")]
+        public async Task<IActionResult> AddToCart(int BookId, int quantity)
+        {
+            var book = await _db.Books.FirstOrDefaultAsync(b => b.BookId == BookId);
+            if (book == null)
+            {
+                return Json(new { success = false, message = "Book not found." });
+            }
 
-			// Get session
-			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+            // Get session
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
-			// Check if the book is already in the cart
-			var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
-			if (cartItem != null)
-			{
-				cartItem.Quantity += quantity; // Update quantity based on input
-			}
-			else
-			{
-				cart.Add(new CartItem
-				{
-					ProductId = BookId,
-					Name = book.Title,
-					Price = book.Price,
-					Image = book.ImageUrl,
-					Quantity = quantity
-				});
-			}
+            // Check if the book is already in the cart
+            var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
+            if (cartItem != null)
+            {
+                cartItem.Quantity += quantity; // Update quantity based on input
+            }
+            else
+            {
+                cart.Add(new CartItem
+                {
+                    ProductId = BookId,
+                    Name = book.Title,
+                    Price = book.Price,
+                    Image = book.ImageUrl,
+                    Quantity = quantity
+                });
+            }
 
-			// Save to session
-			HttpContext.Session.SetObjectAsJson("Cart", cart);
-			int totalItems = cart.Sum(p => p.Quantity);
-			return Json(new { success = true, totalItems, message = "Book added to cart." });
-		}
+            // Save to session
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+            int totalItems = cart.Sum(p => p.Quantity);
+            return Json(new { success = true, totalItems, message = "Book added to cart." });
+        }
 
 
-		[HttpGet("/count-cart", Name = "CountCart")]
-		public IActionResult GetCountCart()
-		{
-			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart")?? new List<CartItem>();
+        [HttpGet("/count-cart", Name = "CountCart")]
+        public IActionResult GetCountCart()
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
             int totalItems = cart.Sum(p => p.Quantity);
-			return Json(new { totalItems });
-		}
+            return Json(new { totalItems });
+        }
 
         [HttpGet("/cart", Name = "Cart")]
         public IActionResult Cart()
@@ -234,13 +152,23 @@ namespace IceCreamProject.Controllers
 
             decimal totalPrice = cart.Sum(p => p.Quantity * p.Price);
 
-            decimal totalWithShipping = totalPrice + 5;
+            decimal totalWithShipping = 0;
 
-            ViewData["TotalPrice"] = totalPrice; 
-            ViewData["TotalWithShipping"] = totalWithShipping; 
+            if (cart.Any())
+            {
+                totalWithShipping = totalPrice + 5;
+            }
+            else
+            {
+                totalWithShipping = totalPrice;
+            }
+
+            ViewData["TotalPrice"] = totalPrice;
+            ViewData["TotalWithShipping"] = totalWithShipping;
 
             return View(cart);
         }
+
 
 
 
@@ -256,6 +184,7 @@ namespace IceCreamProject.Controllers
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             return RedirectToAction("Cart");
         }
+
         [HttpPost("/update-cart", Name = "UpdateCart")]
         public IActionResult UpdateCart(int productId, int quantity)
         {
@@ -289,26 +218,37 @@ namespace IceCreamProject.Controllers
         }
 
 
+
         [Authorize]
         [HttpGet("/check-out", Name = "CheckOut")]
         public async Task<IActionResult> CheckOut()
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-
-            if (cart == null || !cart.Any())
+            if (!cart.Any())
             {
                 TempData["Error"] = "Your cart is empty.";
                 return RedirectToAction("Cart");
             }
 
-            var model = new CheckoutViewModel
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
             {
-                CartItems = cart,
-                TotalAmount = cart.Sum(item => item.Quantity * item.Price) + 5,
-                ShippingCost = 5 // Giá trị mặc định
+                TempData["Error"] = "User information is missing.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            decimal shippingCost = 5; // Giá trị phí ship cố định
+            decimal totalAmount = cart.Sum(item => item.Quantity * item.Price) + shippingCost;
+
+            var checkoutData = new CheckoutDTO
+            {
+                Cart = cart,
+                User = currentUser,
+                ShippingCost = shippingCost,
+                TotalAmount = totalAmount
             };
 
-            return View(model);
+            return View(checkoutData);
         }
 
 
@@ -318,65 +258,75 @@ namespace IceCreamProject.Controllers
 
         [Authorize]
         [HttpPost("/check-out", Name = "CheckOut")]
-        public async Task<IActionResult> CheckOut(CheckoutViewModel checkoutViewModel)
+        public async Task<IActionResult> CheckOut(string shippingAddress, string phoneNumber, string paymentMethod)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(checkoutViewModel);
-            }
-
+            // Lấy giỏ hàng từ session
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
-            if (cart.Any())
+            if (cart == null || !cart.Any())
             {
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser == null)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
+                TempData["Error"] = "Your cart is empty.";
+                return RedirectToAction("Cart");
+            }
 
-                var newOrder = new Order
+            // Lấy thông tin người dùng
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                TempData["Error"] = "User information is missing.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (string.IsNullOrWhiteSpace(shippingAddress) || string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                TempData["Error"] = "Please provide valid shipping address and phone number.";
+                return RedirectToAction("CheckOut");
+            }
+
+            // Tính toán tổng tiền
+            decimal shippingCost = 5;
+            decimal totalAmount = cart.Sum(item => item.Quantity * item.Price) + shippingCost;
+
+            // Tạo đơn hàng mới
+            var newOrder = new Order
+            {
+                CustomerName = currentUser.UserName,
+                Address = shippingAddress,
+                PhoneNumber = phoneNumber,
+                TotalAmount = totalAmount,
+                PaymentMethod = paymentMethod,
+                OrderDate = DateTime.UtcNow,
+                UserId = currentUser.Id,
+                OrderStatus = "Processing"
+            };
+
+            _db.Orders.Add(newOrder);
+            await _db.SaveChangesAsync();
+
+            // Thêm sản phẩm vào chi tiết đơn hàng
+            foreach (var item in cart)
+            {
+                var orderDetail = new CartItem
                 {
-                    CustomerName = currentUser.UserName,
-                    Address = checkoutViewModel.ShippingAddress,
-                    PhoneNumber = checkoutViewModel.PhoneNumber,
-                    TotalAmount = cart.Sum(p => p.Quantity * p.Price) + checkoutViewModel.ShippingCost,
-                    PaymentMethod = checkoutViewModel.PaymentMethod,
-                    OrderDate = DateTime.UtcNow,
-                    UserId = currentUser.Id,
-                    OrderStatus = "Completed"
+                    ProductId = item.ProductId,
+                    Name = item.Name,
+                    Price = item.Price,
+                    Quantity = item.Quantity,
+                    Image = item.Image,
+                    OrderId = newOrder.OrderId
                 };
-
-                _db.Orders.Add(newOrder);
-                await _db.SaveChangesAsync();
-
-                foreach (var item in cart)
-                {
-                    var newCartItem = new CartItem
-                    {
-                        ProductId = item.ProductId,
-                        Name = item.Name,
-                        Price = item.Price,
-                        Quantity = item.Quantity,
-                        Image = item.Image,
-                        OrderId = newOrder.OrderId
-                    };
-
-                    _db.CartItems.Add(newCartItem);
-                }
-
-                await _db.SaveChangesAsync();
-
-                HttpContext.Session.Remove("Cart");
-
-                TempData["Success"] = "Your order has been placed successfully!";
-                return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
+                _db.CartItems.Add(orderDetail);
             }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
+
+            await _db.SaveChangesAsync();
+
+            // Xóa giỏ hàng trong session
+            HttpContext.Session.Remove("Cart");
+
+            TempData["Success"] = "Your order has been placed successfully!";
+            return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
         }
+
 
 
         [Authorize]

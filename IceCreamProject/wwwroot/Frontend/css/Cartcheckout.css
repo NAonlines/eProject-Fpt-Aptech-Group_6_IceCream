@@ -1,0 +1,44 @@
+﻿/* Product Image */
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    display: block;
+    margin: auto;
+}
+
+/* Table Styling */
+.table {
+    margin-bottom: 0;
+}
+
+.table-bordered th, .table-bordered td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.table td.text-end {
+    text-align: right;
+}
+
+/* Card Styling */
+.card {
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: bold;
+    font-size: 1.25rem;
+    background-color: #f8f9fa;
+}
+
+.card-title {
+    margin-bottom: 0;
+}
