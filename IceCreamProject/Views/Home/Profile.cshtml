@@ -1,160 +1,144 @@
-﻿@model IceCreamProject.Models.User
+﻿@model IceCreamProject.ViewModels.ProfileViewModel
 @{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Frontend.cshtml";
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Secure.cshtml";
 }
 
-<div class="profile-container">
-    <div class="profile-header">
-        <img src="@Url.Content("~/ImageUrl/" + Model.ProfileImageUrl)" alt="Profile Image" class="profile-image" />
-        <h1>Xin Chào: @Model.UserName</h1>
-        @* <p>Status: @(Model.IsRegistered != null && (bool)ViewData["IsRegistered"] ? "Registered" : "Not Registered")</p> *@
+<style>
+    .form-control {
+        border: 1px solid #d3d3d3; 
+        border-radius: 5px; 
+        padding: 10px;
+    }
 
-        <!-- Form to change profile image -->
-        <form id="formChangeImg">
-            <div class="form-group">
-                <label for="profileImage">Upload new image</label>
-                <input type="file" id="profileImage" name="profileImage" class="form-control" required />
+        .form-control:focus {
+            border-color: #a9a9a9;
+            box-shadow: none; 
+        }
+
+    .btn-primary {
+        background-color: #ff7f50; 
+        border: none;
+        border-radius: 5px; 
+    }
+
+        .btn-primary:hover {
+            background-color: #ff6347; 
+        }
+</style>
+
+<section class="h-100 gradient-custom-2"
+         style="background-image: url('@Url.Content("~/Frontend/images/Ice_Cream_banner_wallpaper.jpg")');
+                background-size: cover;
+                background-position: center;">
+
+    <!-- Success Toast Notification -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-container position-fixed p-3" style="bottom: 1rem; right: 1rem; z-index:1050;" id="toast-container">
+            <div class="toast align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @TempData["Success"]
+                </div>
             </div>
-            <br />
-            <button type="button" id="submitBtnChangeImg" class="btn btn-primary">Upload</button>
-        </form>
-        <p id="responseImageMessage" class="mt-2"></p>
+        </div>
+    }
+
+    <!-- Error Toast Notification -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="toast-container position-fixed p-3" style="bottom: 1rem; right: 1rem; z-index:1050;" id="toast-container">
+            <div class="toast align-items-center border-0 show bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-danger text-white">
+                    <strong class="me-auto">Error</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @TempData["Error"]
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="container py-5 h-100">
+        <div class="mb-3">
+            <a asp-route="Home" class="btn btn-primary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <div class="row d-flex justify-content-center">
+            <div class="col col-lg-9 col-xl-8">
+                <div class="card">
+                    <!-- Header Section -->
+                    <div class="rounded-top text-white d-flex flex-row"
+                         style="background-image: url('@Url.Content("~/Frontend/images/Ice_Cream_banner_4_wallpaper.jpg")');
+                                background-size: cover;
+                                background-position: center;
+                                height: 200px;">
+                        <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                            <img src="@Url.Content(Model.ProfileImageUrl)"
+                                 alt="Profile Image"
+                                 class="img-fluid img-thumbnail mt-4 mb-2"
+                                 style="width: 150px; z-index: 1; border: 2px solid white;">
+                        </div>
+                        <div class="ms-3" style="margin-top: 130px;">
+                            <h5 class="text-white">@Model.Email</h5>
+                            <p>@Model.Address</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="card-body p-4 text-black">
+                        <!-- Update Profile Form -->
+                        <h4 class="mb-4">Update Profile</h4>
+                        <form asp-action="UpdateProfile" asp-controller="Home" method="post" enctype="multipart/form-data">
+                            <div class="form-floating mb-3">
+                                <input type="email" asp-for="Email" class="form-control" id="floatingEmail" placeholder="Email" readonly />
+                                <label for="floatingEmail">Email</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Phone" class="form-control" id="floatingPhone" placeholder="Phone" />
+                                <label for="floatingPhone">Phone</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Address" class="form-control" id="floatingAddress" placeholder="Address" />
+                                <label for="floatingAddress">Address</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Profile Image</label>
+                                <input type="file" asp-for="ProfileImage" class="form-control" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+
+                        <hr />
+                        <!-- Change Password Form -->
+                        <h4 class="mb-4">Change Password</h4>
+                        <form asp-action="ChangePassword" asp-controller="Home" method="post">
+                            <div class="form-floating mb-3">
+                                <input type="password" name="currentPassword" class="form-control" id="floatingCurrentPassword" placeholder="Current Password" required />
+                                <label for="floatingCurrentPassword">Current Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="newPassword" class="form-control" id="floatingNewPassword" placeholder="New Password"
+                                       minlength="6"
+                                       pattern="(?=.*[A-Z]).{6,}"
+                                       title="Password must be at least 6 characters long and contain at least one uppercase letter."
+                                       required />
+                                <label for="floatingNewPassword">New Password</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="profile-info">
-        <p>Email: @Model.Email</p>
-
-        <p>Address: @Model.Address</p>
-        <form id="formChangeAddress">
-            <div class="form-group">
-                <label for="Address">Address</label>
-                <input type="text" id="Address" name="Address" class="form-control" required />
-            </div>
-            <br />
-            <button type="button" id="submitBtnChangeAddress" class="btn btn-primary">Upload</button>
-        </form>
-
-        <!-- Form to change password -->
-        <form id="formChangePassWord">
-            <div class="form-group">
-                <label for="currentPassword">Current Password</label>
-                <input type="password" id="currentPassword" name="currentPassword" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label for="newPassword">New Password</label>
-                <input type="password" id="newPassword" name="newPassword" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">Confirm New Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required />
-            </div>
-            <br />
-            <button type="button" id="submitBtnChangePassword" class="btn btn-secondary">Change Password</button>
-            <a href="/"> HOME </a>
-        </form>
-        <p id="responsePasswordMessage" class="mt-2"></p>
-    </div>
-</div>
-
-<script>
-    // Base URLs for actions
-    const changeImageUrl = '@Url.Action("ChangeProfileImage", "Home")';
-    const changePasswordUrl = '@Url.Action("ChangePassword", "Home")';
-    const changeAddressUrl = '@Url.Action("ChangeAddress", "Home")';
-
-    document.getElementById('submitBtnChangeAddress').addEventListener('click', function () {
-        const form = document.getElementById('formChangeAddress');
-        const formData = new FormData(form);
-
-        fetch(changeAddressUrl, {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                const message = document.getElementById('responseImageMessage');
-                if (data.success) {
-                    message.textContent = "Profile address updated successfully!";
-                    message.classList.remove('text-danger');
-                    message.classList.add('text-success');
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 1000);
-                } else {
-                    message.textContent = data.message || "Failed to update profile address.";
-                    message.classList.remove('text-success');
-                    message.classList.add('text-danger');
-                }
-            })
-            .catch(() => {
-                const message = document.getElementById('responseImageMessage');
-                message.textContent = "An error occurred. Please try again.";
-                message.classList.add('text-danger');
-            });
-    });
-
-    // Change Profile Image
-    document.getElementById('submitBtnChangeImg').addEventListener('click', function () {
-        const form = document.getElementById('formChangeImg');
-        const formData = new FormData(form);
-
-        fetch(changeImageUrl, {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                const message = document.getElementById('responseImageMessage');
-                if (data.success) {
-                    message.textContent = "Profile image updated successfully!";
-                    message.classList.remove('text-danger');
-                    message.classList.add('text-success');
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 1000);
-                } else {
-                    message.textContent = data.message || "Failed to update profile image.";
-                    message.classList.remove('text-success');
-                    message.classList.add('text-danger');
-                }
-            })
-            .catch(() => {
-                const message = document.getElementById('responseImageMessage');
-                message.textContent = "An error occurred. Please try again.";
-                message.classList.add('text-danger');
-            });
-    });
-
-    // Change Password
-    document.getElementById('submitBtnChangePassword').addEventListener('click', function () {
-        const form = document.getElementById('formChangePassWord');
-        const formData = new FormData(form);
-
-        fetch(changePasswordUrl, {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                const message = document.getElementById('responsePasswordMessage');
-                if (data.success) {
-                    message.textContent = "Password changed successfully!";
-                    message.classList.remove('text-danger');
-                    message.classList.add('text-success');
-                    setTimeout(() => {
-                        window.location.href = '/Home/Index';
-                    }, 1000);
-                } else {
-                    message.textContent = data.message || "Failed to change password.";
-                    message.classList.remove('text-success');
-                    message.classList.add('text-danger');
-                }
-            })
-            .catch(() => {
-                const message = document.getElementById('responsePasswordMessage');
-                message.textContent = "An error occurred. Please try again.";
-                message.classList.add('text-danger');
-            });
-    });
-</script>
+</section>

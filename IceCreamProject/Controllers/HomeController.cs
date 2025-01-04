@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Dynamic;
 using IceCreamProject.Models;
 using Microsoft.AspNetCore.Hosting;
+using System.Security.Claims;
 namespace IceCreamProject.Controllers
 {
     public class HomeController : Controller
@@ -32,107 +33,140 @@ namespace IceCreamProject.Controllers
 
             return View(books);
         }
-        public IActionResult Profile()
+
+        [Authorize]
+        [HttpGet("/profile", Name = "Profile")]
+        public async Task<IActionResult> Profile()
         {
-            var userId = HttpContext.Session.GetString("UserId");
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return RedirectToAction("Sucre", "Login");
-            }
-
-            var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+            // Lấy thông tin user hiện tại
+            var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
             {
-                return NotFound();
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("Index", "Home");
             }
 
-            return View(user);
+            // Tạo ViewModel và đổ thông tin user vào
+            var model = new ProfileViewModel
+            {
+                Email = user.Email,
+                Phone = user.PhoneNumber,
+                Address = user.Address,
+                ProfileImageUrl = string.IsNullOrWhiteSpace(user.ProfileImageUrl) ? "/default-profile.png" : user.ProfileImageUrl // Đường dẫn mặc định nếu không có ảnh
+            };
+
+            return View(model);
         }
+
+
+
         [HttpPost]
-        public IActionResult ChangeProfileImage(IFormFile profileImage)
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile()
         {
+            var phone = Request.Form["Phone"];
+            var address = Request.Form["Address"];
+            var profileImage = Request.Form.Files["ProfileImage"];
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            user.PhoneNumber = phone;
+            user.Address = address;
+
             if (profileImage != null && profileImage.Length > 0)
             {
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
-                string filePath = Path.Combine(uploadsFolder, profileImage.FileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+
+                if (!Directory.Exists(uploads))
                 {
-                    profileImage.CopyTo(fileStream);
+                    Directory.CreateDirectory(uploads);
                 }
 
-                var userId = HttpContext.Session.GetString("UserId");
-                var user = _db.Users.FirstOrDefault(u => u.Id == userId);
-
-                if (user != null)
+                // Delete old profile image if it exists
+                if (!string.IsNullOrEmpty(user.ProfileImageUrl) && user.ProfileImageUrl != "/default-profile.png")
                 {
-                    user.ProfileImageUrl = profileImage.FileName;
-                    _db.SaveChanges();
+                    var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, user.ProfileImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
                 }
+
+                // Save the new profile image
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(profileImage.FileName);
+                var filePath = Path.Combine(uploads, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await profileImage.CopyToAsync(stream);
+                }
+
+                user.ProfileImageUrl = "/Images/" + uniqueFileName;
             }
-            return View();
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                TempData["Error"] = "Error updating profile.";
+                return RedirectToAction("Profile");
+            }
+
+            TempData["Success"] = "Profile updated successfully!";
+            return RedirectToAction("Profile");
         }
+
+
         [HttpPost]
-        public IActionResult ChangeAddress(string Address)
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword)
         {
-            if (Address != null && Address.Length > 0)
-            {
-                var userId = HttpContext.Session.GetString("UserId");
-                var user = _db.Users.FirstOrDefault(u => u.Id == userId);
-
-                if (user != null)
-                {
-                    user.Address = Address;
-                    _db.SaveChanges();
-                }
-            }
-            return Json(new { success = true, message = "Address updated successfully." });
-        }
-        [HttpPost]
-        public IActionResult ChangePassword(string currentPassword, string newPassword, string confirmPassword)
-        {
-            if (newPassword != confirmPassword)
-            {
-                return Json(new { success = false, message = "New password and confirmation do not match." });
-            }
-
-            var userId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Json(new { success = false, message = "User not logged in." });
-            }
-
-            var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Json(new { success = false, message = "User not found." });
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("Index", "Home");
             }
 
-            var passwordHasher = new PasswordHasher<IdentityUser>();
-            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, currentPassword);
-
-            if (verificationResult != PasswordVerificationResult.Success)
+            if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 6 || !newPassword.Any(char.IsUpper))
             {
-                return Json(new { success = false, message = "Current password is incorrect." });
+                TempData["Error"] = "New password must be at least 6 characters long and contain at least one uppercase letter.";
+                return RedirectToAction("Profile");
             }
 
-            user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
-            _db.SaveChanges();
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, newPassword);
+            if (passwordCheck)
+            {
+                TempData["Error"] = "New password cannot be the same as the current password.";
+                return RedirectToAction("Profile");
+            }
 
-            return Json(new { success = true, message = "Password updated successfully." });
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!result.Succeeded)
+            {
+                TempData["Error"] = string.Join(" ", result.Errors.Select(e => e.Description));
+                return RedirectToAction("Profile");
+            }
+
+            TempData["Success"] = "Password changed successfully!";
+            return RedirectToAction("Profile");
         }
 
-        [HttpGet("/about-us", Name = "AboutUs")]
+
+
+
 
 
         [HttpGet("/product-details/{id}", Name = "ProductDetails")]
         public async Task<IActionResult> ProductDetails(int id)
         {
-            // Lấy sản phẩm từ cơ sở dữ liệu, bao gồm thông tin liên quan
             var product = await _db.Books
-                .Include(b => b.Category)  // Include Category
-                .Include(b => b.Recipe)    // Include Recipe
+                .Include(b => b.Category)  
+                .Include(b => b.Recipe) 
                 .FirstOrDefaultAsync(b => b.BookId == id);
 
             if (product == null)
@@ -140,7 +174,7 @@ namespace IceCreamProject.Controllers
                 return NotFound("Product not found.");
             }
 
-            return View(product); // Truyền trực tiếp model Book vào View
+            return View(product); 
         }
 
 
