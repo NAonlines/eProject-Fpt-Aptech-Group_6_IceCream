@@ -391,7 +391,6 @@ namespace IceCreamProject.Controllers
         [HttpPost("/check-out", Name = "CheckOut")]
         public async Task<IActionResult> CheckOut(string shippingAddress, string phoneNumber, string paymentMethod)
         {
-            // Lấy giỏ hàng từ session
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
             if (cart == null || !cart.Any())
@@ -400,7 +399,6 @@ namespace IceCreamProject.Controllers
                 return RedirectToAction("Cart");
             }
 
-            // Lấy thông tin người dùng
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
             {
@@ -410,15 +408,24 @@ namespace IceCreamProject.Controllers
 
             if (string.IsNullOrWhiteSpace(shippingAddress) || string.IsNullOrWhiteSpace(phoneNumber))
             {
-                TempData["Error"] = "Please provide valid shipping address and phone number.";
+                TempData["Error"] = "Shipping address and phone number are required.";
                 return RedirectToAction("CheckOut");
             }
 
-            // Tính toán tổng tiền
+            // Update user information
+            currentUser.Address = shippingAddress;
+            currentUser.PhoneNumber = phoneNumber;
+            var updateResult = await _userManager.UpdateAsync(currentUser);
+
+            if (!updateResult.Succeeded)
+            {
+                TempData["Error"] = "Failed to update user information.";
+                return RedirectToAction("CheckOut");
+            }
+
             decimal shippingCost = 5;
             decimal totalAmount = cart.Sum(item => item.Quantity * item.Price) + shippingCost;
 
-            // Tạo đơn hàng mới
             var newOrder = new Order
             {
                 CustomerName = currentUser.UserName,
@@ -434,7 +441,6 @@ namespace IceCreamProject.Controllers
             _db.Orders.Add(newOrder);
             await _db.SaveChangesAsync();
 
-            // Thêm sản phẩm vào chi tiết đơn hàng
             foreach (var item in cart)
             {
                 var orderDetail = new CartItem
@@ -451,13 +457,11 @@ namespace IceCreamProject.Controllers
 
             await _db.SaveChangesAsync();
 
-            // Xóa giỏ hàng trong session
             HttpContext.Session.Remove("Cart");
 
             TempData["Success"] = "Your order has been placed successfully!";
             return RedirectToAction("OrderConfirmation", new { orderId = newOrder.OrderId });
         }
-
 
 
         [Authorize]

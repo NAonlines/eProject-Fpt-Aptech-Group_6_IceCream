@@ -1,38 +1,138 @@
 ﻿@model IceCreamProject.Models.Order
 
 @{
-    ViewData["Title"] = "OrderConfirmation";
-    Layout = "~/Views/Frontend.cshtml";
+    ViewData["Title"] = "Order Confirmation";
+    Layout = "~/Views/Secure.cshtml";
 }
-<div class="container">
-    <main>
-        <div class="py-5 text-center">
-            <h2>Order Confirmation</h2>
-            <p class="lead">Thank you for your order!</p>
+<style>
+    body {
+        background-image: url('@Url.Content("~/Frontend/images/Ice_Cream_banner_wallpaper.jpg")');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+</style>
+<section class="h-100 gradient-custom">
+@*     <div class="position-relative"
+         style="
+        background: rgba(255, 255, 255, 0.2); /* Transparent white background */
+        backdrop-filter: blur(8px); /* Adds a blur effect to the background */
+        height: 200px;
+        border: 3px solid rgba(255, 255, 255, 0.8); /* Light border for contrast */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+        border-radius: 10px; /* Rounded corners for a polished look */">
+        <div class="container h-100 d-flex align-items-center justify-content-center">
+            <h1 class="pt-5 text-white fw-bold">Confirm Order</h1>
         </div>
+    </div> *@
 
-        <div class="row g-5">
-            <div class="col-md-12">
-                <h4 class="mb-3">Order Details</h4>
-                <ul class="list-group mb-3">
-                    @foreach (var item in Model.CartItems)
-                    {
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">@item.Name</h6>
-                                <small class="text-muted">@item.Description</small>
-                            </div>
-                            <span class="text-muted">@item.Quantity x @item.Price.ToString("C")</span>
-                        </li>
-                    }
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Total</span>
-                        <strong>@Model.TotalAmount.ToString("C")</strong>
-                    </li>
-                </ul>
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-container position-fixed p-3" style="bottom: 1rem; right: 1rem; z-index:1050;" id="toast-container">
+            <div class="toast align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @TempData["Success"]
+                </div>
             </div>
         </div>
-    </main>
-</div>
-<p>Shipping Address: @Model.Address</p>
-<p>Payment Method: @Model.PaymentMethod</p>
+    }
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card" style="border-radius: 10px;">
+                    <!-- Header Section -->
+                    <div class="card-header px-4 py-5">
+                        <h5 class="text-muted mb-0">
+                            Thanks for your order,
+                            <span style="color: #a8729a;">@Model.CustomerName</span>!
+                        </h5>
+                    </div>
+
+                    <!-- Receipt Section -->
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <p class="lead fw-normal mb-0" style="color: #a8729a;">Receipt</p>
+                            <p class="small text-muted mb-0">Order ID: @Model.OrderId</p>
+                        </div>
+
+                        <!-- Cart Items -->
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <div class="card shadow-0 border mb-4">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <img src="~/ImageUrl/@item.Image" class="img-fluid" alt="@item.Name">
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0">@item.Name</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">@item.Description</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">Qty: @item.Quantity</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">@item.Price.ToString("C")</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">Total: $@(item.Quantity * item.Price)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Order Summary -->
+                        <div class="d-flex justify-content-between pt-2">
+                            <p class="fw-bold mb-0">Order Details</p>
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <p class="text-muted mb-0"><span class="fw-bold me-4">Price Item</span> $@(item.Quantity * item.Price)</p>
+                            }
+
+                        </div>
+
+                        <div class="d-flex justify-content-between pt-2">
+                            <p class="text-muted mb-0">Invoice Number: @Model.OrderId</p>
+                            <p class="text-muted mb-0"><span class="fw-bold me-4">Shipping cost</span>$5</p>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <p class="text-muted mb-0">Order Date: @Model.OrderDate.ToString("dd MMM, yyyy")</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-5">
+                            <p class="text-muted mb-0">Shipping Address: @Model.Address</p>
+
+                            <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span>@Model.TotalAmount.ToString("C")</p>
+                        </div>
+                    </div>
+
+                    <!-- Footer Section -->
+                    <div class="card-footer border-0 px-4 py-5 bg-primary"
+                         style=" border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                        <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">
+                            Total paid: <span class="h2 mb-0 ms-2 text-white">@Model.TotalAmount.ToString("C")</span>
+                        </h5>
+                    </div>
+                </div>
+
+                <!-- Back to Home Button -->
+                <div class="mt-4 text-center">
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg">
+                        <i class="fas fa-home"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

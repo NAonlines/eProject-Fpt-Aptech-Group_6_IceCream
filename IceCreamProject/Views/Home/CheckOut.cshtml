@@ -6,9 +6,39 @@
 }
 <link href="~/Frontend/css/Cartcheckout.css" rel="stylesheet" />
 <div class="container">
+    @if (TempData["Success"] != null)
+    {
+        <div class="toast-container position-fixed p-3" style="bottom: 1rem; right: 1rem; z-index:1050;" id="toast-container">
+            <div class="toast align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @TempData["Success"]
+                </div>
+            </div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="toast-container position-fixed p-3" style="bottom: 1rem; right: 1rem; z-index:1050;" id="toast-container">
+            <div class="toast align-items-center border-0 show bg-info text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-info text-white">
+                    <strong class="me-auto">Information</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @TempData["Error"]
+                </div>
+            </div>
+        </div>
+
+    }
     <main>
         <div class="py-5 text-center">
-            <h2>Checkout</h2>
             <p class="lead">Review your order and provide the required information to complete your purchase.</p>
         </div>
 
