@@ -1,0 +1,90 @@
+﻿@model IceCreamProject.Models.Recipe
+
+@{
+    ViewData["Title"] = Model.Name; // Sử dụng tên recipe làm tiêu đề trang
+    Layout = "~/Views/Frontend.cshtml";
+}
+
+<section class="h-100 gradient-custom-2">
+    <!-- Top Background Section -->
+    <div class="position-relative"
+         style="background-image: url('@Url.Content("~/Frontend/images/banner-3.jpg")');
+            background-size: cover;
+            background-position: center;
+            height: 200px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;">
+        <div class="container h-100 d-flex flex-column align-items-center justify-content-center">
+            <nav aria-label="breadcrumb" class="pt-5">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("FreeRecipes", "Home")" class="text-white">Free Recipes</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Recipe Detail</li>
+                </ol>
+            </nav>
+            <h5 class="pt-1 text-white fw-bold">@Model.Name</h5>
+        </div>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="d-flex justify-content-center align-items-center mt-5 py-5">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="container">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-lg-10">
+                        <div class="row g-4">
+                            <!-- Image -->
+                            <div class="col-lg-6 text-center">
+                                <div class="border rounded">
+                                    <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/ImageUrl/default-recipe.jpg" : "/ImageUrl/" + Model.ImageUrl)"
+                                         class="img-fluid rounded" alt="@Model.Name">
+                                </div>
+                            </div>
+
+                            <!-- Recipe Details -->
+                            <div class="col-lg-6">
+                                <h4 class="fw-bold mb-3">@Model.Name</h4>
+                                <p class="mb-3">Category: @Model.Category?.Name</p>
+                                @if (!string.IsNullOrEmpty(Model.Book?.Title))
+                                {
+                                    <p class="mb-3">From Book: <a href="@Url.Action("ProductDetails", "Home", new { id = Model.Book.BookId })">@Model.Book.Title</a></p>
+                                }
+                                <p class="mb-4">@Model.Ingredients</p>
+                            </div>
+                        </div>
+
+                        <!-- Instructions (if available) -->
+                        <div class="row g-4 mt-5">
+                            <div class="col-lg-12">
+                                <nav>
+                                    <div class="nav nav-tabs mb-3 justify-content-center">
+                                        <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                                id="nav-instructions-tab" data-bs-toggle="tab" data-bs-target="#nav-instructions"
+                                                aria-controls="nav-instructions" aria-selected="true">
+                                            Instructions
+                                        </button>
+                                    </div>
+                                </nav>
+                                <div class="tab-content mb-5">
+                                    <div class="tab-pane active" id="nav-instructions" role="tabpanel" aria-labelledby="nav-instructions-tab">
+                                        <p>@Model.Ingredients</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Back Button -->
+                        <div class="row mt-4">
+                            <div class="col text-center">
+                                <a href="@Url.Action("FreeRecipes", "Home")" class="btn btn-secondary rounded-pill px-4 py-2">
+                                    <i class="bi bi-arrow-left"></i> Back to Recipes
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

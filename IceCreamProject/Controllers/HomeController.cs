@@ -478,5 +478,41 @@ namespace IceCreamProject.Controllers
         }
 
 
+
+        [HttpGet("/free-recipes", Name = "FreeRecipes")]
+        public async Task<IActionResult> FreeRecipes()
+        {
+            var freeCategory = await _db.Categories.FirstOrDefaultAsync(c => c.Name == "Free" && c.IsActive);
+            if (freeCategory == null)
+            {
+                return View(new List<Recipe>());
+            }
+
+            var freeRecipes = await _db.Recipes
+                .Include(r => r.Book)
+                .Include(r => r.Category)
+                .Where(r => r.CategoryId == freeCategory.CategoryId)
+                .ToListAsync();
+
+            return View(freeRecipes);
+        }
+
+        [HttpGet("/recipe-details/{id}", Name = "RecipeDetails")]
+        public async Task<IActionResult> RecipeDetails(int id)
+        {
+            var recipe = await _db.Recipes
+                .Include(r => r.Category)
+                .Include(r => r.Book)
+                .Include(r => r.CreatedBy)
+                .FirstOrDefaultAsync(r => r.RecipeId == id);
+
+            if (recipe == null)
+            {
+                return NotFound("Recipe not found.");
+            }
+
+            return View(recipe);
+        }
+
     }
 }

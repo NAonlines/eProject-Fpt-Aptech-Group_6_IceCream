@@ -242,7 +242,7 @@ namespace IceCreamProject.Areas.System.Controllers
                 _context.Recipes.Update(recipe);
                 await _context.SaveChangesAsync();
 
-                TempData["Success"] = "Recipe updated successfully.";
+                TempData["Message"] = "Recipe updated successfully.";
                 return RedirectToAction("Index");
             }
 
@@ -283,12 +283,12 @@ namespace IceCreamProject.Areas.System.Controllers
 
                 _context.Recipes.Remove(recipe);
                 await _context.SaveChangesAsync();
-                TempData["Note"] = "Delete recipe successfully";
+                TempData["Message"] = "Delete recipe successfully";
                 return RedirectToAction("Index");
             }
             else
             {
-                TempData["Note"] = "Recipe not found";
+                TempData["Message"] = "Recipe not found";
                 return RedirectToAction("Index");
             }
         }
