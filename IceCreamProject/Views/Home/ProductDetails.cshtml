@@ -15,9 +15,16 @@
             border: 3px solid rgba(255, 255, 255, 0.8); /* Light border for contrast */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
             border-radius: 10px; /* Rounded corners for a polished look */">
-        <div class="container h-100 d-flex align-items-center justify-content-center">
-            <h1 class="pt-5 text-white fw-bold">Book Detail</h1>
+        <div class="container h-100 d-flex flex-column align-items-center justify-content-center">
+            <nav aria-label="breadcrumb" class="pt-5">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-white">Home</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Book Detail</li>
+                </ol>
+            </nav>
+            <h5 class="pt-1 text-white fw-bold">@Model.Title</h5>
         </div>
+
     </div>
 
     <!-- Main Content Section -->

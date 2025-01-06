@@ -50,6 +50,7 @@ namespace IceCreamProject.Areas.System.Controllers
 
 
 
+
         // GET: System/Books1/Create
         [HttpGet("Create")]
         public IActionResult Create()
@@ -64,8 +65,6 @@ namespace IceCreamProject.Areas.System.Controllers
             };
             return View(viewModel);
         }
-
-        // POST: System/Books1/Create
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookViewModel viewModel)
@@ -79,7 +78,7 @@ namespace IceCreamProject.Areas.System.Controllers
                     string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
                     if (!Directory.Exists(uploadsFolder))
                     {
-                        Directory.CreateDirectory(uploadsFolder); 
+                        Directory.CreateDirectory(uploadsFolder);
                     }
 
                     string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
@@ -87,8 +86,6 @@ namespace IceCreamProject.Areas.System.Controllers
                     imagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
 
                     string filePath = Path.Combine(uploadsFolder, imagePath);
-
-                    // Lưu tệp vào thư mục
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await viewModel.ImageUrl.CopyToAsync(stream);
@@ -100,12 +97,14 @@ namespace IceCreamProject.Areas.System.Controllers
                     Title = viewModel.Title,
                     Description = viewModel.Description,
                     Price = viewModel.Price,
-                    ImageUrl = imagePath, 
+                    ImageUrl = imagePath,
+                    IsActive = viewModel.IsActive, // Include IsActive
                     CategoryId = viewModel.CategoryId
                 };
 
                 _context.Books.Add(book);
                 await _context.SaveChangesAsync();
+                TempData["Message"] = "Book created successfully!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -120,6 +119,7 @@ namespace IceCreamProject.Areas.System.Controllers
 
 
 
+
         [HttpGet("Delete/{id:int}")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -128,7 +128,7 @@ namespace IceCreamProject.Areas.System.Controllers
             {
                 if (!string.IsNullOrEmpty(product.ImageUrl))
                 {
-                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", product.ImageUrl);
+                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl", product.ImageUrl);
                     if (IOFile.Exists(imagePath))
                     {
                         IOFile.Delete(imagePath);
@@ -170,6 +170,7 @@ namespace IceCreamProject.Areas.System.Controllers
                 Title = book.Title,
                 Description = book.Description,
                 Price = book.Price,
+                IsActive = book.IsActive,
                 CategoryId = book.CategoryId,
             };
 
@@ -193,7 +194,7 @@ namespace IceCreamProject.Areas.System.Controllers
         {
             if (id != viewModel.BookId)
             {
-                return RedirectToAction("Index");
+                return NotFound();
             }
 
             if (ModelState.IsValid)
@@ -202,12 +203,11 @@ namespace IceCreamProject.Areas.System.Controllers
 
                 if (book == null)
                 {
-                    return RedirectToAction("Index");
+                    return NotFound();
                 }
 
                 string imagePath = book.ImageUrl;
 
-                // Xử lý cập nhật ảnh nếu có
                 if (viewModel.ImageUrl != null)
                 {
                     string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
@@ -216,7 +216,6 @@ namespace IceCreamProject.Areas.System.Controllers
                         Directory.CreateDirectory(uploadsFolder);
                     }
 
-                    // Xóa ảnh cũ nếu có
                     if (!string.IsNullOrEmpty(book.ImageUrl))
                     {
                         string oldImagePath = Path.Combine(uploadsFolder, book.ImageUrl);
@@ -226,7 +225,6 @@ namespace IceCreamProject.Areas.System.Controllers
                         }
                     }
 
-                    // Tạo đường dẫn ảnh mới
                     string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
                     string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
                     imagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
@@ -238,21 +236,20 @@ namespace IceCreamProject.Areas.System.Controllers
                     }
                 }
 
-                // Cập nhật thông tin sách
                 book.Title = viewModel.Title;
                 book.Description = viewModel.Description;
                 book.Price = viewModel.Price;
                 book.ImageUrl = imagePath;
+                book.IsActive = viewModel.IsActive; // Include IsActive
                 book.CategoryId = viewModel.CategoryId;
 
                 _context.Books.Update(book);
                 await _context.SaveChangesAsync();
 
-                TempData["Note"] = "Update book successfully";
-                return RedirectToAction("Index");
+                TempData["Message"] = "Book updated successfully!";
+                return RedirectToAction(nameof(Index));
             }
 
-            // Nạp lại dropdown nếu ModelState không hợp lệ
             viewModel.Categories = await _context.Categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),
@@ -262,6 +259,7 @@ namespace IceCreamProject.Areas.System.Controllers
 
             return View(viewModel);
         }
+
 
 
 

@@ -165,17 +165,18 @@ namespace IceCreamProject.Controllers
         public async Task<IActionResult> ProductDetails(int id)
         {
             var product = await _db.Books
-                .Include(b => b.Category)  
-                .Include(b => b.Recipe) 
-                .FirstOrDefaultAsync(b => b.BookId == id);
+                .Include(b => b.Category)
+                .Include(b => b.Recipes)
+                .FirstOrDefaultAsync(b => b.BookId == id && b.IsActive); 
 
             if (product == null)
             {
-                return NotFound("Product not found.");
+                return NotFound("Product not found or is not active.");
             }
 
-            return View(product); 
+            return View(product);
         }
+
 
 
         [HttpGet("/about-us", Name = "AboutUs")]

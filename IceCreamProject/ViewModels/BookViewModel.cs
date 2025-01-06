@@ -20,24 +20,21 @@ namespace IceCreamProject.ViewModels
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater than or equal to 0.")]
         public decimal Price { get; set; }
 
-        // For file upload
         [Display(Name = "Upload Image")]
         public IFormFile? ImageUrl { get; set; }
 
-
-        // To store the path of the uploaded image
         public string? ImagePath { get; set; }
+        public bool IsActive { get; set; }
 
         [Required(ErrorMessage = "Category is required.")]
         public int? CategoryId { get; set; }
 
-        // Optional: To include category details
         public Category? Category { get; set; }
 
         // Dropdown list for categories
         public IEnumerable<SelectListItem>? Categories { get; set; }
 
-        // Recipe ID or reference
-        public int? Recipe { get; set; }
+        // List of recipes associated with this book
+        public List<RecipeViewModel>? Recipes { get; set; }
     }
 }

@@ -8,14 +8,13 @@ namespace IceCreamProject.ViewModels
     {
         public int? RecipeId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Recipe Name is required.")]
         [Display(Name = "Recipe Name")]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Ingredients are required.")]
         [Display(Name = "Ingredients")]
         public string Ingredients { get; set; }
-
 
         [Display(Name = "Image")]
         public IFormFile? ImageUrl { get; set; }
@@ -24,12 +23,13 @@ namespace IceCreamProject.ViewModels
 
         public bool IsApproved { get; set; } = false;
 
-        [Required]
+        [Required(ErrorMessage = "Category is required.")]
         [Display(Name = "Category")]
         public int? CategoryId { get; set; }
 
         public List<SelectListItem>? Categories { get; set; }
 
+        [Required(ErrorMessage = "Book is required.")]
         [Display(Name = "Book")]
         public int? BookId { get; set; }
 

@@ -31,7 +31,7 @@
                 <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" name="search" class="form-control" placeholder="Search by name, ingredients, book or category"
+                <input type="text" name="search" class="form-control" placeholder="Search by username, name, book or category"
                        value="@ViewBag.SearchQuery">
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
@@ -49,8 +49,8 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
-                                    <th>Ingredients</th>
-                                    <th>Image</th>
+@*                                     <th>Ingredients</th>
+ *@                                    <th>Image</th>
                                     <th>Is Approved</th>
                                     <th>Category</th>
                                     <th>Created By</th>
@@ -64,11 +64,20 @@
                                     <tr>
                                         <td>@item.RecipeId</td>
                                         <td>@item.Name</td>
-                                        <td><small>@item.Ingredients</small></td>
-                                        <td>
-                                            <img src="/RecipeImages/@item.ImageUrl" alt="Images" style="width:100px; height:auto;" />
+@*                                         <td><small>@item.Ingredients</small></td>
+ *@                                        <td>
+                                            <img src="/ImageUrl/@item.ImageUrl" alt="Images" style="width:100px; height:auto;" />
                                         </td>
-                                        <td>@(item.IsApproved ? "Yes" : "No")</td>
+                                        <td>
+                                            @if (item.IsApproved)
+                                            {
+                                                <i class="fa fa-check text-success "></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-times text-danger "></i>
+                                            }
+                                        </td>
                                         <td>@(item.Category?.Name)</td>
                                         <td>@(item.CreatedBy?.UserName ?? "Unknown")</td>
                                         <td>@item.Book?.Title</td>

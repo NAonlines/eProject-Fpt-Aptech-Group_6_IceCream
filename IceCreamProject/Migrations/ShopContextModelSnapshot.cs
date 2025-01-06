@@ -40,6 +40,9 @@ namespace IceCreamProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -275,9 +278,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasKey("RecipeId");
 
-                    b.HasIndex("BookId")
-                        .IsUnique()
-                        .HasFilter("[BookId] IS NOT NULL");
+                    b.HasIndex("BookId");
 
                     b.HasIndex("CategoryId");
 
@@ -561,8 +562,8 @@ namespace IceCreamProject.Migrations
             modelBuilder.Entity("IceCreamProject.Models.Recipe", b =>
                 {
                     b.HasOne("IceCreamProject.Models.Book", "Book")
-                        .WithOne("Recipe")
-                        .HasForeignKey("IceCreamProject.Models.Recipe", "BookId");
+                        .WithMany("Recipes")
+                        .HasForeignKey("BookId");
 
                     b.HasOne("IceCreamProject.Models.Category", "Category")
                         .WithMany()
@@ -632,8 +633,7 @@ namespace IceCreamProject.Migrations
 
             modelBuilder.Entity("IceCreamProject.Models.Book", b =>
                 {
-                    b.Navigation("Recipe")
-                        .IsRequired();
+                    b.Navigation("Recipes");
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>

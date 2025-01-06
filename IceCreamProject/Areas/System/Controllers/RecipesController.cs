@@ -28,19 +28,20 @@ namespace IceCreamProject.Areas.System.Controllers
         public async Task<IActionResult> Index(string search = null)
         {
             var recipesQuery = _context.Recipes
-                .Include(r => r.CreatedBy)
+                .Include(r => r.CreatedBy) 
                 .Include(r => r.Book)
                 .Include(r => r.Category)
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                search = search.ToLower(); 
+                search = search.ToLower();
                 recipesQuery = recipesQuery.Where(r =>
                     r.Name.ToLower().Contains(search) ||
-                    r.Ingredients.ToLower().Contains(search) ||
-                    (r.Book != null && r.Book.Title.ToLower().Contains(search)) ||
-                    (r.Category != null && r.Category.Name.ToLower().Contains(search)));
+                    (r.Book != null && r.Book.Title.ToLower().Contains(search)) || 
+                    (r.Category != null && r.Category.Name.ToLower().Contains(search)) || 
+                    (r.CreatedBy != null && r.CreatedBy.UserName.ToLower().Contains(search)) 
+                );
             }
 
             var recipes = await recipesQuery.ToListAsync();
@@ -52,20 +53,9 @@ namespace IceCreamProject.Areas.System.Controllers
 
 
 
-        // GET: Recipes/Create
         [HttpGet("Create")]
         public IActionResult Create()
         {
-            // 
-            var usedBookIds = _context.Recipes.Select(r => r.BookId).ToHashSet(); // 
-            var availableBooks = _context.Books
-                .Where(b => !usedBookIds.Contains(b.BookId)) // 
-                .Select(b => new SelectListItem
-                {
-                    Value = b.BookId.ToString(),
-                    Text = b.Title
-                }).ToList();
-
             var viewModel = new RecipeViewModel
             {
                 Categories = _context.Categories.Select(c => new SelectListItem
@@ -73,12 +63,15 @@ namespace IceCreamProject.Areas.System.Controllers
                     Value = c.CategoryId.ToString(),
                     Text = c.Name
                 }).ToList(),
-                Books = availableBooks //
+                Books = _context.Books.Select(b => new SelectListItem
+                {
+                    Value = b.BookId.ToString(),
+                    Text = b.Title
+                }).ToList()
             };
             return View(viewModel);
         }
 
-        //
 
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
@@ -88,10 +81,9 @@ namespace IceCreamProject.Areas.System.Controllers
             {
                 string imagePath = string.Empty;
 
-                // Xử lý ảnh
                 if (viewModel.ImageUrl != null)
                 {
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
                     if (!Directory.Exists(uploadsFolder))
                     {
                         Directory.CreateDirectory(uploadsFolder);
@@ -100,7 +92,6 @@ namespace IceCreamProject.Areas.System.Controllers
                     string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
                     string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
                     imagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
-
                     string filePath = Path.Combine(uploadsFolder, imagePath);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
@@ -109,13 +100,7 @@ namespace IceCreamProject.Areas.System.Controllers
                     }
                 }
 
-                var createdById = User.FindFirstValue(ClaimTypes.NameIdentifier); 
-                if (string.IsNullOrEmpty(createdById))
-                {
-                    ModelState.AddModelError("", "Unable to determine the current user's ID.");
-                    return View(viewModel);
-                }
-
+                var createdById = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var recipe = new Recipe
                 {
@@ -125,17 +110,15 @@ namespace IceCreamProject.Areas.System.Controllers
                     IsApproved = viewModel.IsApproved,
                     CategoryId = viewModel.CategoryId,
                     BookId = viewModel.BookId,
-                    CreatedById = createdById // Gán ID của người dùng vào CreatedById
+                    CreatedById = createdById
                 };
 
                 _context.Recipes.Add(recipe);
                 await _context.SaveChangesAsync();
-
-                TempData["Message"] = "Recipe created successfully.";
+                TempData["Message"] = "Recipe created successfully!";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Nếu có lỗi, tải lại danh sách danh mục và sách
             viewModel.Categories = _context.Categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),
@@ -157,23 +140,17 @@ namespace IceCreamProject.Areas.System.Controllers
 
 
         [HttpGet("Edit/{id:int}")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
-
             var recipe = await _context.Recipes
                 .Include(r => r.Category)
                 .Include(r => r.Book)
+                .Include(r => r.CreatedBy) // Include CreatedBy to fetch username
                 .FirstOrDefaultAsync(r => r.RecipeId == id);
-            if (recipe == null)
-            {
-                return RedirectToAction("Index");
-            }
 
-            var model = new RecipeViewModel
+            if (recipe == null) return NotFound();
+
+            var viewModel = new RecipeViewModel
             {
                 RecipeId = recipe.RecipeId,
                 Name = recipe.Name,
@@ -181,21 +158,23 @@ namespace IceCreamProject.Areas.System.Controllers
                 IsApproved = recipe.IsApproved,
                 CategoryId = recipe.CategoryId,
                 BookId = recipe.BookId,
-                Categories = await _context.Categories.Select(c => new SelectListItem
+                CreatedById = recipe.CreatedById,
+                CreatedByName = recipe.CreatedBy?.UserName, // Assuming UserName is the property for username
+                Categories = _context.Categories.Select(c => new SelectListItem
                 {
                     Value = c.CategoryId.ToString(),
                     Text = c.Name,
                     Selected = c.CategoryId == recipe.CategoryId
-                }).ToListAsync(),
-                Books = await _context.Books.Select(b => new SelectListItem
+                }).ToList(),
+                Books = _context.Books.Select(b => new SelectListItem
                 {
                     Value = b.BookId.ToString(),
                     Text = b.Title,
                     Selected = b.BookId == recipe.BookId
-                }).ToListAsync()
+                }).ToList()
             };
 
-            return View(model);
+            return View(viewModel);
         }
 
 
@@ -205,6 +184,7 @@ namespace IceCreamProject.Areas.System.Controllers
         {
             if (id != viewModel.RecipeId)
             {
+                TempData["Error"] = "Invalid Recipe ID.";
                 return RedirectToAction("Index");
             }
 
@@ -214,15 +194,16 @@ namespace IceCreamProject.Areas.System.Controllers
 
                 if (recipe == null)
                 {
+                    TempData["Error"] = "Recipe not found.";
                     return RedirectToAction("Index");
                 }
 
                 string imagePath = recipe.ImageUrl;
 
-                // Xử lý hình ảnh
+                // Xử lý hình ảnh mới
                 if (viewModel.ImageUrl != null)
                 {
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "RecipeImages");
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
                     if (!Directory.Exists(uploadsFolder))
                     {
                         Directory.CreateDirectory(uploadsFolder);
@@ -238,6 +219,7 @@ namespace IceCreamProject.Areas.System.Controllers
                         }
                     }
 
+                    // Tạo đường dẫn ảnh mới
                     string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
                     string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
                     imagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
@@ -249,20 +231,22 @@ namespace IceCreamProject.Areas.System.Controllers
                     }
                 }
 
+                // Cập nhật dữ liệu công thức
                 recipe.Name = viewModel.Name;
                 recipe.Ingredients = viewModel.Ingredients;
                 recipe.IsApproved = viewModel.IsApproved;
                 recipe.ImageUrl = imagePath;
                 recipe.CategoryId = viewModel.CategoryId;
-                recipe.BookId = viewModel.BookId; 
+                recipe.BookId = viewModel.BookId;
 
                 _context.Recipes.Update(recipe);
                 await _context.SaveChangesAsync();
 
-                TempData["Note"] = "Cập nhật công thức thành công.";
+                TempData["Success"] = "Recipe updated successfully.";
                 return RedirectToAction("Index");
             }
 
+            // Nếu có lỗi, tải lại danh sách danh mục và sách
             viewModel.Categories = await _context.Categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),
@@ -281,19 +265,16 @@ namespace IceCreamProject.Areas.System.Controllers
         }
 
 
-
-
         [HttpGet("Delete/{id:int}")]
         public async Task<IActionResult> Delete(int? id)
         {
-            //
             var recipe = await _context.Recipes.FindAsync(id);
             if (recipe != null)
             {
              
                 if (!string.IsNullOrEmpty(recipe.ImageUrl))
                 {
-                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", recipe.ImageUrl);
+                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl", recipe.ImageUrl);
                     if (IOFile.Exists(imagePath)) 
                     {
                         IOFile.Delete(imagePath);
