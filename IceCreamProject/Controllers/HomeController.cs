@@ -368,7 +368,7 @@ namespace IceCreamProject.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            decimal shippingCost = 5; // Giá trị phí ship cố định
+            decimal shippingCost = 5;
             decimal totalAmount = cart.Sum(item => item.Quantity * item.Price) + shippingCost;
 
             var checkoutData = new CheckoutDTO
@@ -454,6 +454,7 @@ namespace IceCreamProject.Controllers
                 };
                 _db.CartItems.Add(orderDetail);
             }
+            newOrder.OrderStatus = "Completed";
 
             await _db.SaveChangesAsync();
 
