@@ -54,7 +54,7 @@
  *@                                    <th>Price</th>
                                     <th>Image</th>
                                     <th>Category</th>
-                                    <th>Active</th>
+                                    <th>Stock</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -64,8 +64,7 @@
                                     <tr>
                                         <td>@item.BookId</td>
                                         <td>@item.Title</td>
-@*                                         <td><small>@item.Description</small></td>
- *@                                     <td>@item.Price</td>
+                                        <td>@item.Price</td>
                                         <td>
                                             <img src="/ImageUrl/@item.ImageUrl" alt="Image" style="width: 100px; height: auto;" />
                                         </td>
@@ -73,16 +72,16 @@
                                         <td>
                                             @if (item.IsActive)
                                             {
-                                                <i class="fa fa-check text-success "></i>
+                                                <span class="text-success">Available</span>
                                             }
                                             else
                                             {
-                                                <i class="fa fa-times text-danger "></i>
+                                                <span class="text-danger">Out of Stock</span>
                                             }
                                         </td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.BookId" class="btn btn-sm btn-outline-primary">Edit</a>
-                                            
+                                           
                                         </td>
                                     </tr>
                                 }

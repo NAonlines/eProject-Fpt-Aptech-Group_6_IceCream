@@ -234,14 +234,19 @@ namespace IceCreamProject.Controllers
                 return Json(new { success = false, message = "Book not found." });
             }
 
-            // Get session
+            // Kiểm tra trạng thái sản phẩm
+            if (!book.IsActive)
+            {
+                return Json(new { success = false, message = "This book is currently out of stock." });
+            }
+
+            // Logic thêm sản phẩm vào giỏ hàng
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
-            // Check if the book is already in the cart
             var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
             if (cartItem != null)
             {
-                cartItem.Quantity += quantity; // Update quantity based on input
+                cartItem.Quantity += quantity;
             }
             else
             {
@@ -255,11 +260,12 @@ namespace IceCreamProject.Controllers
                 });
             }
 
-            // Save to session
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             int totalItems = cart.Sum(p => p.Quantity);
-            return Json(new { success = true, totalItems, message = "Book added to cart." });
+            return Json(new { success = true, totalItems, message = "Book added to cart successfully!" });
         }
+
+
 
 
         [HttpGet("/count-cart", Name = "CountCart")]
@@ -540,6 +546,12 @@ namespace IceCreamProject.Controllers
             ViewBag.CategoryName = "Free";
 
             return View(recipe);
+        }
+        public async Task<IActionResult> BestSelling()
+        {
+            
+            var books = await _db.Books.ToListAsync(); // Lấy tất cả sách
+            return View(books);
         }
 
     }

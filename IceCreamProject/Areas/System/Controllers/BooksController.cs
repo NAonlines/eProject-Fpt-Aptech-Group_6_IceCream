@@ -257,7 +257,12 @@ namespace IceCreamProject.Areas.System.Controllers
 
             return View(viewModel);
         }
-
+       
+        public async Task<IActionResult> BestSelling()
+        {
+            var books = await _context.Books.ToListAsync();
+            return View(books);
+        }
 
 
 

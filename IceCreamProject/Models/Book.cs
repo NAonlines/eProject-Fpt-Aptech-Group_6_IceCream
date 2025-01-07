@@ -12,4 +12,5 @@ public class Book
 
     // Navigation property for Recipes (one-to-many relationship)
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
+
 }
