@@ -25,12 +25,35 @@
         .btn-primary:hover {
             background-color: #ff6347; 
         }
+
+    .details-table {
+        font-size: 0.85rem; 
+    }
+
+    .table thead th {
+        font-family: Arial, sans-serif !important; 
+    }
+
+    .order-details-row {
+        overflow: hidden;
+        height: 0;
+        opacity: 0;
+        transition: height 0.5s ease, opacity 0.5s ease; 
+    }
+
+        .order-details-row.show {
+            height: auto; 
+            opacity: 1; 
+        }
 </style>
 
 <section class="h-100 gradient-custom-2"
          style="background-image: url('@Url.Content("~/Frontend/images/Ice_Cream_banner_wallpaper.jpg")');
                 background-size: cover;
-                background-position: center;">
+                background-position: center;
+                background-attachment: fixed;
+                min-height: 100vh;">
+
 
     <!-- Success Toast Notification -->
     @if (TempData["Success"] != null)
@@ -74,8 +97,12 @@
         </div>
 
         <div class="row d-flex justify-content-center">
-            <div class="col col-lg-9 col-xl-8">
-                <div class="card">
+            <div class="col col-lg-9 col-xl-8 position-relative">
+                <button id="btnTransactionHistory" class="btn btn-primary btn-sm position-absolute" style="top: 10px; right: 10px; z-index: 10;">
+                    <i class="bi bi-clock-history"></i> Transaction History
+                </button>
+
+                <div id="profileSection" class="card">
                     <!-- Header Section -->
                     <div class="rounded-top text-white d-flex flex-row"
                          style="background-image: url('@Url.Content("~/Frontend/images/Ice_Cream_banner_4_wallpaper.jpg")');
@@ -86,8 +113,9 @@
                             <img src="@Url.Content(Model.ProfileImageUrl)"
                                  alt="Profile Image"
                                  class="img-fluid img-thumbnail mt-4 mb-2"
-                                 style="width: 150px; z-index: 1; border: 2px solid white;">
+                                 style="width: 150px; height: 150px; object-fit: cover; z-index: 1; border: 2px solid white;">
                         </div>
+
                         <div class="ms-3" style="margin-top: 130px;">
                             <h5 class="text-white">@Model.Email</h5>
                             <p>@Model.Address</p>
@@ -97,7 +125,8 @@
                     <!-- Main Content -->
                     <div class="card-body p-4 text-black">
                         <!-- Update Profile Form -->
-                        <h4 class="mb-4">Update Profile</h4>
+                        <h4 class="mb-4">Update Profile</h4> 
+
                         <form asp-action="UpdateProfile" asp-controller="Home" method="post" enctype="multipart/form-data">
                             <div class="form-floating mb-3">
                                 <input type="email" asp-for="Email" class="form-control" id="floatingEmail" placeholder="Email" readonly />
@@ -138,7 +167,160 @@
                         </form>
                     </div>
                 </div>
+                <div id="transactionHistorySection" class="card d-none">
+                    <div class="card-body p-0">
+                        <div class="rounded-top text-white d-flex align-items-center justify-content-center"
+                             style="background-image: url('@Url.Content("~/Frontend/images/Ice_Cream_banner_4_wallpaper.jpg")');
+                                background-size: cover;
+                                background-position: center;
+                                height: 200px;">
+                            <h4 class="mb-0 text-white fw-bold">Transaction History</h4>
+                        </div>
+                        <div class="table-responsive table-scroll" style="position: relative; height: 700px;">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Order ID</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Payment Method</th>
+                                        <th scope="col">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.TransactionHistory)
+                                    {
+                                        <tr>
+                                            <td>@order.OrderId</td>
+                                            <td>@order.OrderDate.ToShortDateString()</td>
+                                            <td>$@order.TotalAmount</td>
+                                            <td>@order.OrderStatus</td>
+                                            <td>@order.PaymentMethod</td>
+                                            <td>
+                                                <a href="javascript:void(0)" class="toggle-details" data-order-id="@order.OrderId">View</a>
+                                            </td>
+                                        </tr>
+                                        <!-- Hidden row for order details -->
+                                        <tr class="order-details-row d-none" id="details-@order.OrderId">
+                                            <td colspan="6">
+                                                <div class="order-details-content">
+                                                    <p>Loading details...</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center py-3">
+                            <button id="btnBackToProfile" class="btn btn-secondary">Back to Profile</button>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+    <script>
+        const btnToggle = document.getElementById('btnTransactionHistory');
+
+        btnToggle.addEventListener('click', function () {
+            const profileSection = document.getElementById('profileSection');
+            const transactionHistorySection = document.getElementById('transactionHistorySection');
+
+            if (profileSection.classList.contains('d-none')) {
+                // Profile
+                profileSection.classList.remove('d-none');
+                transactionHistorySection.classList.add('d-none');
+                btnToggle.innerHTML = '<i class="bi bi-clock-history"></i> Transaction History'; 
+            } else {
+                // transactionHistory
+
+                profileSection.classList.add('d-none');
+                transactionHistorySection.classList.remove('d-none');
+                btnToggle.innerHTML = '<i class="bi bi-person"></i> Profile';
+            }
+        });
+    </script>
+    <script>
+        const btnBackToProfile = document.getElementById('btnBackToProfile');
+
+        btnBackToProfile.addEventListener('click', function () {
+            const profileSection = document.getElementById('profileSection');
+            const transactionHistorySection = document.getElementById('transactionHistorySection');
+
+            profileSection.classList.remove('d-none');
+            transactionHistorySection.classList.add('d-none');
+
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('.toggle-details').forEach(button => {
+            button.addEventListener('click', function () {
+                const orderId = this.getAttribute('data-order-id');
+                const detailsRow = document.getElementById(`details-${orderId}`);
+
+                // Toggle visibility of details row with animation
+                if (detailsRow.classList.contains('d-none')) {
+                    // Show details with animation
+                    detailsRow.classList.remove('d-none');
+                    detailsRow.classList.add('show');
+                    this.innerText = "Hide";
+
+                    // Fetch order details via AJAX
+                    fetch(`/order-detail?orderId=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const detailsContent = detailsRow.querySelector('.order-details-content');
+                            if (data.success) {
+                                let html = `
+                                    <table class="table table-striped mb-0 details-table">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col">Product Name</th>
+                                                <th scope="col">Quantity</th>
+                                                <th scope="col">Price</th>
+                                                <th scope="col">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                `;
+                                data.cartItems.forEach(item => {
+                                    html += `
+                                        <tr>
+                                            <td>${item.name}</td>
+                                            <td>${item.quantity}</td>
+                                            <td>$${item.price.toFixed(2)}</td>
+                                            <td>$${(item.quantity * item.price).toFixed(2)}</td>
+                                        </tr>
+                                    `;
+                                });
+                                html += `
+                                        </tbody>
+                                    </table>
+                                `;
+                                detailsContent.innerHTML = html;
+                            } else {
+                                detailsContent.innerHTML = `<p>Error loading details: ${data.message}</p>`;
+                            }
+                        })
+                        .catch(error => {
+                            detailsRow.querySelector('.order-details-content').innerHTML = `<p>Error fetching details: ${error.message}</p>`;
+                        });
+
+                } else {
+                    // Hide details with animation
+                    detailsRow.classList.remove('show');
+                    detailsRow.classList.add('d-none');
+                    this.innerText = "View";
+                }
+            });
+        });
+
+    </script>
+
+
 </section>

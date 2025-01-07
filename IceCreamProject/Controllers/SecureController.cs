@@ -2,12 +2,16 @@
 using IceCreamProject.Models;
 using Microsoft.AspNetCore.Identity;
 using IceCreamProject.ViewModels;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 namespace IceCreamProject.Controllers
  
 {
     
 
-    public class SucreController : Controller
+    public class SecureController : Controller
     {
         private readonly ShopContext db;
         private readonly UserManager<User> _userManager;
@@ -16,7 +20,7 @@ namespace IceCreamProject.Controllers
         private readonly EmailService _emailService;
 
 
-        public SucreController(ShopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, EmailService emailService)
+        public SecureController(ShopContext context, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, EmailService emailService)
         {
             db = context;
             _userManager = userManager;
@@ -26,17 +30,77 @@ namespace IceCreamProject.Controllers
 
         }
 
-        [HttpGet("/login",Name = "Login")]
-        public IActionResult Login()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
+		[HttpGet("/login", Name = "Login")]
+		public IActionResult Login(string returnUrl = "/")
+		{
+			if (User.Identity.IsAuthenticated)
+			{
+				return RedirectToAction("Index", "Home");
+			}
 
+			ViewData["ReturnUrl"] = returnUrl;
+			return View();
+		}
+
+
+		[HttpGet("/login-google", Name = "LoginGoogle")]
+		public IActionResult LoginGoogle(string returnUrl = "/")
+		{
+			var properties = new AuthenticationProperties
+			{
+				RedirectUri = Url.Action("GoogleResponse", "Secure"),
+				Items = { { "returnUrl", returnUrl } }
+			};
+			return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+		}
+
+
+        [HttpGet("/google-response", Name = "GoogleResponse")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!result.Succeeded) return RedirectToAction("Login");
+
+            var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                // Register a new user if not found
+                user = new User
+                {
+                    Email = email,
+                    UserName = result.Principal.FindFirstValue(ClaimTypes.Name) ?? email,
+                    EmailConfirmed = true
+                };
+
+                foreach (var claim in result.Principal.Claims)
+                {
+                    Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                }
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    TempData["Error"] = "Failed to create user account.";
+                    return RedirectToAction("Login");
+                }
+
+                await _userManager.AddToRoleAsync(user, "User");
             }
-            // This will simply return the login view for GET requests
-            return View();
+
+            // Sign in the user
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            // Store user data in session after login
+            HttpContext.Session.SetString("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName ?? string.Empty);
+            HttpContext.Session.SetString("Email", user.Email ?? string.Empty);
+
+            return Redirect(result.Properties.Items["returnUrl"] ?? "/");
         }
+
 
         [HttpPost("/login")]
         [ValidateAntiForgeryToken]

@@ -1,0 +1,44 @@
+﻿@model List<IceCreamProject.Models.Order>
+
+@{
+    ViewData["Title"] = "Your Orders";
+}
+
+<h1>Your Orders</h1>
+
+@if (!Model.Any())
+{
+    <p>You have no orders yet.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Payment Method</th>
+                <th>Order Status</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var order = Model[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@order.TotalAmount.ToString("C")</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>@order.OrderStatus</td>
+                    <td>
+                        <a asp-action="OrderDetail" asp-route-orderId="@order.OrderId" class="btn btn-info btn-sm">View</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

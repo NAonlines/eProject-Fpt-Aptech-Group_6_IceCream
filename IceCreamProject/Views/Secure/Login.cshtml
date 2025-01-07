@@ -3,6 +3,9 @@
     ViewData["Title"] = "Login";
     Layout = "~/Views/Secure.cshtml";
 }
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+
 <section class="vh-100">
     @if (TempData["Success"] != null)
     {
@@ -20,6 +23,21 @@
                     </div>
                 </div>
             }
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="toast-container position-fixed p-3" style="bottom: 1rem; right: 1rem; z-index:1050;" id="toast-container">
+            <div class="toast align-items-center border-0 show bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-danger text-white">
+                    <strong class="me-auto">Error</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @TempData["Error"]
+                </div>
+            </div>
         </div>
     }
     <div class="container py-5 h-100">
@@ -65,9 +83,20 @@
                                     </div>
 
                                     <!-- Submit Button -->
-                                    <div class="pt-1 mb-4">
+                                    <div class="pt-1 mb-4 text-center">
                                         <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+
                                         <a asp-route="Home" class="btn btn-dark btn-lg btn-block">Cancel</a>
+
+                                    </div>
+                                    <div class="text-center">
+                                        <p>or sign up with:</p>
+
+                                        <a asp-route="LoginGoogle" type="button" class="btn btn-link btn-floating mx-1">
+                                            <img src="~/Frontend/images/svg/Google__G__logo.svg" alt="Google Icon" style="width: 24px; height: 24px;" />
+                                        </a>
+
+
 
                                     </div>
 

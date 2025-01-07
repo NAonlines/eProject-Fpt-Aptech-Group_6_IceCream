@@ -18,7 +18,7 @@ namespace IceCreamProject.Controllers
 			_webHostEnvironment = webHostEnvironment;
 		}
 
-		[HttpGet("payment-membership")]
+		[HttpGet("payment-membership",Name = "Membership")]
 		public async Task<IActionResult> Index()
 		{
 
@@ -33,7 +33,7 @@ namespace IceCreamProject.Controllers
 			return View(package);
 		}
 
-		[HttpGet("recipes-user")]
+		[HttpGet("recipes-user",Name = "RecipesUser")]
 		public async Task<IActionResult> RecipesUser()
 		{
 			var user = await _userManager.GetUserAsync(User);

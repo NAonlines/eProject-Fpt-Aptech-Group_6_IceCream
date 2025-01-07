@@ -29,7 +29,6 @@
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="~/Frontend/css/site.css">
-	<link rel="stylesheet" href="~/Frontend/css/site.css">
 	<title>Ice Cream </title>
 	@RenderSection("Styles", required: false)
 
@@ -62,21 +61,42 @@
 								<a asp-route="Home">Home</a>
 							</li>
 
-												<li class="@(
+							<li class="@(
 								(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
-								 
-								  ViewBag.CategoryName == "Free") ? "active" : "")">
+								 ViewContext.RouteData.Values["action"]?.ToString() == "FreeRecipes" &&
+								 (ViewBag.CategoryName == null || ViewBag.CategoryName == "Free")) ? "active" : "")">
 								<a asp-controller="Home" asp-action="FreeRecipes">Free Recipes</a>
 							</li>
-							<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "AboutUs") ? "active" : "")">
+
+							<li class="has-children @((ViewContext.RouteData.Values["action"]?.ToString() == "AboutUs" ||
+								ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs") ? "active" : "")">
 								<a asp-route="AboutUs">About Us</a>
+								<ul class="dropdown">
+
+									@* Uncomment if more nested menus are needed *@
+									<!--
+									<li class="has-children @((ViewContext.RouteData.Values["action"]?.ToString() == "MenuTwo") ? "active" : "")">
+										<a asp-route="MenuTwo">Menu Two</a>
+										<ul class="dropdown">
+											<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "SubMenuThree") ? "active" : "")">
+												<a asp-route="SubMenuThree">Sub Menu Three</a>
+											</li>
+										</ul>
+									</li>
+									-->
+									<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs") ? "active" : "")">
+										<a asp-route="ContactUs">Contact Us</a>
+									</li>
+
+								</ul>
 							</li>
-							<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs") ? "active" : "")">
-								<a asp-route="ContactUs">Contact Us</a>
+
+
+
+							<li class="@((ViewContext.RouteData.Values["controller"]?.ToString() == "Membership") ? "active" : "")">
+								<a asp-route="Membership">Membership</a>
 							</li>
-							<li class="@((ViewContext.HttpContext.Request.Path.ToString() == "/payment-membership") ? "active" : "")">
-								<a href="/payment-membership">Membership</a>
-							</li>
+
 
 						</ul>
 					</div>
@@ -277,7 +297,8 @@
 
 	</script>
 
+		
 
-
+	
 </body>
 </html>

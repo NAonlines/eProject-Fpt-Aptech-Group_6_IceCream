@@ -27,12 +27,10 @@ namespace IceCreamProject.Controllers
 
             return View(books);
         }
-
         [Authorize]
         [HttpGet("/profile", Name = "Profile")]
         public async Task<IActionResult> Profile()
         {
-            // Lấy thông tin user hiện tại
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
@@ -41,18 +39,23 @@ namespace IceCreamProject.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Tạo ViewModel và đổ thông tin user vào
+            var transactionHistory = await _db.Orders
+                .Where(o => o.UserId == user.Id)
+                .Include(o => o.CartItems)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
             var model = new ProfileViewModel
             {
                 Email = user.Email,
                 Phone = user.PhoneNumber,
                 Address = user.Address,
-                ProfileImageUrl = string.IsNullOrWhiteSpace(user.ProfileImageUrl) ? "/default-profile.png" : user.ProfileImageUrl // Đường dẫn mặc định nếu không có ảnh
+                ProfileImageUrl = string.IsNullOrWhiteSpace(user.ProfileImageUrl) ? "/default-profile.png" : user.ProfileImageUrl,
+                TransactionHistory = transactionHistory
             };
 
             return View(model);
         }
-
 
 
         [HttpPost]
@@ -234,13 +237,11 @@ namespace IceCreamProject.Controllers
                 return Json(new { success = false, message = "Book not found." });
             }
 
-            // Kiểm tra trạng thái sản phẩm
             if (!book.IsActive)
             {
                 return Json(new { success = false, message = "This book is currently out of stock." });
             }
 
-            // Logic thêm sản phẩm vào giỏ hàng
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
             var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
@@ -477,9 +478,46 @@ namespace IceCreamProject.Controllers
             return View(order);
         }
 
+		//      [HttpGet("/orders", Name = "Orders")]
+		//public async Task<IActionResult> Orders()
+		//{
+		//          var user = await _userManager.GetUserAsync(User);
+		//          if(user == null) {
+		//		return RedirectToAction("Login", "Secure");
+		//	}else{
+		//		var orders = await _db.Orders.Where(o => o.UserId == user.Id).ToListAsync();
+		//		return View(orders);
+		//	}
 
 
-        [HttpGet("/free-recipes", Name = "FreeRecipes")]
+		//}
+		[Authorize]
+		[HttpGet("/order-detail")]
+		public async Task<IActionResult> OrderDetail(int orderId)
+		{
+			var order = await _db.Orders
+				.Include(o => o.CartItems)
+				.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+			if (order == null)
+			{
+				return Json(new { success = false, message = "Order not found." });
+			}
+
+			var cartItems = order.CartItems.Select(item => new
+			{
+				name = item.Name,
+				quantity = item.Quantity,
+				price = item.Price
+			}).ToList();
+
+			return Json(new { success = true, cartItems });
+		}
+
+
+
+
+		[HttpGet("/free-recipes", Name = "FreeRecipes")]
         public async Task<IActionResult> FreeRecipes()
         {
             var freeCategory = await _db.Categories.FirstOrDefaultAsync(c => c.Name == "Free" && c.IsActive);
@@ -550,7 +588,7 @@ namespace IceCreamProject.Controllers
         public async Task<IActionResult> BestSelling()
         {
             
-            var books = await _db.Books.ToListAsync(); // Lấy tất cả sách
+            var books = await _db.Books.ToListAsync(); 
             return View(books);
         }
 

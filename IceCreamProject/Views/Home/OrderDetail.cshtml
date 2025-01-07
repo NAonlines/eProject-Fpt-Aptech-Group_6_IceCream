@@ -1,0 +1,70 @@
+﻿@model IceCreamProject.Models.Order
+
+@{
+    ViewData["Title"] = "Order Detail";
+}
+
+<h1>Order Details</h1>
+
+<div>
+    <h3>Order Information</h3>
+    <ul>
+        <li><strong>Order ID:</strong> @Model.OrderId</li>
+        <li><strong>Customer Name:</strong> @Model.CustomerName</li>
+        <li><strong>Phone Number:</strong> @Model.PhoneNumber</li>
+        <li><strong>Address:</strong> @Model.Address</li>
+        <li><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</li>
+        <li><strong>Payment Method:</strong> @Model.PaymentMethod</li>
+        <li><strong>Order Status:</strong> @Model.OrderStatus</li>
+        <li><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</li>
+    </ul>
+</div>
+
+<h3>Cart Items</h3>
+@if (Model.CartItems == null || !Model.CartItems.Any())
+{
+    <p>No items found in this order.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.CartItems.Count; i++)
+            {
+                var item = Model.CartItems[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Image))
+                        {
+                            <img src="@item.Image" alt="@item.Name" width="50" height="50" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div>
+    <a asp-action="Orders" class="btn btn-primary">Back to Orders</a>
+</div>

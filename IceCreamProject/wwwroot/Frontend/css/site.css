@@ -325,3 +325,8 @@ a.btn-link.text-light:after {
         transform: rotate(360deg);
     }
 }
+@media (min-width: 992px) {
+    .site-mobile-menu {
+        display: none !important; 
+    }
+}
