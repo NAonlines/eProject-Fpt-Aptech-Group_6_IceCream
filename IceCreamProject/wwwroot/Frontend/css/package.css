@@ -1,0 +1,82 @@
+﻿
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pricing-box {
+    background-color: #efefef;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-title {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.pricing-subtitle {
+    color: #d81b60;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.price {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.vat {
+    font-size: 24px;
+    font-weight: 700;
+    color: #555;
+}
+
+.price-details {
+    margin: 24px 0;
+    padding-left: 14px;
+    list-style: square;
+}
+
+    .price-details li {
+        margin-bottom: 12px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+.buy-button {
+    background-color: #f38d61;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: auto;
+    text-align: center;
+    text-decoration: none;
+}
+    .buy-button:hover {
+        color: #fff;
+    }
+
+  

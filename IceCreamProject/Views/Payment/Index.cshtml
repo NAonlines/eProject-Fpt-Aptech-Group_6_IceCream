@@ -1,0 +1,191 @@
+﻿//PHẦN THANH TOÁN + API THANH TOÁN 
+
+@{
+    ViewData["Title"] = "Payment";
+    Layout = "~/Views/Secure.cshtml";
+}
+
+@section Styles{
+    <link href="~/frontend/css/payment.css" rel="stylesheet" />
+}
+
+
+<section class="h-100 gradient-custom-2"
+         style="background-image: url('@Url.Content("~/Frontend/images/Ice_Cream_banner_wallpaper.jpg")');
+                background-size: cover;
+                background-position: center;">
+
+  
+
+
+    <div class="container py-5 h-1200">
+        <div class="mb-3">
+            <a asp-route="Home" class="btn btn-primary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <div class="row d-flex justify-content-center">
+            <div class="col col-lg-9 col-xl-8">
+                <div class="card">
+                    <!-- Header Section -->
+                   
+                    <div class="col-12 col-md-12" id="step-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-6">
+                                        <div class="img-bank-qr" id="imgBank" data-id="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                       
+                                        @* Sửa thành bank của mọi người nhé *@
+
+                                        <div class="content-qr">
+                                            <div class="mb-3">
+                                                <p class="title-chuyen mb-0">
+                                                    Account owner
+                                                </p>
+                                                <p class="in-dam">Nguyen Thanh Nghia</p>
+                                            </div>
+                                            <div class="mb-3 copy-ele">
+                                                <div>
+                                                    <p class="title-chuyen mb-0">Account number</p>
+                                                    <p id="accountNumber" data-copy="083202000257" class="in-dam">083202000257</p>
+                                                </div>
+                                               
+                                            </div>
+                                            @*End Sửa *@
+                                            <div class="mb-3">
+                                                <p class="title-chuyen mb-0">Amount</p>
+                                                <p class="in-dam" id="so-tien"></p>
+                                            </div>
+                                            <div class="mb-3 copy-ele">
+                                                <div>
+                                                    <p class="title-chuyen mb-0">Content</p>
+                                                    <p id="contentToCopy" data-copy="@ViewBag.CodeOrder" class="in-dam">@ViewBag.CodeOrder</p>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-4 mb-4 d-flex justify-content-center" id="step-2-2">
+                                <button class="btn btn-primary confirm-button">Confirm deposit</button>
+                            </div>
+                        </div>
+
+                    </div>
+                 
+                    <!-- Main Content -->
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        function formatCurrency(amount) {
+            const formatter = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+
+            return formatter.format(amount);
+        }
+        $(document).ready(function () {
+            $('#preloader').fadeIn().addClass('d-flex');
+
+
+            
+            const nameBank = "ACB";
+            const stkBank = "15190927";
+            const tenNguoiDung = "NGUYEN THANH NGHIA";
+
+            //End sửa
+
+            var orderCode = "@ViewBag.CodeOrder";
+            const Price = '@ViewBag.Price'
+            const soTien = formatCurrency(Price);
+            $("#so-tien").text(soTien)
+            $('.img-bank-qr').each(function () {
+                const imgUrl = `https://img.vietqr.io/image/${nameBank}-${stkBank}-print.png?amount=${Price}&addInfo=${orderCode}&accountName=${tenNguoiDung}`;
+
+                $(this).html(`<img src="${imgUrl}" alt="QR Code bank" class="qr-code-img img-fluid" />`);
+                $('#preloader').fadeOut(function () {
+                    $(this).removeClass('d-flex');
+                });
+            });
+
+
+
+            $('.confirm-button').on('click', function () {
+
+                $('#preloader').fadeIn().addClass('d-flex');
+
+                const formData = new FormData();
+                formData.append('OrderCode', orderCode);
+                formData.append('PriceRecharge', "@ViewBag.Price");
+                formData.append('PriceMemberID', "@ViewBag.PackageID");
+                axios.post('/confirm/payment', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(function (response) {
+                    $('#preloader').fadeOut(function () {
+                        $(this).removeClass('d-flex');
+                    });
+
+                    if (response.data.code === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Successg',
+                            text: 'Confirmed successfully',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/";
+                            }
+                        });
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: `${response.data.message}`,
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                return;
+                            }
+                        });
+                    }
+                }).catch(function (error) {
+                    $('#preloader').fadeOut(function () {
+                        $(this).removeClass('d-flex');
+                    });
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `An Error has occurred`,
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            return;
+
+                        }
+                    });
+                });
+
+
+            })
+
+
+        });
+        
+    </script>
+}

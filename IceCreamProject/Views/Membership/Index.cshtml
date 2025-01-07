@@ -1,0 +1,96 @@
+﻿@model List<IceCreamProject.Models.MemberPrice>
+@{
+    ViewData["Title"] = "Payment";
+    Layout = "~/Views/Frontend.cshtml";
+    List<IceCreamProject.Models.Memberships> listMember = null;
+    IceCreamProject.Models.Memberships isPurchased = null;
+    if (ViewBag.DataOrder != null)
+    {
+        listMember = ViewBag.DataOrder;
+    }
+}
+@section Scripts{
+    <link href="~/frontend/css/package.css" rel="stylesheet" />
+}
+<div class="hero overlay">
+    <div class="img-bg rellax">
+        <img src="~/Frontend/images/money-trendy-banner-vector.jpg" alt="Image" class="img-fluid">
+    </div>
+
+    <div class="container">
+        <div class="row align-items-center justify-content-start">
+            <div class="col-lg-5">
+                <h1 class="heading" data-aos="fade-up">Payment!</h1>
+                <p class="mb-5" data-aos="fade-up">Become a member with us to see attractive recipes!</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+@if (Model.Any())
+{
+    <div class="section section-2">
+        <section class="pb-5">
+            <div class="container-lg">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="section-header d-flex flex-wrap justify-content-between my-4">
+                            <h2 class="section-title">Membership Prices</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="pricing-grid">
+                        @foreach(var item in Model)
+                        {
+                            if (listMember != null)
+                            {
+                                isPurchased = listMember.FirstOrDefault(x => x.PriceMemberID == item.IDMemberShipPrice);
+
+                            }
+                            <div class="pricing-box">
+                                <div class="pricing-title">
+                                   @item.NamePrice
+                                </div>
+                                <div class="pricing-subtitle"><i class="fa-regular fa-clock"></i> @item.Duration</div>
+                                <div class="price">
+                                    @item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+
+                                </div>
+                                <ul class="price-details">
+                                    <li>
+                                        List Recipes 
+                                    </li>
+                                </ul>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    @if (listMember != null && isPurchased != null && isPurchased.Status)
+                                    {
+                                        <span class="btn btn-secondary">Purchased (Expired: @isPurchased.EndDate.ToString("dd/MM/yyyy"))</span>
+                                    }
+                                    else
+                                    {
+                                        <a href="/payment/@item.IDMemberShipPrice/@item.Price" class="buy-button">Buy Now ></a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a href="/login" class="buy-button">Buy Now ></a>
+
+                                }
+
+
+                            </div>
+
+                        }
+                       
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    
+}

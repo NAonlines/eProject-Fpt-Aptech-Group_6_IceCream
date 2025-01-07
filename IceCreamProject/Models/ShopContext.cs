@@ -6,21 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 public class ShopUser : IdentityUser
 {
-	// Bạn có thể mở rộng lớp IdentityUser nếu cần
+    // Bạn có thể mở rộng lớp IdentityUser nếu cần
 }
 
 public class ShopContext : IdentityDbContext<User, IdentityRole, string>
 {
-	public ShopContext(DbContextOptions<ShopContext> options) : base(options) { }
+    public ShopContext(DbContextOptions<ShopContext> options) : base(options) { }
 
-	// DbSets cho các model của bạn
-	public DbSet<Category> Categories { get; set; }
-	public DbSet<Recipe> Recipes { get; set; }
-	public DbSet<Book> Books { get; set; }
-	public DbSet<Order> Orders { get; set; }
-	public DbSet<Feedback> Feedbacks { get; set; }
-	public DbSet<MembershipPayment> MembershipPayments { get; set; }
+    // DbSets cho các model của bạn
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
+    public DbSet<Book> Books { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Feedback> Feedbacks { get; set; }
+    public DbSet<MembershipPayment> MembershipPayments { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
+
+    
+    public DbSet<MemberPrice> MemberPrice { get; set; }
+    public DbSet<PaymentMember> PaymentMember { get; set; }
+    public DbSet<Memberships> Memberships { get; set; }
     //public DbSet<Checkout> Checkouts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

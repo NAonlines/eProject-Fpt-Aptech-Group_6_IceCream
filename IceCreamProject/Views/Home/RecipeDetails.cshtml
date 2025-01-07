@@ -18,7 +18,19 @@
         <div class="container h-100 d-flex flex-column align-items-center justify-content-center">
             <nav aria-label="breadcrumb" class="pt-5">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="@Url.Action("FreeRecipes", "Home")" class="text-white">Free Recipes</a></li>
+                    @if (ViewBag.CategoryName == "Payment")
+                    {
+                        <li class="breadcrumb-item">
+                            <a href="/recipes-user" class="text-white">@ViewBag.CategoryName Recipes</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("FreeRecipes", "Home")" class="text-white">@ViewBag.CategoryName Recipes</a>
+                        </li>
+                    }
+
                     <li class="breadcrumb-item active text-white" aria-current="page">Recipe Detail</li>
                 </ol>
             </nav>

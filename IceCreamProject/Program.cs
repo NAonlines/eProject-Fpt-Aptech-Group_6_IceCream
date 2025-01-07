@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using IceCreamProject.Models;
+using IceCreamProject.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using IceCreamProject.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +22,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+builder.Services.AddTransient<IServices, Services>();
+
 builder.Services.AddDbContext<ShopContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 // Cấu hình Identity sử dụng ShopContext
-builder.Services.AddIdentity<User, IdentityRole>(options => {
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
@@ -56,17 +63,17 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddAuthentication(options =>
 {
-	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-	options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-.AddCookie(options => 
+.AddCookie(options =>
 {
-	options.LoginPath = "/Login";
-	options.AccessDeniedPath = "/";
-	options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-	options.SlidingExpiration = true;
- });
+    options.LoginPath = "/Login";
+    options.AccessDeniedPath = "/";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
+});
 
 
 builder.Services.AddSession(options =>
@@ -82,9 +89,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -98,7 +105,7 @@ app.UseAuthorization();
 
 
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

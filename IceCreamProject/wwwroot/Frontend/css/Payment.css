@@ -1,0 +1,27 @@
+﻿
+
+
+.form-control {
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+    .form-control:focus {
+        border-color: #a9a9a9;
+        box-shadow: none;
+    }
+
+.btn-primary {
+    background-color: #ff7f50;
+    border: none;
+    border-radius: 5px;
+}
+
+    .btn-primary:hover {
+        background-color: #ff6347;
+    }
+
+.h-1200 {
+    height: 1200px;
+}

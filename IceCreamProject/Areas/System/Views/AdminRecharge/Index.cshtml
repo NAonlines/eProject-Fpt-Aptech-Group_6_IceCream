@@ -1,0 +1,133 @@
+﻿@model List<IceCreamProject.Models.PaymentMember>
+
+@{
+    ViewData["Title"] = "List Recharge";
+    Layout = "~/Areas/System/Views/backend.cshtml";
+    var count = 1;
+}
+<div class="content">
+    <div class="container">
+        <div class="page-title">
+            <h3>Recharge List</h3>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="card">
+                  
+                    <div class="card-body">
+                        <table class="table table-hover" id="dataTables-example" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Payment Code</th>
+                                    <th>Name User</th>
+                                    <th>Name Price</th>
+                                    <th>Price</th>
+                                    <th>Create Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Any())
+                                {
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@(count++)</td>
+                                            <td>@item.PaymentCode</td>
+                                            <td>@item.UserData?.UserName</td>
+                                            <td>@item.MemberPriceData?.NamePrice</td>
+                                            <td>
+                                                @item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+
+                                            </td>
+                                            <td>
+                                                @item.CreateDate.ToString("hh:mm dd/MM/yyyy")
+                                            </td>
+                                            <td>
+                                                @if (item.Status)
+                                                {
+                                                    <button class="btn btn-success">Approved</button>
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-danger change-active" data-id="@item.IDPayment">
+                                                        Not approved yet
+                                                    </button>
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                            No data
+                                    </td>
+                                </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".change-active").on("click", function () {
+                const id = $(this).data("id");
+                const url = `/system/recharge/change-active/${id}`;
+                axios.get(url)
+                    .then(function (response) {
+                        if (response.data.code === 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Approved Success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: `${response.data.message}`,
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    return;
+
+                                }
+                            });
+                        }
+                    })
+                    .catch(function (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: `${response.data.message}`,
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                return;
+
+                            }
+                        });
+                    });
+
+            });
+        });
+       
+    </script>
+}

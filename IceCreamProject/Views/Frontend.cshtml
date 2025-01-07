@@ -31,6 +31,8 @@
 	<link rel="stylesheet" href="~/Frontend/css/site.css">
 	<link rel="stylesheet" href="~/Frontend/css/site.css">
 	<title>Ice Cream </title>
+	@RenderSection("Styles", required: false)
+
 </head>
 <body>
 
@@ -62,8 +64,8 @@
 
 												<li class="@(
 								(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
-								 (ViewContext.RouteData.Values["action"]?.ToString() == "FreeRecipes" ||
-								  ViewContext.RouteData.Values["action"]?.ToString() == "RecipeDetails")) ? "active" : "")">
+								 
+								  ViewBag.CategoryName == "Free") ? "active" : "")">
 								<a asp-controller="Home" asp-action="FreeRecipes">Free Recipes</a>
 							</li>
 							<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "AboutUs") ? "active" : "")">
@@ -72,6 +74,10 @@
 							<li class="@((ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs") ? "active" : "")">
 								<a asp-route="ContactUs">Contact Us</a>
 							</li>
+							<li class="@((ViewContext.HttpContext.Request.Path.ToString() == "/payment-membership") ? "active" : "")">
+								<a href="/payment-membership">Membership</a>
+							</li>
+
 						</ul>
 					</div>
 
@@ -93,7 +99,7 @@
 									</a>
 									<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
 										<li><a class="dropdown-item" asp-route="Profile">Profile</a></li>
-										<li><a class="dropdown-item" href="#">Settings</a></li>
+										<li><a class="dropdown-item" href="/recipes-user">Recipes</a></li>
 										<li><hr class="dropdown-divider"></li>
 										<li><a class="dropdown-item" asp-route="Logout">Logout</a></li>
 									</ul>
@@ -228,6 +234,7 @@
 	@RenderSection("Scripts", required: false)
 	<script>
 		document.addEventListener('DOMContentLoaded', (event) => {
+
 			var toastEL = document.querySelector('.toast');
 			var loadtoast = new bootstrap.Toast(toastEL);
 			loadtoast.show();

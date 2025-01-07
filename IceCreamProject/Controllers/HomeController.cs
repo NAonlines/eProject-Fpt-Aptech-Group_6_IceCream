@@ -1,16 +1,10 @@
-﻿using IceCreamProject.ViewModels;
+﻿using IceCreamProject.Extensions;
+using IceCreamProject.Models;
+using IceCreamProject.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using IceCreamProject.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Authorization;
-using System.Dynamic;
-using IceCreamProject.Models;
-using Microsoft.AspNetCore.Hosting;
-using System.Security.Claims;
 namespace IceCreamProject.Controllers
 {
     public class HomeController : Controller
@@ -18,7 +12,7 @@ namespace IceCreamProject.Controllers
         private readonly ShopContext _db;
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public HomeController(ShopContext db, UserManager<User> userManager,IWebHostEnvironment webHostEnvironment)
+        public HomeController(ShopContext db, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _userManager = userManager;
@@ -26,7 +20,7 @@ namespace IceCreamProject.Controllers
         }
 
         [HttpGet("/", Name = "Home")]
-        
+
         public IActionResult Index()
         {
             var books = _db.Books.Take(8).ToList();
@@ -167,7 +161,7 @@ namespace IceCreamProject.Controllers
             var product = await _db.Books
                 .Include(b => b.Category)
                 .Include(b => b.Recipes)
-                .FirstOrDefaultAsync(b => b.BookId == id && b.IsActive); 
+                .FirstOrDefaultAsync(b => b.BookId == id && b.IsActive);
 
             if (product == null)
             {
@@ -500,6 +494,7 @@ namespace IceCreamProject.Controllers
         [HttpGet("/recipe-details/{id}", Name = "RecipeDetails")]
         public async Task<IActionResult> RecipeDetails(int id)
         {
+
             var recipe = await _db.Recipes
                 .Include(r => r.Category)
                 .Include(r => r.Book)
@@ -510,6 +505,39 @@ namespace IceCreamProject.Controllers
             {
                 return NotFound("Recipe not found.");
             }
+            var freeCategory = await _db.Categories.FirstOrDefaultAsync(c => c.Name == "Payment" && c.IsActive);
+            if (freeCategory != null)
+            {
+                ViewBag.CategoryName = "Payment";
+                if (freeCategory.CategoryId == recipe.CategoryId)
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user != null)
+                    {
+                        var checkMembership = await _db.Memberships.Where(x => x.UserID == user.Id && x.Status).ToListAsync();
+                        if (checkMembership.Count > 0)
+                        {
+                            foreach (var membership in checkMembership)
+                            {
+                                if (membership.EndDate <= DateTime.UtcNow)
+                                {
+                                    membership.Status = false;
+                                }
+                            }
+                            await _db.SaveChangesAsync();
+                            return View(recipe);
+
+                        }
+                        return NotFound("Recipe not found.");
+
+
+                    }
+                    return NotFound("Recipe not found.");
+
+
+                }
+            }
+            ViewBag.CategoryName = "Free";
 
             return View(recipe);
         }
