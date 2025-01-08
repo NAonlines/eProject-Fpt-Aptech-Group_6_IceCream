@@ -87,7 +87,7 @@
     </div>
 </section>
 
-@section Scripts{
+@section Scripts {
     <script>
         function formatCurrency(amount) {
             const formatter = new Intl.NumberFormat('vi-VN', {
@@ -97,21 +97,19 @@
 
             return formatter.format(amount);
         }
+
         $(document).ready(function () {
             $('#preloader').fadeIn().addClass('d-flex');
 
-
-            
             const nameBank = "ACB";
             const stkBank = "15190927";
             const tenNguoiDung = "NGUYEN THANH NGHIA";
 
-            //End sửa
-
             var orderCode = "@ViewBag.CodeOrder";
-            const Price = '@ViewBag.Price'
+            const Price = '@ViewBag.Price';
             const soTien = formatCurrency(Price);
-            $("#so-tien").text(soTien)
+            $("#so-tien").text(soTien);
+
             $('.img-bank-qr').each(function () {
                 const imgUrl = `https://img.vietqr.io/image/${nameBank}-${stkBank}-print.png?amount=${Price}&addInfo=${orderCode}&accountName=${tenNguoiDung}`;
 
@@ -121,16 +119,20 @@
                 });
             });
 
-
+            // Initialize Notyf
+            const notyf = new Notyf({
+                duration: 3000, // Notification duration in milliseconds
+                position: { x: 'right', y: 'bottom' }, // Position of the notification
+            });
 
             $('.confirm-button').on('click', function () {
-
                 $('#preloader').fadeIn().addClass('d-flex');
 
                 const formData = new FormData();
                 formData.append('OrderCode', orderCode);
                 formData.append('PriceRecharge', "@ViewBag.Price");
                 formData.append('PriceMemberID', "@ViewBag.PackageID");
+
                 axios.post('/confirm/payment', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -141,51 +143,21 @@
                     });
 
                     if (response.data.code === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Confirmed successfully',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = "/";
-                            }
-                        });
-                    }else{
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: `${response.data.message}`,
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                return;
-                            }
-                        });
+                        notyf.success('Confirmed successfully');
+                        setTimeout(() => {
+                            window.location.href = "/";
+                        }, 3000);
+                    } else {
+                        notyf.error(`${response.data.message}`);
                     }
                 }).catch(function (error) {
                     $('#preloader').fadeOut(function () {
                         $(this).removeClass('d-flex');
                     });
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: `An Error has occurred`,
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            return;
-
-                        }
-                    });
+                    notyf.error('An error has occurred');
                 });
-
-
-            })
-
-
+            });
         });
-        
     </script>
 }

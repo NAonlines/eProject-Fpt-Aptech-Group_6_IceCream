@@ -12,6 +12,5 @@ namespace IceCreamProject.Models
         public string? ProfileImageUrl { get; set; }
         public DateTime? LastForgotPasswordRequest { get; set; }
 
-        public ICollection<MembershipPayment> MembershipPayments { get; set; } = new List<MembershipPayment>();
     }
 }

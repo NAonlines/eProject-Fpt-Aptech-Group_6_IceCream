@@ -28,19 +28,20 @@
 
     @if (TempData["Success"] != null)
     {
-        <div class="toast-container position-fixed p-3" style="bottom: 1rem; right: 1rem; z-index:1050;" id="toast-container">
-            <div class="toast align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="me-auto">Notification</strong>
-                    <small>Just now</small>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    @TempData["Success"]
-                </div>
-            </div>
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize Notyf
+                const notyf = new Notyf({
+                    duration: 3000, // Notification duration in milliseconds
+                    position: { x: 'right', y: 'bottom' }, // Notification position
+                });
+
+                // Trigger the Notyf success notification
+                notyf.success('@TempData["Success"]');
+            });
+        </script>
     }
+
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-lg-10 col-xl-8">

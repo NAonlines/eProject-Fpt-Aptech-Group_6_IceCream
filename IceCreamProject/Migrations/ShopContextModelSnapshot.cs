@@ -57,7 +57,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.CartItem", b =>
@@ -93,7 +93,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Category", b =>
@@ -121,7 +121,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Feedback", b =>
@@ -153,7 +153,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.MemberPrice", b =>
@@ -180,7 +180,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasKey("IDMemberShipPrice");
 
-                    b.ToTable("MemberPrice");
+                    b.ToTable("MemberPrice", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.MembershipPayment", b =>
@@ -227,7 +227,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("MembershipPayments");
+                    b.ToTable("MembershipPayments", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Memberships", b =>
@@ -260,7 +260,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Memberships");
+                    b.ToTable("Memberships", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Order", b =>
@@ -305,7 +305,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.PaymentMember", b =>
@@ -342,7 +342,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("PaymentMember");
+                    b.ToTable("PaymentMember", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.Recipe", b =>
@@ -384,7 +384,7 @@ namespace IceCreamProject.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Recipes");
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("IceCreamProject.Models.User", b =>

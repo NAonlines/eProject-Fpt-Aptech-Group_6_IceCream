@@ -162,7 +162,7 @@ namespace IceCreamProject.Controllers
 
 
 
-        [HttpGet("/product-details/{id}", Name = "ProductDetails")]
+        [HttpGet("/product-details/{name}-{id}", Name = "ProductDetails")]
         public async Task<IActionResult> ProductDetails(int id)
         {
             var product = await _db.Books
@@ -343,13 +343,21 @@ namespace IceCreamProject.Controllers
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
             var item = cart.FirstOrDefault(p => p.ProductId == productId);
+
             if (item != null)
             {
                 cart.Remove(item);
+                TempData["Success"] = "The product has been removed from your cart.";
             }
+            else
+            {
+                TempData["Error"] = "Product not found in the cart.";
+            }
+
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             return RedirectToAction("Cart");
         }
+
 
         [HttpPost("/update-cart", Name = "UpdateCart")]
         public IActionResult UpdateCart(int productId, int quantity)
@@ -568,7 +576,7 @@ namespace IceCreamProject.Controllers
             return View(freeRecipes);
         }
 
-        [HttpGet("/recipe-details/{id}", Name = "RecipeDetails")]
+        [HttpGet("/recipe-details/{name}-{id}", Name = "RecipeDetails")]
         public async Task<IActionResult> RecipeDetails(int id)
         {
 

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<IceCreamProject.Models.Recipe>
+﻿@using IceCreamProject.Libary
+@model IEnumerable<IceCreamProject.Models.Recipe>
 
 @{
     ViewData["Title"] = "Recipes";
@@ -48,7 +49,7 @@
                             <div class="col">
                                 <div class="product-item" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
                                     <figure style="position: relative; padding-top: 100%; overflow: hidden;">
-                                        <a href="@Url.Action("RecipeDetails", "Home", new { id = recipe.RecipeId })" title="@recipe.Name">
+                                        <a asp-route="RecipeDetails" asp-route-name="@UrlHelper.seoweb(@recipe.Name)" asp-route-id="@recipe.RecipeId" title="@recipe.Name">
                                             <img src="@(string.IsNullOrEmpty(recipe.ImageUrl) ? "/ImageUrl/default-recipe.jpg" : "/ImageUrl/" + recipe.ImageUrl)"
                                                  alt="@recipe.Name"
                                                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
@@ -66,7 +67,7 @@
                                         </p>
 
                                         <div class="button-area p-3 pt-0">
-                                            <a href="@Url.Action("RecipeDetails", "Home", new { id = recipe.RecipeId })" class="btn btn-primary rounded-1 p-2 fs-7">
+                                            <a asp-route="RecipeDetails" asp-route-name="@UrlHelper.seoweb(@recipe.Name)" asp-route-id="@recipe.RecipeId" class="btn btn-primary rounded-1 p-2 fs-7">
                                                 View Recipe
                                             </a>
                                         </div>

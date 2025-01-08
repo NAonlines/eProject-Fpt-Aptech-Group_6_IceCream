@@ -5,6 +5,46 @@
     }
 
     <section class="h-100 h-custom">
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize Notyf
+                const notyf = new Notyf({
+                    duration: 3000, // Notification duration in milliseconds
+                    position: { x: 'right', y: 'bottom' }, // Position of the notification
+                });
+
+                // Trigger the Notyf success notification
+                notyf.success('@TempData["Success"]');
+            });
+        </script>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize Notyf
+                const notyf = new Notyf({
+                    duration: 3000, // Notification duration in milliseconds
+                    position: { x: 'right', y: 'bottom' }, // Position of the notification
+                });
+
+                // Trigger the Notyf error notification
+                notyf.open({
+                    type: 'error', // Custom notification type for error
+                    message: '@TempData["Error"]', // Your message from TempData
+                    background: '#dc3545', // Red background (Bootstrap's danger color)
+                    icon: {
+                        className: 'fas fa-times-circle', // Font Awesome error icon class
+                        tagName: 'i', // HTML tag for the icon
+                    },
+                });
+            });
+        </script>
+    }
+
         <div class="container h-100 py-5">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col">
@@ -186,6 +226,7 @@
                 </div>
             </div>
         </div>
+
         <script>
             function updateQuantity(button, delta) {
                 const form = button.closest('form');
@@ -203,17 +244,31 @@
                 form.submit();
             }
         </script>
-    <script>
-        function validateCartBeforeCheckout() {
-            // Check if the cart has any items (assumes a data attribute or global variable for cart count)
-            const cartCount = @Model.Count; // Assuming Model is List<CartItem>
-            if (cartCount === 0) {
-                alert("Your cart is empty!");
-                window.location.href = '@Url.Action("Index", "Home")'; // Redirect to home
-            } else {
-                document.getElementById("checkoutForm").submit();
+        <script>
+            function validateCartBeforeCheckout() {
+                // Parse Razor variable safely
+                const cartCount = parseInt('@(Model?.Count ?? 0)', 10); // Defaults to 0 if Model.Count is null or undefined
+
+                if (isNaN(cartCount) || cartCount === 0) {
+                    // Trigger Notyf warning if cart is empty
+                    const notyf = new Notyf({
+                        duration: 3000, // Duration in milliseconds
+                        position: { x: 'right', y: 'bottom' } // Notification position
+                    });
+
+                    notyf.error('Your cart is empty! Please add items before proceeding.');
+
+                    // Redirect to the homepage after 3 seconds (3000 ms)
+                    setTimeout(() => {
+                        window.location.href = '@Url.Action("Index", "Home")'; // Redirect to Home page
+                    }, 2000); // 3 seconds delay
+                } else {
+                    // Submit the checkout form if items exist in the cart
+                    document.getElementById("checkoutForm").submit();
+                }
             }
-        }
-    </script>
+        </script>
+
+
     </section>
 
