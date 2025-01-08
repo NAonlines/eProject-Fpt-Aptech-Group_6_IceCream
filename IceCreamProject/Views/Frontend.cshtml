@@ -27,8 +27,10 @@
 	<link rel="stylesheet" href="~/Frontend/css/style.css" asp-append-version="true">
 	<link rel="stylesheet" href="~/Frontend/css/site.css" asp-append-version="true">
 
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="~/Frontend/css/site.css">
+
+	<link rel="stylesheet" href="~/Frontend/css/notyf.min.css " asp-append-version="true">
+
 	<title>Ice Cream </title>
 	@RenderSection("Styles", required: false)
 
@@ -148,36 +150,28 @@
 	</main>
 
 	<!-- Footer -->
-	<footer class="site-footer">
-		<div class="container">
-			<div class="row">
-				<!-- Footer content -->
-				<div class="col-lg-4">
-					<h3>About Our Recipe </h3>
-					<p>The recipes crafted by Mr. Amber are a blend of tradition and innovation, designed to bring out the finest flavors in every dessert. Each recipe is meticulously developed, ensuring a balance of taste, texture, and presentation. By following Mr. Amber's recipes, customers can recreate his signature desserts at home, transforming ordinary moments into delightful experiences. These recipes are not only easy to follow but also use ingredients that are readily available, making them accessible to everyone. Moreover, they encourage creativity, allowing users to add their personal twist. Embrace the art of dessert making with Mr. Amber's recipes and experience the joy of creating magic in your kitchen.</p>
-				</div>
-			</div>
-		</div>
-	</footer>
-
-
-
-
 
 	<div class="site-footer">
 		<div class="container">
 
 			<div class="row">
 				<div class="col-lg-4">
-					
 					<div class="widget">
-						<h3>Our Social Media</h3>
+						<h3>About Ice Cream<span class="text-primary">.</span></h3>
+						<p>
+							Nestled behind the sugar mountains and far from the lands of Vanilla and Chocolate lies a whimsical paradise where the magic of ice cream begins. Every scoop here is a masterpiece, carefully crafted with love, laughter, and the finest ingredients to spread sweetness and joy. Step into our world and let every flavor tell you its delicious story!
+						</p>
+
+					</div> <!-- /.widget -->
+					<div class="widget">
+						<h3>Connect</h3>
 						<ul class="list-unstyled social">
-							<li><a href="https://www.instagram.com/yugenx.610/profilecard/?igsh=MWVrYmFlMnBvNmJxdg%3D%3D"><span class="icon-instagram"></span></a></li>
-							<li><a href="https://x.com/rockyy0610"><span class="icon-twitter"></span></a></li>
-							<li><a href="https://www.facebook.com/share/15kAi3NR87/?mibextid=wwXIfr"><span class="icon-facebook"></span></a></li>
-							<li><a href="https://pin.it/4fFyy5iZn"><span class="icon-pinterest"></span></a></li>
-							
+							<li><a href="#"><span class="icon-instagram"></span></a></li>
+							<li><a href="#"><span class="icon-twitter"></span></a></li>
+							<li><a href="#"><span class="icon-facebook"></span></a></li>
+							<li><a href="#"><span class="icon-linkedin"></span></a></li>
+							<li><a href="#"><span class="icon-pinterest"></span></a></li>
+							<li><a href="#"><span class="icon-dribbble"></span></a></li>
 						</ul>
 					</div> <!-- /.widget -->
 				</div> <!-- /.col-lg-3 -->
@@ -186,35 +180,61 @@
 					<div class="widget">
 						<h3>Links</h3>
 						<ul class="list-unstyled float-left links">
-							<li><a href="#">About us</a></li>
-							<li><a href="#">Services</a></li>
+							<li><a asp-route="AboutUs">About us</a></li>
+						@* 	<li><a href="#">Services</a></li>
 							<li><a href="#">News</a></li>
-							<li><a href="#">Careers</a></li>
-							<li><a href="#">Contact</a></li>
-						</ul>
-					</div> <!-- /.widget -->
-				</div> <!-- /.col-lg-3 -->
-				<div class="col-lg-3">
-					<div class="widget">
-						<h3>Contact</h3>
-						<address>386/12 Le Van Quoi , Binh Tan Disctrict , Ho Chi Minh City</address>
-						<ul class="list-unstyled links mb-4">
-							<li><a href="tel://0707918661">0707918661</a></li>
-							<li><a href="mailto:yunsosweet0610@gmail.com">yunsosweet0610@gmail.com</a></li>
+							<li><a href="#">Careers</a></li> *@
+							<li><a asp-route=ContactUs>Contact</a></li>
 						</ul>
 					</div> <!-- /.widget -->
 				</div> <!-- /.col-lg-3 -->
 
-			</div> <!-- /.row -->		
+				<div class="col-lg-2">
+					<div class="widget">
+						<h3>Company</h3>
+						<ul class="list-unstyled float-left links">
+							<li><a asp-route="AboutUs">About us</a></li>
+		@* 					<li><a href="#">Services</a></li>
+							<li><a href="#">News</a></li>
+							<li><a href="#">Careers</a></li> *@
+							<li><a asp-route=ContactUs>Contact</a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-3 -->
+
+
+				<div class="col-lg-3">
+					<div class="widget">
+						<h3>Contact</h3>
+						<address>
+							62 Street 36, Van Phuc Urban Area, Thu Duc, Ho Chi Minh City
+						</address>
+						<ul class="list-unstyled links mb-4">
+							<li><a href="tel://0385784610">+84(0385784610)</a></li>
+							<li><a href="tel://0385784610">+84(0385784610)</a></li>
+							<li><a href="mailto:info@mydomain.com">pnamanh98@gmail.com</a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-3 -->
+
+			</div> <!-- /.row -->
+
+			<div class="row mt-5">
+				<div class="col-12 text-center">
+					<p class="mb-0">
+						Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed  by Nam Anh 
+					</p>
+				</div>
 			</div> <!-- /.container -->
-		</div> <!-- /.container -->
-	</div> <!-- /.site-footer -->
-	<!-- Preloader -->
-	<div id="overlayer"></div>
-	<div class="loader">
-		<div class="spinner-border text-primary" role="status">
-			<span class="visually-hidden">Loading...</span>
+		</div> <!-- /.site-footer -->
+		<!-- Preloader -->
+		<div id="overlayer"></div>
+		<div class="loader">
+			<div class="spinner-border text-primary" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
 		</div>
+
 	</div>
 
 
@@ -230,10 +250,9 @@
 	<script src="~/Frontend/js/jquery.validate.min.js" asp-append-version="true"></script>
 	<script src="~/Frontend/js/jquery-3.6.0.min.js" asp-append-version="true"></script>
 	<script src="~/frontend/js/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+@* 	<script src="~/frontend/js/sweetalert2@11.js" asp-append-version="true"></script>
+ *@
+	<script src="~/Frontend/js/notyf.min.js" asp-append-version="true"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.1/js/swiper.min.js'></script>
@@ -260,7 +279,9 @@
 			loadtoast.show();
 		});
 	</script>
-	<script>
+	@* 	  ==================javascript thuần=====================
+	*@
+	@* <script>
 			$(document).ready(function () {
 				function updateCartCount() {
 				$.get("/count-cart", function (data) {
@@ -295,10 +316,219 @@
 		});
 
 
+	</script> *@
+
+	@* <script>
+			function viewProductDetails(productId) {
+				var url = '/product-details/' + productId;
+
+				$.ajax({
+					url: url,
+					method: "GET",
+					success: function (response) {
+						if (!response.success) {
+							alert(response.message); // Hiển thị thông báo hết hàng
+							// if (response.redirectUrl) {
+							// 	window.location.href = response.redirectUrl; // Chuyển hướng về trang chủ
+							// }
+						} else {
+							// Nếu sản phẩm tồn tại, mở chi tiết sản phẩm (có thể chuyển hướng đến trang chi tiết sản phẩm)
+							window.location.href = '/product-details/' + productId; // Hoặc xử lý theo cách khác
+						}
+					},
+					error: function () {
+						alert('An error occurred while fetching product details.');
+					}
+				});
+			}
+	</script> *@
+
+
+	@* 	  ==================sweetalert2==========
+	 *@	
+ 
+ @* <script>
+		function viewProductDetails(productId) {
+			var url = '/product-details/' + productId;
+
+			$.ajax({
+				url: url,
+				method: "GET",
+				success: function (response) {
+					if (!response.success) {
+						Swal.fire({
+							title: 'Out of Stock', 
+							text: response.message, // Nội dung thông báo
+							icon: 'error', // Loại biểu tượng (info, success, error, warning, question)
+							confirmButtonText: 'OK' // Nút xác nhận
+						}).then((result) => {
+							if (result.isConfirmed) {
+								if (response.redirectUrl) {
+									// Chuyển hướng nếu có URL chuyển hướng
+									window.location.href = response.redirectUrl;
+								}
+							}
+						});
+					} else {
+						// Nếu sản phẩm tồn tại, mở trang chi tiết sản phẩm
+						window.location.href = '/product-details/' + productId;
+					}
+				},
+				error: function () {
+					// Hiển thị thông báo lỗi trong trường hợp xảy ra lỗi
+					Swal.fire({
+						title: 'Alert',
+						text: 'An error occurred while fetching product details.',
+						icon: 'error',
+						confirmButtonText: 'OK'
+					});
+				}
+			});
+		}
+	</script>
+	<script>
+		$(document).ready(function () {
+			// Hàm cập nhật số lượng giỏ hàng
+			function updateCartCount() {
+				$.get("/count-cart", function (data) {
+					$(".count-item-only").text(data.totalItems);
+				}).fail(function () {
+					console.error("Failed to fetch cart count.");
+				});
+			}
+
+			// Xử lý khi nhấn nút "Add to Cart"
+			$(".add-to-cart").click(function () {
+				const BookId = $(this).data("id");
+				const quantity = $("#quantity-" + BookId).val(); // Lấy số lượng từ input
+				const url = $(this).data("url");
+
+				// Kiểm tra tính hợp lệ của số lượng
+				if (isNaN(quantity) || quantity <= 0) {
+					Swal.fire({
+						title: 'Invalid Quantity',
+						text: 'Quantity must be a number greater than 0.',
+						icon: 'warning',
+						confirmButtonText: 'OK'
+					});
+					return;
+				}
+
+				// Gửi yêu cầu POST để thêm sản phẩm vào giỏ
+				$.post(url, { bookId: BookId, quantity: quantity }, function (response) {
+					if (response.success) {
+						updateCartCount(); // Cập nhật số lượng giỏ hàng
+						Swal.fire({
+							title: 'Success',
+							text: response.message || 'Product added to cart successfully!',
+							icon: 'success',
+							confirmButtonText: 'OK'
+						});
+					} else {
+						Swal.fire({
+							title: 'Alert',
+							text: response.message || 'An error occurred!',
+							icon: 'error',
+							confirmButtonText: 'OK'
+						});
+					}
+				}).fail(function (jqXHR, textStatus, errorThrown) {
+					console.error("AJAX failed:", textStatus, errorThrown);
+					Swal.fire({
+						title: 'Alert',
+						text: 'An error occurred while processing your request.',
+						icon: 'error',
+						confirmButtonText: 'OK'
+					});
+				});
+			});
+
+			// Cập nhật số lượng giỏ hàng khi trang tải
+			updateCartCount();
+		});
+	</script> *@
+
+
+
+
+
+@* 	========Notyf=========
+ *@	<script>
+		$(document).ready(function () {
+			// Khởi tạo Notyf
+			const notyf = new Notyf();
+
+			// Hàm cập nhật số lượng giỏ hàng
+			function updateCartCount() {
+				$.get("/count-cart", function (data) {
+					$(".count-item-only").text(data.totalItems);
+				}).fail(function () {
+					console.error("Failed to fetch cart count.");
+					notyf.error("Failed to fetch cart count.");
+				});
+			}
+
+			// Xử lý khi nhấn nút "Add to Cart"
+			$(".add-to-cart").click(function () {
+				const BookId = $(this).data("id");
+				const quantity = $("#quantity-" + BookId).val(); // Lấy số lượng từ input
+				const url = $(this).data("url");
+
+				// Kiểm tra tính hợp lệ của số lượng
+				if (isNaN(quantity) || quantity <= 0) {
+					notyf.error("Quantity must be a number greater than 0.");
+					return;
+				}
+
+				// Gửi yêu cầu POST để thêm sản phẩm vào giỏ
+				$.post(url, { bookId: BookId, quantity: quantity }, function (response) {
+					if (response.success) {
+						updateCartCount(); // Cập nhật số lượng giỏ hàng
+						notyf.success(response.message || "Product added to cart successfully!");
+					} else {
+						notyf.error(response.message || "An error occurred!");
+					}
+				}).fail(function (jqXHR, textStatus, errorThrown) {
+					console.error("AJAX failed:", textStatus, errorThrown);
+					notyf.error("An error occurred while adding the product.");
+				});
+			});
+
+			// Cập nhật số lượng giỏ hàng khi trang tải
+			updateCartCount();
+		});
+	</script>
+	<script>
+		// Khởi tạo Notyf
+		const notyf = new Notyf();
+
+		function viewProductDetails(productId) {
+			var url = '/product-details/' + productId;
+
+			$.ajax({
+				url: url,
+				method: "GET",
+				success: function (response) {
+					if (!response.success) {
+						// Hiển thị thông báo lỗi bằng Notyf
+						notyf.error(response.message || "This product is currently out of stock.");
+
+						// Nếu có URL chuyển hướng, thực hiện chuyển hướng
+						// if (response.redirectUrl) {
+						// 	window.location.href = response.redirectUrl;
+						// }
+					} else {
+						// Nếu sản phẩm tồn tại, chuyển hướng đến trang chi tiết sản phẩm
+						window.location.href = '/product-details/' + productId;
+					}
+				},
+				error: function () {
+					// Hiển thị thông báo lỗi khi xảy ra lỗi AJAX
+					notyf.error("An error occurred while fetching product details.");
+				}
+			});
+		}
 	</script>
 
-		
-
-	
 </body>
 </html>

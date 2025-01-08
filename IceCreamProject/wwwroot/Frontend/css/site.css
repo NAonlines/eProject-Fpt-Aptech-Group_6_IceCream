@@ -319,7 +319,14 @@ a.btn-link.text-light:after {
     border-radius: 100px;
     animation: spin 1s infinite linear;
 }
+.grayscale {
+    filter: grayscale(100%);
+    transition: filter 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà khi hover */
+}
 
+    .grayscale:hover {
+        filter: grayscale(0%); /* Khi hover, ảnh sẽ trở lại màu gốc */
+    }
 @keyframes spin {
     100% {
         transform: rotate(360deg);

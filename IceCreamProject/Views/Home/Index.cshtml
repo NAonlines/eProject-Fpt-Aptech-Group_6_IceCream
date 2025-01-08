@@ -59,9 +59,19 @@
 							<div class="col">
 								<div class="product-item">
 									<figure>
-										<a href="@Url.Action("ProductDetails", "Home", new { id = item.BookId })" title="@item.Title">
-											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
-										</a>
+										
+										@if(item.IsActive == true)
+										{
+											<a href="@Url.Action("ProductDetails", "Home", new { id = item.BookId })" title="@item.Title">
+												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
+											</a>
+										}
+										else
+										{
+											<a href="javascript:void(0);" data-id="@item.BookId" onclick="viewProductDetails(@item.BookId)">
+												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
+											</a>
+										}
 									</figure>
 									<div class="d-flex flex-column text-center">
 										<!-- Centering the title within its container -->
@@ -80,22 +90,54 @@
 											<div class="row g-1 mt-2">
 												<div class="col-3">
 													<!-- Input số lượng -->
-													<input type="number" name="quantity" id="quantity-@item.BookId"
-														   class="form-control border-dark-subtle input-number quantity" value="1" min="1" />
+													@if(item.IsActive == true)
+													{
+														<input type="number" name="quantity" id="quantity-@item.BookId"
+														class="form-control border-dark-subtle input-number quantity" value="1" min="1" />
+													}
+													else
+													{
+														<input type="number" name="quantity" id="quantity-@item.BookId"
+															   class="form-control border-dark-subtle input-number quantity" value="1" min="1" readonly />
+
+													}
 												</div>
 												<div class="col-7">
 													<!-- Nút Thêm vào Giỏ hàng -->
-													<a href="javascript:void(0);"
-													   data-id="@item.BookId"
-													   data-url="@Url.Action("AddToCart", "Home")"
-													   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart">
-														Add to Cart
-													</a>
+													@if(item.IsActive == true)
+													{
+														<a href="javascript:void(0);"
+														   data-id="@item.BookId"
+														   data-url="@Url.Action("AddToCart", "Home")"
+														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart">
+															Add to Cart
+														</a>
+													}
+													else
+													{
+														<a href="javascript:void(0);"
+														   data-id="@item.BookId"
+														   data-url="@Url.Action("AddToCart", "Home")"
+														   class="btn btn-dark rounded-1 p-2 fs-7 btn-cart add-to-cart">
+															Sold Out
+														</a>
+													}
 												</div>
 												<div class="col-2">
-													<a href="@Url.Action("ProductDetails", "Home", new { id = item.BookId })" class="btn btn-primary rounded-1 p-2 fs-6">
-														<i class="bi bi-three-dots"></i>
-													</a>
+													@if(item.IsActive == true)
+													{
+														<a href="@Url.Action("ProductDetails", "Home", new { id = item.BookId })" class="btn btn-primary rounded-1 p-2 fs-6">
+															<i class="bi bi-three-dots"></i>
+														</a>
+													}
+													else
+													{
+														<a href="javascript:void(0);"data-id="@item.BookId" class="btn btn-dark rounded-1 p-2 fs-6" onclick="viewProductDetails(@item.BookId)">
+															<i class="bi bi-three-dots"></i>
+														</a>
+
+													}
+
 												</div>
 											</div>
 										</div>

@@ -12,20 +12,25 @@
 @section Scripts{
     <link href="~/frontend/css/package.css" rel="stylesheet" />
 }
-<div class="hero overlay">
-    <div class="img-bg rellax">
-        <img src="~/Frontend/images/money-trendy-banner-vector.jpg" alt="Image" class="img-fluid">
+<!-- Top Background Section -->
+<div class="position-relative"
+     style="background-image: url('@Url.Content("~/Frontend/images/banner-3.jpg")');
+            background-size: cover;
+            background-position: center;
+            height: 200px;
+            border: 3px solid rgba(255, 255, 255, 0.8); /* Light border for contrast */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+            border-radius: 10px; /* Rounded corners for a polished look */">
+    <div class="container h-100 d-flex flex-column align-items-center justify-content-center">
+        <nav aria-label="breadcrumb" class="pt-5">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Membership</li>
+            </ol>
+        </nav>
+        <h5 class="pt-1 text-white fw-bold">Membership</h5>
     </div>
 
-    <div class="container">
-        <div class="row align-items-center justify-content-start">
-            <div class="col-lg-5">
-                <h1 class="heading" data-aos="fade-up">Payment!</h1>
-                <p class="mb-5" data-aos="fade-up">Become a member with us to see attractive recipes!</p>
-            </div>
-        </div>
-
-    </div>
 </div>
 @if (Model.Any())
 {
@@ -35,7 +40,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="section-header d-flex flex-wrap justify-content-between my-4">
-                            <h2 class="section-title">Membership Prices</h2>
+                            <h2 class="section-title">Membership Package</h2>
                         </div>
                     </div>
                 </div>
@@ -78,7 +83,7 @@
                                 }
                                 else
                                 {
-                                    <a href="/login" class="buy-button">Buy Now ></a>
+                                    <a href="/login" class="buy-button">Buy Now</a>
 
                                 }
 

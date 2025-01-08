@@ -158,25 +158,27 @@ namespace IceCreamProject.Controllers
 
 
 
-        [HttpGet("/product-details/{id}", Name = "ProductDetails")]
-        public async Task<IActionResult> ProductDetails(int id)
-        {
-            var product = await _db.Books
-                .Include(b => b.Category)
-                .Include(b => b.Recipes)
-                .FirstOrDefaultAsync(b => b.BookId == id && b.IsActive);
+		[HttpGet("/product-details/{id}", Name = "ProductDetails")]
+		public async Task<IActionResult> ProductDetails(int id)
+		{
+			var product = await _db.Books
+				.Include(b => b.Category)
+				.Include(b => b.Recipes)
+				.FirstOrDefaultAsync(b => b.BookId == id && b.IsActive);
 
-            if (product == null)
-            {
-                return NotFound("Product not found or is not active.");
-            }
+			if (product == null)
+			{
+				return Json(new { success = false, message = "This book is currently out of stock.", redirectUrl = Url.Action("Index", "Home") });
 
-            return View(product);
-        }
+			}
+
+			return View(product); 
+		}
 
 
 
-        [HttpGet("/about-us", Name = "AboutUs")]
+
+		[HttpGet("/about-us", Name = "AboutUs")]
         public IActionResult AboutUs()
         {
             return View();
