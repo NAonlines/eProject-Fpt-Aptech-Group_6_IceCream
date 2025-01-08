@@ -165,12 +165,22 @@ namespace IceCreamProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUser != null)
+                // Check if the username already exists
+                var existingUserByUsername = await _userManager.FindByNameAsync(model.Username);
+                if (existingUserByUsername != null)
                 {
-                    ModelState.AddModelError("Email", "Email already exists");
+                    ModelState.AddModelError("Username", "Username is already taken.");
                     return View(model);
                 }
+
+                // Check if the email already exists
+                var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUserByEmail != null)
+                {
+                    ModelState.AddModelError("Email", "Email is already registered.");
+                    return View(model);
+                }
+
                 var user = new User
                 {
                     UserName = model.Username,
@@ -189,7 +199,7 @@ namespace IceCreamProject.Controllers
                     }
 
                     await _userManager.AddToRoleAsync(user, "User");
-                    //tự động login
+                    // Automatically log in
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     TempData["Success"] = "Registration successful!";
                     return RedirectToAction("Index", "Home");
@@ -201,10 +211,11 @@ namespace IceCreamProject.Controllers
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-
             }
+
             return View(model);
         }
+
         [HttpGet("/access-denied")]
         public IActionResult AccessDenied()
         {

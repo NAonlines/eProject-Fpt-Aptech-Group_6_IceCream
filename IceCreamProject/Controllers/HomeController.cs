@@ -23,10 +23,14 @@ namespace IceCreamProject.Controllers
 
         public IActionResult Index()
         {
-            var books = _db.Books.Take(8).ToList();
+            var books = _db.Books
+                            .OrderBy(b => b.IsActive ? 0 : 1) // Sắp xếp sản phẩm còn hàng lên trước
+                            .Take(8)
+                            .ToList();
 
             return View(books);
         }
+
         [Authorize]
         [HttpGet("/profile", Name = "Profile")]
         public async Task<IActionResult> Profile()
@@ -158,27 +162,54 @@ namespace IceCreamProject.Controllers
 
 
 
-		[HttpGet("/product-details/{id}", Name = "ProductDetails")]
-		public async Task<IActionResult> ProductDetails(int id)
-		{
-			var product = await _db.Books
-				.Include(b => b.Category)
-				.Include(b => b.Recipes)
-				.FirstOrDefaultAsync(b => b.BookId == id && b.IsActive);
+        [HttpGet("/product-details/{id}", Name = "ProductDetails")]
+        public async Task<IActionResult> ProductDetails(int id)
+        {
+            var product = await _db.Books
+                .Include(b => b.Category)
+                .Include(b => b.Recipes)
+                .ThenInclude(r => r.Category)  // Ensure Recipe's Category is loaded as well
+                .FirstOrDefaultAsync(b => b.BookId == id && b.IsActive);
 
-			if (product == null)
-			{
-				return Json(new { success = false, message = "This book is currently out of stock.", redirectUrl = Url.Action("Index", "Home") });
+            if (product == null)
+            {
+                return Json(new { success = false, message = "This book is currently out of stock.", redirectUrl = Url.Action("Index", "Home") });
+            }
 
-			}
+            var user = await _userManager.GetUserAsync(User);
+            bool hasValidMembership = false;
 
-			return View(product); 
-		}
+            if (user != null)
+            {
+                var membership = await _db.Memberships
+                    .FirstOrDefaultAsync(m => m.UserID == user.Id && m.Status && m.EndDate > DateTime.UtcNow);
+
+                hasValidMembership = membership != null;
+            }
+
+            ViewData["HasValidMembership"] = hasValidMembership;
+
+            var paymentCategory = await _db.Categories
+                .FirstOrDefaultAsync(c => c.Name == "Payment" && c.IsActive);
+
+            if (paymentCategory != null)
+            {
+                var paymentRecipes = product.Recipes.Where(r => r.CategoryId == paymentCategory.CategoryId).ToList();
+                ViewData["Recipes"] = paymentRecipes; // Only "Payment" category recipes
+            }
+            else
+            {
+                ViewData["Recipes"] = new List<Recipe>(); // If no "Payment" category exists, pass an empty list
+            }
+
+            return View(product);
+        }
 
 
 
 
-		[HttpGet("/about-us", Name = "AboutUs")]
+
+        [HttpGet("/about-us", Name = "AboutUs")]
         public IActionResult AboutUs()
         {
             return View();

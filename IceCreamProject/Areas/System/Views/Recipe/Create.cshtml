@@ -18,8 +18,6 @@
                         <form asp-action="Create" method="post" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
 
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
                             <!-- Recipe Name -->
                             <div class="mb-3 row">
                                 <label class="col-sm-2"> <span class="text-danger">*</span> Name</label>
@@ -33,7 +31,7 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-2"><span class="text-danger">*</span> Ingredients</label>
                                 <div class="col-sm-10">
-                                    <textarea asp-for="Ingredients" class="form-control"></textarea>
+                                    <textarea asp-for="Ingredients" class="form-control" id="editor"></textarea>
                                     <span asp-validation-for="Ingredients" class="text-danger"></span>
                                 </div>
                             </div>
@@ -58,26 +56,6 @@
                                 </div>
                             </div>
 
-                            <!-- Book -->
-                            <div class="mb-3 row">
-                                <label class="col-sm-2">Book</label>
-                                <div class="col-sm-10">
-                                    <select asp-for="BookId" class="form-control" asp-items="Model.Books">
-                                        <option value="">-- Select Book (Optional) --</option>
-                                    </select>
-                                    <span asp-validation-for="BookId" class="text-danger"></span>
-                                </div>
-                            </div>
-
-                            <!-- Approval -->
-                            <div class="mb-3 row">
-                                <label class="col-sm-2">Approved</label>
-                                <div class="col-sm-10">
-                                    <input asp-for="IsApproved" type="checkbox" />
-                                    <span asp-validation-for="IsApproved" class="text-danger"></span>
-                                </div>
-                            </div>
-
                             <!-- Submit Button -->
                             <div class="mb-3 row">
                                 <div class="col-sm-4 offset-sm-2">
@@ -89,7 +67,6 @@
                                     </a>
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -97,3 +74,36 @@
         </div>
     </div>
 </div>
+
+<!-- CKEditor Script -->
+<script src="~/Backend/ckeditor/ckeditor.js"></script>
+
+<script>
+    // Khởi tạo CKEditor
+    CKEDITOR.replace('editor', {
+        height: 300,
+        toolbar: [
+            { name: 'document', items: ['Source', '-', 'Preview'] },
+            { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo'] },
+            { name: 'editing', items: ['Find', 'Replace', '-', 'SelectAll'] },
+            '/',
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote'] },
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'SpecialChar'] },
+            '/',
+            { name: 'styles', items: ['Styles', 'Format'] },
+            { name: 'colors', items: ['TextColor', 'BGColor'] },
+            { name: 'tools', items: ['Maximize'] }
+        ]
+    });
+
+    // Xử lý thông báo khi CKEditor khởi tạo
+    CKEDITOR.on('instanceReady', function (ev) {
+        var editor = ev.editor;
+        editor.on('notificationShow', function (event) {
+            if (event.data.message.includes('version is not secure')) {
+                event.cancel(); // Hủy hiển thị thông báo
+            }
+        });
+    });
+</script>

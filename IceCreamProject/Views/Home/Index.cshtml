@@ -53,14 +53,12 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-5 gap-4">
-
 						@foreach (var item in Model)
 						{
 							<div class="col">
 								<div class="product-item">
 									<figure>
-										
-										@if(item.IsActive == true)
+										@if (item.IsActive == true)
 										{
 											<a href="@Url.Action("ProductDetails", "Home", new { id = item.BookId })" title="@item.Title">
 												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
@@ -74,11 +72,9 @@
 										}
 									</figure>
 									<div class="d-flex flex-column text-center">
-										<!-- Centering the title within its container -->
 										<h3 class="fs-6 fw-normal text-truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; margin: 0 auto;">
 											@item.Title
 										</h3>
-
 										<div class="d-flex justify-content-center align-items-center gap-2">
 											@if (item.Price > 20)
 											{
@@ -89,22 +85,19 @@
 										<div class="button-area p-3 pt-0">
 											<div class="row g-1 mt-2">
 												<div class="col-3">
-													<!-- Input số lượng -->
-													@if(item.IsActive == true)
+													@if (item.IsActive == true)
 													{
 														<input type="number" name="quantity" id="quantity-@item.BookId"
-														class="form-control border-dark-subtle input-number quantity" value="1" min="1" />
+															   class="form-control border-dark-subtle input-number quantity" value="1" min="1" />
 													}
 													else
 													{
 														<input type="number" name="quantity" id="quantity-@item.BookId"
 															   class="form-control border-dark-subtle input-number quantity" value="1" min="1" readonly />
-
 													}
 												</div>
 												<div class="col-7">
-													<!-- Nút Thêm vào Giỏ hàng -->
-													@if(item.IsActive == true)
+													@if (item.IsActive == true)
 													{
 														<a href="javascript:void(0);"
 														   data-id="@item.BookId"
@@ -124,7 +117,7 @@
 													}
 												</div>
 												<div class="col-2">
-													@if(item.IsActive == true)
+													@if (item.IsActive == true)
 													{
 														<a href="@Url.Action("ProductDetails", "Home", new { id = item.BookId })" class="btn btn-primary rounded-1 p-2 fs-6">
 															<i class="bi bi-three-dots"></i>
@@ -132,12 +125,10 @@
 													}
 													else
 													{
-														<a href="javascript:void(0);"data-id="@item.BookId" class="btn btn-dark rounded-1 p-2 fs-6" onclick="viewProductDetails(@item.BookId)">
+														<a href="javascript:void(0);" data-id="@item.BookId" class="btn btn-dark rounded-1 p-2 fs-6" onclick="viewProductDetails(@item.BookId)">
 															<i class="bi bi-three-dots"></i>
 														</a>
-
 													}
-
 												</div>
 											</div>
 										</div>
@@ -145,6 +136,7 @@
 								</div>
 							</div>
 						}
+
 
 					</div>
 					<!-- / product-grid -->

@@ -4,7 +4,14 @@
     ViewData["Title"] = "Recipes";
     Layout = "~/Views/Frontend.cshtml";
 }
+<style>
+    .text-truncate {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 
+</style>
 <div class="hero overlay">
     <div class="img-bg rellax">
         <img src="~/Frontend/images/banner-1.jpg" alt="Image" class="img-fluid">
@@ -54,9 +61,10 @@
                                         <p class="text-muted small mb-1">
                                             Category: @(recipe.Category?.Name ?? "Uncategorized")
                                         </p>
-                                        <p class="text-muted small mb-2">
+                                        <p class="text-muted small mb-2 text-truncate" style="max-width: 150px;">
                                             Book: @(recipe.Book?.Title ?? "No Book")
                                         </p>
+
                                         <div class="button-area p-3 pt-0">
                                             <a href="@Url.Action("RecipeDetails", "Home", new { id = recipe.RecipeId })" class="btn btn-primary rounded-1 p-2 fs-7">
                                                 View Recipe

@@ -1,10 +1,15 @@
-﻿@model IceCreamProject.Models.Book // Adjust to your actual model namespace
+﻿@model IceCreamProject.Models.Book
 
 @{
-    ViewData["Title"] = Model.Title; // Use the product title as the page title
+    ViewData["Title"] = Model.Title;
     Layout = "~/Views/Frontend.cshtml";
 }
-
+<style>
+    
+    footer {
+        margin-top: auto; /* Đẩy footer xuống cuối */
+    }
+</style>
 <section class="h-100 gradient-custom-2">
     <!-- Top Background Section -->
     <div class="position-relative"
@@ -12,9 +17,9 @@
             background-size: cover;
             background-position: center;
             height: 200px;
-            border: 3px solid rgba(255, 255, 255, 0.8); /* Light border for contrast */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
-            border-radius: 10px; /* Rounded corners for a polished look */">
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;">
         <div class="container h-100 d-flex flex-column align-items-center justify-content-center">
             <nav aria-label="breadcrumb" class="pt-5">
                 <ol class="breadcrumb">
@@ -24,21 +29,19 @@
             </nav>
             <h5 class="pt-1 text-white fw-bold">@Model.Title</h5>
         </div>
-
     </div>
 
     <!-- Main Content Section -->
-    <div class="d-flex justify-content-center align-items-center  mt-5 py-5">
-        <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="d-flex justify-content-center align-items-center mt-5 py-5">
+        <div class="d-flex justify-content-center align-items-center">
             <div class="container">
                 <div class="row justify-content-center align-items-center">
                     <div class="col-lg-10">
-                        <div class="row g-4">
+                        <div class="row g-4 mt-5">
                             <div class="col-lg-6 text-center">
                                 <div class="border rounded">
                                     <a href="#">
-                                        <img src="~/ImageUrl/@Model.ImageUrl"
-                                             class="img-fluid rounded" alt="@Model.Title">
+                                        <img src="~/ImageUrl/@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Title">
                                     </a>
                                 </div>
                             </div>
@@ -48,36 +51,54 @@
                                 <h5 class="fw-bold mb-3">@Model.Price.ToString("C")</h5>
                                 <p class="mb-4">@Model.Description</p>
                                 <div class="input-group quantity mb-5" style="width: 120px; margin: 0 auto;">
-                                    <input type="number" name="quantity" id="quantity-@Model.BookId"
-                                           class="form-control border-dark-subtle input-number quantity" value="1" min="1" />
+                                    <input type="number" name="quantity" id="quantity-@Model.BookId" class="form-control border-dark-subtle input-number quantity" value="1" min="1" />
                                 </div>
-                                <a href="javascript:void(0);"
-                                   data-id="@Model.BookId"
-                                   data-url="@Url.Action("AddToCart", "Home")"
-                                   class="btn btn-primary rounded-pill px-4 py-2 mb-4 add-to-cart">
+                                <a href="javascript:void(0);" data-id="@Model.BookId" data-url="@Url.Action("AddToCart", "Home")" class="btn btn-primary rounded-pill px-4 py-2 mb-4 add-to-cart">
                                     <i class="fa fa-shopping-bag me-2"></i> Add to Cart
                                 </a>
-
                             </div>
                         </div>
                         <div class="row g-4 mt-5">
                             <div class="col-lg-12">
                                 <nav>
                                     <div class="nav nav-tabs mb-3 justify-content-center">
-                                        <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
-                                                id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                                aria-controls="nav-about" aria-selected="true">
+                                        <button class="nav-link active border-white border-bottom-0" type="button" role="tab" id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about" aria-controls="nav-about" aria-selected="true">
                                             Recipe
                                         </button>
-                                      
                                     </div>
                                 </nav>
                                 <div class="tab-content mb-5">
                                     <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                                        <p>Recipe</p>
-                                       
+                                        <!-- Kiểm tra Membership -->
+                                        @if (ViewData["HasValidMembership"] != null && (bool)ViewData["HasValidMembership"])
+                                        {
+                                            <div class="recipe-section">
+                                                <h3>Recipes</h3>
+                                                <ul>
+                                                    @foreach (var recipe in (IEnumerable<IceCreamProject.Models.Recipe>)ViewData["Recipes"])
+                                                    {
+                                                        <li>
+                                                            <strong>@recipe.Name</strong>
+                                                            @if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                                                            {
+                                                                <img src="~/ImageUrl/@recipe.ImageUrl" alt="@recipe.Name" class="recipe-image" width="100" />
+                                                            }
+                                                            <p class="recipe-ingredients">
+                                                                @Html.Raw(recipe.Ingredients.Replace("\n", "<br>"))
+                                                            </p>
+
+                                                            @* Optional: Display additional information *@
+                                                            @* <p>Status: @(recipe.IsApproved ? "Approved" : "Pending Approval")</p> *@
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <p>You need an active membership to view the recipes.</p>
+                                        }
                                     </div>
-                                  
                                 </div>
                             </div>
                         </div>
@@ -85,6 +106,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 </section>
