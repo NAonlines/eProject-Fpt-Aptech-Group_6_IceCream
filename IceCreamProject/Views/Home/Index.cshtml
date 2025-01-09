@@ -63,7 +63,7 @@
 						@foreach (var item in Model.AllProducts)
 						{
 							<div class="col">
-								<div class="product-item">
+								<div class="product-item"  data-group="all" data-id="@item.BookId">
 									<figure>
 										@if (item.IsActive == true)
 										{
@@ -94,8 +94,8 @@
 												<div class="col-3">
 													@if (item.IsActive == true)
 													{
-														<input type="number" name="quantity" id="quantity-@item.BookId"
-															   class="form-control border-dark-subtle input-number quantity" value="1" min="1" />
+														<input type="number" name="quantity" id="quantity-@item.BookId"  id="quantity-all-@item.BookId"
+															   class="form-control border-dark-subtle input-number quantity-all" value="1" min="1" />
 													}
 													else
 													{
@@ -252,7 +252,7 @@
 			{
 				<div class="destination mb-5">
 					<div class="col">
-						<div class="product-item">
+						<div class="product-item" data-group="best" data-id="@item.BookId">
 							<figure>
 								@if (item.IsActive)
 								{
@@ -281,17 +281,16 @@
 								<div class="button-area p-3 pt-0">
 									<div class="row g-1 mt-2">
 										<div class="col-3">
-											<input type="number" name="quantity" id="quantity-@item.BookId"
-												   class="form-control border-dark-subtle input-number quantity"
-												   value="1" min="1" @(item.IsActive ? "" : "readonly") />
+											<input type="number" name="quantity" id="quantity-@item.BookId"  id="quantity-best-@item.BookId"
+															   class="form-control border-dark-subtle input-number quantity-best" value="1" min="1" />
 										</div>
 										<div class="col-7">
 											<a href="javascript:void(0);"
-											   data-id="@item.BookId"
-											   data-url="@Url.Action("AddToCart", "Home")"
-											   class="btn @(item.IsActive ? "btn-primary" : "btn-dark") rounded-1 p-2 fs-7 btn-cart add-to-cart">
-												@(item.IsActive ? "Add to Cart" : "Sold Out")
-											</a>
+														   data-id="@item.BookId"
+														   data-url="@Url.Action("AddToCart", "Home")"
+														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart">
+															Add to Cart
+														</a>
 										</div>
 										<div class="col-2">
 											@if (item.IsActive)
@@ -348,7 +347,7 @@
 				<blockquote class="block-testimonial">
 					<div class="destination mb-5">
 						<div class="col">
-							<div class="product-item">
+							<div class="product-item" data-group="new" data-id="@item.BookId">
 								<figure>
 									@if (item.IsActive)
 									{
@@ -362,7 +361,7 @@
 											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
 										</a>
 									}
-								</figure>
+								</figure>	
 								<div class="d-flex flex-column text-center">
 									<h3 class="fs-6 fw-normal text-truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; margin: 0 auto;">
 										@item.Title
@@ -377,17 +376,16 @@
 									<div class="button-area p-3 pt-0">
 										<div class="row g-1 mt-2">
 											<div class="col-3">
-												<input type="number" name="quantity" id="quantity-@item.BookId"
-													   class="form-control border-dark-subtle input-number quantity"
-													   value="1" min="1" @(item.IsActive ? "" : "readonly") />
+												<input type="number" name="quantity" id="quantity-@item.BookId" id="quantity-new-@item.BookId"
+															   class="form-control border-dark-subtle input-number quantity-new" value="1" min="1" />
 											</div>
 											<div class="col-7">
 												<a href="javascript:void(0);"
-												   data-id="@item.BookId"
-												   data-url="@Url.Action("AddToCart", "Home")"
-												   class="btn @(item.IsActive ? "btn-primary" : "btn-dark") rounded-1 p-2 fs-7 btn-cart add-to-cart">
-													@(item.IsActive ? "Add to Cart" : "Sold Out")
-												</a>
+														   data-id="@item.BookId"
+														   data-url="@Url.Action("AddToCart", "Home")"
+														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart">
+															Add to Cart
+														</a>
 											</div>
 											<div class="col-2">
 												@if (item.IsActive)
@@ -459,86 +457,63 @@
 	});
 </script>
 
-@* <div class="section">
-	<div class="container">
 
-		<div class="row">
-			<div class="col-12" data-aos="fade-up" data-aos-delay="0">
 
-				<h2 class="heading mb-5">Sản phẩm được ưa chuộng</h2>
-			</div>
-		</div>
-		<div class="row align-items-stretch">
-			<div class="col-6 col-sm-6 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-				<div class="media-entry">
-					<a href="#">
-						<img src="~/Frontend/images/gal_1.jpg" alt="Image" class="img-fluid">
-					</a>
-					<div class="bg-white m-body">
-						<span class="date">May 14, 2020</span>
-						<h3><a href="#">Far far away, behind the word mountains</a></h3>
-						<p>Vokalia and Consonantia, there live the blind texts. Separated they live.</p>
+<script>
+	$(document).ready(function () {
+    const notyf = new Notyf();
 
-						<a href="single.html" class="more d-flex align-items-center float-start">
-							<span class="label">Read More</span>
-							<span class="arrow"><span class="icon-keyboard_arrow_right"></span></span>
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-				<div class="media-entry">
-					<a href="#">
-						<img src="~/Frontend/images/gal_2.jpg" alt="Image" class="img-fluid">
-					</a>
-					<div class="bg-white m-body">
-						<span class="date">May 14, 2020</span>
-						<h3><a href="#">Far far away, behind the word mountains</a></h3>
-						<p>Vokalia and Consonantia, there live the blind texts. Separated they live.</p>
+    // Cập nhật số lượng giỏ hàng
+    function updateCartCount() {
+        $.get("/count-cart", function (data) {
+            $(".count-item-only").text(data.totalItems);
+        }).fail(function () {
+            notyf.error("Failed to fetch cart count.");
+        });
+    }
 
-						<a href="single.html" class="more d-flex align-items-center float-start">
-							<span class="label">Read More</span>
-							<span class="arrow"><span class="icon-keyboard_arrow_right"></span></span>
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-				<div class="media-entry">
-					<a href="#">
-						<img src="~/Frontend/images/gal_3.jpg" alt="Image" class="img-fluid">
-					</a>
-					<div class="bg-white m-body">
-						<span class="date">May 14, 2020</span>
-						<h3><a href="#">Far far away, behind the word mountains</a></h3>
-						<p>Vokalia and Consonantia, there live the blind texts. Separated they live.</p>
-						<a href="single.html" class="more d-flex align-items-center float-start">
-							<span class="label">Read More</span>
-							<span class="arrow"><span class="icon-keyboard_arrow_right"></span></span>
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-				<div class="media-entry">
-					<a href="#">
-						<img src="~/Frontend/images/gal_4.jpg" alt="Image" class="img-fluid">
-					</a>
-					<div class="bg-white m-body">
-						<span class="date">May 14, 2020</span>
-						<h3><a href="#">Far far away, behind the word mountains</a></h3>
-						<p>Vokalia and Consonantia, there live the blind texts. Separated they live.</p>
-						<a href="single.html" class="more d-flex align-items-center float-start">
-							<span class="label">Read More</span>
-							<span class="arrow"><span class="icon-keyboard_arrow_right"></span></span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+    // Xử lý sự kiện khi nhấn nút "Add to Cart"
+    $(document).on("click", ".add-to-cart", function () {
+        const $button = $(this); // Nút Add to Cart
+        const $productItem = $button.closest(".product-item"); // Lấy sản phẩm liên quan
+        const bookId = $productItem.data("id"); // Lấy ID sản phẩm
+        const url = $button.data("url"); // URL để gửi request
+        const group = $productItem.data("group"); // Nhóm sản phẩm (all, best, new)
 
-    
-	
- *@
+        // Xác định input số lượng dựa vào nhóm sản phẩm
+        let $quantityInput;
+        if (group === "all") {
+            $quantityInput = $(`#quantity-all-${bookId}`);
+        } else if (group === "best") {
+            $quantityInput = $(`#quantity-best-${bookId}`);
+        } else if (group === "new") {
+            $quantityInput = $(`#quantity-new-${bookId}`);
+        }
+
+        // Lấy giá trị số lượng từ input
+        const quantity = parseInt($quantityInput.val());
+
+        // Kiểm tra tính hợp lệ của số lượng
+        if (isNaN(quantity) || quantity <= 0) {
+            notyf.error("Quantity must be a number greater than 0.");
+            return;
+        }
+
+        // Gửi yêu cầu AJAX để thêm sản phẩm vào giỏ hàng
+        $.post(url, { BookId: bookId, quantity: quantity }, function (response) {
+            if (response.success) {
+                updateCartCount(); // Cập nhật giỏ hàng
+                notyf.success(response.message || "Product added to cart successfully!");
+            } else {
+                notyf.error(response.message || "An error occurred while adding the product.");
+            }
+        }).fail(function () {
+            notyf.error("An error occurred while adding the product.");
+        });
+    });
+
+    // Cập nhật giỏ hàng khi tải trang
+    updateCartCount();
+});
+
+	</script>

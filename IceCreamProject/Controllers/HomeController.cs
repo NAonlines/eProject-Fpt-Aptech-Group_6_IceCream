@@ -287,48 +287,52 @@ namespace IceCreamProject.Controllers
         }
 
 
-        [HttpPost("/add-cart", Name = "AddCart")]
-        public async Task<IActionResult> AddToCart(int BookId, int quantity)
-        {
-            var book = await _db.Books.FirstOrDefaultAsync(b => b.BookId == BookId);
-            if (book == null)
-            {
-                return Json(new { success = false, message = "Book not found." });
-            }
+		[HttpPost("/add-cart", Name = "AddCart")]
+		public async Task<IActionResult> AddToCart(int BookId, int quantity)
+		{
+			if (quantity <= 0)
+			{
+				return Json(new { success = false, message = "Invalid quantity." });
+			}
 
-            if (!book.IsActive)
-            {
-                return Json(new { success = false, message = "This book is currently out of stock." });
-            }
+			var book = await _db.Books.FirstOrDefaultAsync(b => b.BookId == BookId);
+			if (book == null)
+			{
+				return Json(new { success = false, message = "Book not found." });
+			}
 
-            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+			if (!book.IsActive)
+			{
+				return Json(new { success = false, message = "This book is currently out of stock." });
+			}
 
-            var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
-            if (cartItem != null)
-            {
-                cartItem.Quantity += quantity;
-            }
-            else
-            {
-                cart.Add(new CartItem
-                {
-                    ProductId = BookId,
-                    Name = book.Title,
-                    Price = book.Price,
-                    Image = book.ImageUrl,
-                    Quantity = quantity
-                });
-            }
+			var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
-            HttpContext.Session.SetObjectAsJson("Cart", cart);
-            int totalItems = cart.Sum(p => p.Quantity);
-            return Json(new { success = true, totalItems, message = "Book added to cart successfully!" });
-        }
+			var cartItem = cart.FirstOrDefault(p => p.ProductId == BookId);
+			if (cartItem != null)
+			{
+				cartItem.Quantity += quantity;
+			}
+			else
+			{
+				cart.Add(new CartItem
+				{
+					ProductId = BookId,
+					Name = book.Title,
+					Price = book.Price,
+					Image = book.ImageUrl,
+					Quantity = quantity
+				});
+			}
+
+			HttpContext.Session.SetObjectAsJson("Cart", cart);
+			int totalItems = cart.Sum(p => p.Quantity);
+			return Json(new { success = true, totalItems, message = "Book added to cart successfully!" });
+		}
 
 
 
-
-        [HttpGet("/count-cart", Name = "CountCart")]
+		[HttpGet("/count-cart", Name = "CountCart")]
         public IActionResult GetCountCart()
         {
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
