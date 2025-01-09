@@ -1,10 +1,16 @@
 ﻿@using IceCreamProject.Libary
-@model IEnumerable<IceCreamProject.Models.Book>
+@model IceCreamProject.Models.HomeViewModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Frontend.cshtml";
 }
+<style>
+	.tns-nav button {
+    display: none;
 
+}
+
+</style>
 <div class="hero overlay">
 
 	<div class="img-bg rellax">
@@ -54,7 +60,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-5 gap-4">
-						@foreach (var item in Model)
+						@foreach (var item in Model.AllProducts)
 						{
 							<div class="col">
 								<div class="product-item">
@@ -221,8 +227,8 @@
 	<div class="container">
 		<div class="row align-items-center justify-content-between  mb-5">
 			<div class="col-lg-5" data-aos="fade-up">
-				<h2 class="heading mb-3">Sản Phẩm Nổi Bật</h2>
-				<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
+				<h2 class="heading mb-3">Best Selling</h2>
+				<p>Indulge in our most loved and best-selling ice creams, carefully crafted to satisfy every craving. From classic flavors to unique creations, discover why these frozen delights are everyone’s favorite. Treat yourself today!</p>
 			</div>
 			<div class="col-lg-5 text-md-end" data-aos="fade-up" data-aos-delay="100">
 				<div id="destination-controls">
@@ -242,307 +248,176 @@
 
 	<div class="destination-slider-wrap">
 		<div class="destination-slider mt-5 mb-5">
-			<div class="destination mb-5 ">
-				<div class="col">
-					<div class="product-item">
-						<figure>
-							<a href="index.html" title="Product Title">
-								<img src="~/Frontend/images/about_2.jpg" alt="Product Thumbnail" class="tab-image" />
-							</a>
-						</figure>
-						<div class="d-flex flex-column text-center">
-							<h3 class="fs-6 fw-normal">Whole Wheat Sandwich Bread</h3>
-							<div>
-								<span class="rating">
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-half"></use></svg>
-								</span>
-								<span>(222)</span>
-							</div>
-							<div class="d-flex justify-content-center align-items-center gap-2">
-								<del>$24.00</del>
-								<span class="text-dark fw-semibold">$18.00</span>
-								<span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">10% OFF</span>
-							</div>
-							<div class="button-area p-3 pt-0">
-								<div class="row g-1 mt-2">
-									<div class="col-3">
-										<input type="number" name="quantity" class="form-control border-dark-subtle input-number quantity" value="1" />
-									</div>
-									<div class="col-7">
-										<a href="#" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
-											<svg width="18" height="18"><use xlink:href="#cart"></use></svg> Add to Cart
-										</a>
-									</div>
-									<div class="col-2">
-										<a href="#" class="btn btn-outline-dark rounded-1 p-2 fs-6">
-											<svg width="18" height="18">
-												<use xlink:href="#heart"></use>
-											</svg>
-										</a>
+			@foreach (var item in Model.BestSellingProducts.Where(p => p.IsActive))
+			{
+				<div class="destination mb-5">
+					<div class="col">
+						<div class="product-item">
+							<figure>
+								@if (item.IsActive)
+								{
+									<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
+										<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
+									</a>
+								}
+								else
+								{
+									<a href="javascript:void(0);" data-id="@item.BookId" onclick="viewProductDetails(@item.BookId)">
+										<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
+									</a>
+								}
+							</figure>
+							<div class="d-flex flex-column text-center">
+								<h3 class="fs-6 fw-normal text-truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; margin: 0 auto;">
+									@item.Title
+								</h3>
+								<div class="d-flex justify-content-center align-items-center gap-2">
+									@if (item.Price > 20)
+									{
+										<del>$24.00</del>
+									}
+									<span class="text-dark fw-semibold">@item.Price.ToString("C")</span>
+								</div>
+								<div class="button-area p-3 pt-0">
+									<div class="row g-1 mt-2">
+										<div class="col-3">
+											<input type="number" name="quantity" id="quantity-@item.BookId"
+												   class="form-control border-dark-subtle input-number quantity"
+												   value="1" min="1" @(item.IsActive ? "" : "readonly") />
+										</div>
+										<div class="col-7">
+											<a href="javascript:void(0);"
+											   data-id="@item.BookId"
+											   data-url="@Url.Action("AddToCart", "Home")"
+											   class="btn @(item.IsActive ? "btn-primary" : "btn-dark") rounded-1 p-2 fs-7 btn-cart add-to-cart">
+												@(item.IsActive ? "Add to Cart" : "Sold Out")
+											</a>
+										</div>
+										<div class="col-2">
+											@if (item.IsActive)
+											{
+												<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)"
+												   class="btn btn-primary rounded-1 p-2 fs-6">
+													<i class="bi bi-three-dots"></i>
+												</a>
+											}
+											else
+											{
+												<a href="javascript:void(0);" data-id="@item.BookId"
+												   class="btn btn-dark rounded-1 p-2 fs-6" onclick="viewProductDetails(@item.BookId)">
+													<i class="bi bi-three-dots"></i>
+												</a>
+											}
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			
-			<div class="destination mb-5 ">
-				<div class="col">
-					<div class="product-item">
-						<figure>
-							<a href="index.html" title="Product Title">
-								<img src="~/Frontend/images/about_2.jpg" alt="Product Thumbnail" class="tab-image" />
-							</a>
-						</figure>
-						<div class="d-flex flex-column text-center">
-							<h3 class="fs-6 fw-normal">Whole Wheat Sandwich Bread</h3>
-							<div>
-								<span class="rating">
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-half"></use></svg>
-								</span>
-								<span>(222)</span>
-							</div>
-							<div class="d-flex justify-content-center align-items-center gap-2">
-								<del>$24.00</del>
-								<span class="text-dark fw-semibold">$18.00</span>
-								<span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">10% OFF</span>
-							</div>
-							<div class="button-area p-3 pt-0">
-								<div class="row g-1 mt-2">
-									<div class="col-3">
-										<input type="number" name="quantity" class="form-control border-dark-subtle input-number quantity" value="1" />
-									</div>
-									<div class="col-7">
-										<a href="#" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
-											<svg width="18" height="18"><use xlink:href="#cart"></use></svg> Add to Cart
-										</a>
-									</div>
-									<div class="col-2">
-										<a href="#" class="btn btn-outline-dark rounded-1 p-2 fs-6">
-											<svg width="18" height="18">
-												<use xlink:href="#heart"></use>
-											</svg>
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<div class="destination mb-5 ">
-							<div class="col">
-								<div class="product-item">
-									<figure>
-										<a href="index.html" title="Product Title">
-											<img src="~/Frontend/images/about_2.jpg" alt="Product Thumbnail" class="tab-image" />
-										</a>
-									</figure>
-									<div class="d-flex flex-column text-center">
-										<h3 class="fs-6 fw-normal">Whole Wheat Sandwich Bread</h3>
-										<div>
-											<span class="rating">
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-half"></use></svg>
-											</span>
-											<span>(222)</span>
-										</div>
-										<div class="d-flex justify-content-center align-items-center gap-2">
-											<del>$24.00</del>
-											<span class="text-dark fw-semibold">$18.00</span>
-											<span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">10% OFF</span>
-										</div>
-										<div class="button-area p-3 pt-0">
-											<div class="row g-1 mt-2">
-												<div class="col-3">
-													<input type="number" name="quantity" class="form-control border-dark-subtle input-number quantity" value="1" />
-												</div>
-												<div class="col-7">
-													<a href="#" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
-														<svg width="18" height="18"><use xlink:href="#cart"></use></svg> Add to Cart
-													</a>
-												</div>
-												<div class="col-2">
-													<a href="#" class="btn btn-outline-dark rounded-1 p-2 fs-6">
-														<svg width="18" height="18">
-															<use xlink:href="#heart"></use>
-														</svg>
-													</a>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-			
-			<div class="destination mb-5 ">
-							<div class="col">
-								<div class="product-item">
-									<figure>
-										<a href="index.html" title="Product Title">
-											<img src="~/Frontend/images/about_2.jpg" alt="Product Thumbnail" class="tab-image" />
-										</a>
-									</figure>
-									<div class="d-flex flex-column text-center">
-										<h3 class="fs-6 fw-normal">Whole Wheat Sandwich Bread</h3>
-										<div>
-											<span class="rating">
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-												<svg width="18" height="18" class="text-warning"><use xlink:href="#star-half"></use></svg>
-											</span>
-											<span>(222)</span>
-										</div>
-										<div class="d-flex justify-content-center align-items-center gap-2">
-											<del>$24.00</del>
-											<span class="text-dark fw-semibold">$18.00</span>
-											<span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">10% OFF</span>
-										</div>
-										<div class="button-area p-3 pt-0">
-											<div class="row g-1 mt-2">
-												<div class="col-3">
-													<input type="number" name="quantity" class="form-control border-dark-subtle input-number quantity" value="1" />
-												</div>
-												<div class="col-7">
-													<a href="#" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
-														<svg width="18" height="18"><use xlink:href="#cart"></use></svg> Add to Cart
-													</a>
-												</div>
-												<div class="col-2">
-													<a href="#" class="btn btn-outline-dark rounded-1 p-2 fs-6">
-														<svg width="18" height="18">
-															<use xlink:href="#heart"></use>
-														</svg>
-													</a>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-			<div class="destination mb-5 ">
-				<div class="col">
-					<div class="product-item">
-						<figure>
-							<a href="index.html" title="Product Title">
-								<img src="~/Frontend/images/about_2.jpg" alt="Product Thumbnail" class="tab-image" />
-							</a>
-						</figure>
-						<div class="d-flex flex-column text-center">
-							<h3 class="fs-6 fw-normal">Whole Wheat Sandwich Bread</h3>
-							<div>
-								<span class="rating">
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-half"></use></svg>
-								</span>
-								<span>(222)</span>
-							</div>
-							<div class="d-flex justify-content-center align-items-center gap-2">
-								<del>$24.00</del>
-								<span class="text-dark fw-semibold">$18.00</span>
-								<span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">10% OFF</span>
-							</div>
-							<div class="button-area p-3 pt-0">
-								<div class="row g-1 mt-2">
-									<div class="col-3">
-										<input type="number" name="quantity" class="form-control border-dark-subtle input-number quantity" value="1" />
-									</div>
-									<div class="col-7">
-										<a href="#" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
-											<svg width="18" height="18"><use xlink:href="#cart"></use></svg> Add to Cart
-										</a>
-									</div>
-									<div class="col-2">
-										<a href="#" class="btn btn-outline-dark rounded-1 p-2 fs-6">
-											<svg width="18" height="18">
-												<use xlink:href="#heart"></use>
-											</svg>
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="destination mb-5 ">
-				<div class="col">
-					<div class="product-item">
-						<figure>
-							<a href="index.html" title="Product Title">
-								<img src="~/Frontend/images/about_2.jpg" alt="Product Thumbnail" class="tab-image" />
-							</a>
-						</figure>
-						<div class="d-flex flex-column text-center">
-							<h3 class="fs-6 fw-normal">Whole Wheat Sandwich Bread</h3>
-							<div>
-								<span class="rating">
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-full"></use></svg>
-									<svg width="18" height="18" class="text-warning"><use xlink:href="#star-half"></use></svg>
-								</span>
-								<span>(222)</span>
-							</div>
-							<div class="d-flex justify-content-center align-items-center gap-2">
-								<del>$24.00</del>
-								<span class="text-dark fw-semibold">$18.00</span>
-								<span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">10% OFF</span>
-							</div>
-							<div class="button-area p-3 pt-0">
-								<div class="row g-1 mt-2">
-									<div class="col-3">
-										<input type="number" name="quantity" class="form-control border-dark-subtle input-number quantity" value="1" />
-									</div>
-									<div class="col-7">
-										<a href="#" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart">
-											<svg width="18" height="18"><use xlink:href="#cart"></use></svg> Add to Cart
-										</a>
-									</div>
-									<div class="col-2">
-										<a href="#" class="btn btn-outline-dark rounded-1 p-2 fs-6">
-											<svg width="18" height="18">
-												<use xlink:href="#heart"></use>
-											</svg>
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-
-
+			}
 		</div>
 	</div>
 
 </div>
+
+
+
+
+<div class="section bg-light">
+
+
+	<h2 class="heading mb-5 text-center"> New Products</h2>
+
+	<div class="text-center mb-5">
+		<div id="prevnext-testimonial">
+    <span class="prev me-3" data-controls="prev">
+        <span class="icon-chevron-left"></span>
+    </span>
+    <span class="next" data-controls="next">
+        <span class="icon-chevron-right"></span>
+    </span>
+</div>
+
+	</div>
+
+	<div class="wide-slider-testimonial">
+		@foreach (var item in Model.NewProducts.Where(p => p.IsActive))
+		{
+			<div class="item">
+				<blockquote class="block-testimonial">
+					<div class="destination mb-5">
+						<div class="col">
+							<div class="product-item">
+								<figure>
+									@if (item.IsActive)
+									{
+										<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
+											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
+										</a>
+									}
+									else
+									{
+										<a href="javascript:void(0);" data-id="@item.BookId" onclick="viewProductDetails(@item.BookId)">
+											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
+										</a>
+									}
+								</figure>
+								<div class="d-flex flex-column text-center">
+									<h3 class="fs-6 fw-normal text-truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; margin: 0 auto;">
+										@item.Title
+									</h3>
+									<div class="d-flex justify-content-center align-items-center gap-2">
+										@if (item.Price > 20)
+										{
+											<del>$24.00</del>
+										}
+										<span class="text-dark fw-semibold">@item.Price.ToString("C")</span>
+									</div>
+									<div class="button-area p-3 pt-0">
+										<div class="row g-1 mt-2">
+											<div class="col-3">
+												<input type="number" name="quantity" id="quantity-@item.BookId"
+													   class="form-control border-dark-subtle input-number quantity"
+													   value="1" min="1" @(item.IsActive ? "" : "readonly") />
+											</div>
+											<div class="col-7">
+												<a href="javascript:void(0);"
+												   data-id="@item.BookId"
+												   data-url="@Url.Action("AddToCart", "Home")"
+												   class="btn @(item.IsActive ? "btn-primary" : "btn-dark") rounded-1 p-2 fs-7 btn-cart add-to-cart">
+													@(item.IsActive ? "Add to Cart" : "Sold Out")
+												</a>
+											</div>
+											<div class="col-2">
+												@if (item.IsActive)
+												{
+													<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)"
+													   class="btn btn-primary rounded-1 p-2 fs-6">
+														<i class="bi bi-three-dots"></i>
+													</a>
+												}
+												else
+												{
+													<a href="javascript:void(0);" data-id="@item.BookId"
+													   class="btn btn-dark rounded-1 p-2 fs-6" onclick="viewProductDetails(@item.BookId)">
+														<i class="bi bi-three-dots"></i>
+													</a>
+												}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</blockquote>
+			</div>
+		}
+	</div>
+
+
+</div> 
 
 <div class="section">
 	<div class="container">
@@ -567,11 +442,11 @@
 </div>
 
 <script>
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', function () {
 		const toggleButton = document.querySelector('.read-more-toggle');
 		const content = document.querySelector('.read-more-content');
 
-		toggleButton.addEventListener('click', function(e) {
+		toggleButton.addEventListener('click', function (e) {
 			e.preventDefault();
 			if (content.style.display === 'none') {
 				content.style.display = 'block';
@@ -584,124 +459,7 @@
 	});
 </script>
 
-
-<div class="section bg-light">
-
-
-
-
-	<h2 class="heading mb-5 text-center">Này sửa thành sản phẩm bán chạy</h2>
-
-	<div class="text-center mb-5">
-		<div id="prevnext-testimonial">
-			<span class="prev me-3" data-controls="prev">
-				<span class="icon-chevron-left"></span>
-
-			</span>
-			<span class="next" data-controls="next">
-				<span class="icon-chevron-right"></span>
-
-			</span>
-		</div>
-	</div>
-
-	<div class="wide-slider-testimonial-wrap">
-		<div class="wide-slider-testimonial">
-			<div class="item">
-				<blockquote class="block-testimonial">
-					<div class="author">
-						<img src="~/Frontend/images/person_1.jpg" alt="Free template by TemplateUX">
-						<h3>John Doe</h3>
-						<p class="position mb-5">CEO, Founder</p>
-					</div>
-					<p>
-						<div class="quote">&ldquo;</div>
-						&ldquo;Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.&rdquo;
-					</p>
-				</blockquote>
-			</div>
-
-			<div class="item">
-				<blockquote class="block-testimonial">
-					<div class="author">
-						<img src="~/Frontend/images/person_2.jpg" alt="Free template by TemplateUX">
-						<h3>James Woodland</h3>
-						<p class="position mb-5">Designer at Facebook</p>
-					</div>
-					<p>
-						<div class="quote">&ldquo;</div>
-						&ldquo;When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.&rdquo;
-					</p>
-
-				</blockquote>
-			</div>
-
-			<div class="item">
-				<blockquote class="block-testimonial">
-					<div class="author">
-						<img src="~/Frontend/images/person_3.jpg" alt="Free template by TemplateUX">
-						<h3>Rob Smith</h3>
-						<p class="position mb-5">Product Designer at Twitter</p>
-					</div>
-					<p>
-						<div class="quote">&ldquo;</div>
-						&ldquo;A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.&rdquo;
-					</p>
-				</blockquote>
-			</div>
-
-			<div class="item">
-				<blockquote class="block-testimonial">
-					<div class="author">
-						<img src="~/Frontend/images/person_1.jpg" alt="Free template by TemplateUX">
-						<h3>John Doe</h3>
-						<p class="position mb-5">CEO, Founder</p>
-					</div>
-					<p>
-						<div class="quote">&ldquo;</div>
-						&ldquo;Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.&rdquo;
-					</p>
-				</blockquote>
-			</div>
-
-			<div class="item">
-				<blockquote class="block-testimonial">
-					<div class="author">
-						<img src="~/Frontend/images/person_2.jpg" alt="Free template by TemplateUX">
-						<h3>James Woodland</h3>
-						<p class="position mb-5">Designer at Facebook</p>
-					</div>
-					<p>
-						<div class="quote">&ldquo;</div>
-						&ldquo;When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.&rdquo;
-					</p>
-
-				</blockquote>
-			</div>
-
-			<div class="item">
-				<blockquote class="block-testimonial">
-					<div class="author">
-						<img src="~/Frontend/images/person_3.jpg" alt="Free template by TemplateUX">
-						<h3>Rob Smith</h3>
-						<p class="position mb-5">Product Designer at Twitter</p>
-					</div>
-					<p>
-						<div class="quote">&ldquo;</div>
-						&ldquo;A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.&rdquo;
-					</p>
-				</blockquote>
-			</div>
-		</div>
-	</div>
-
-
-
-</div> <!-- /.untree_co-section -->
-
-
-
-<div class="section">
+@* <div class="section">
 	<div class="container">
 
 		<div class="row">
@@ -783,3 +541,4 @@
 
     
 	
+ *@

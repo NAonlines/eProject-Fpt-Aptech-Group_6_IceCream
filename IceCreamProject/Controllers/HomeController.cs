@@ -19,19 +19,45 @@ namespace IceCreamProject.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpGet("/", Name = "Home")]
+		[HttpGet("/", Name = "Home")]
+		public IActionResult Index()
+		{
+			// AllProduct
+			var allProducts = _db.Books
+								 .OrderBy(b => b.IsActive ? 0 : 1)
+								 .Take(8)
+								 .ToList();
 
-        public IActionResult Index()
-        {
-            var books = _db.Books
-                            .OrderBy(b => b.IsActive ? 0 : 1) // Sắp xếp sản phẩm còn hàng lên trước
-                            .Take(8)
-                            .ToList();
+			// Best Selling
+			var bestSellingProducts = _db.CartItems
+										 .GroupBy(c => c.ProductId)
+										 .Select(g => new
+										 {
+											 ProductId = g.Key,
+											 TotalQuantity = g.Sum(c => c.Quantity)
+										 })
+										 .OrderByDescending(g => g.TotalQuantity)
+										 .Take(8)
+										 .Join(_db.Books,
+											   cartItem => cartItem.ProductId,
+											   book => book.BookId,
+											   (cartItem, book) => book)
+										 .ToList();
+            // New Product
+			var newProducts = _db.Books
+						 .OrderByDescending(b => b.BookId).ToList();
 
-            return View(books);
-        }
+			var viewModel = new HomeViewModel
+			{
+                AllProducts = allProducts,
+				NewProducts = newProducts,
+				BestSellingProducts = bestSellingProducts
+			};
 
-        [Authorize]
+			return View(viewModel);
+		}
+
+		[Authorize]
         [HttpGet("/profile", Name = "Profile")]
         public async Task<IActionResult> Profile()
         {

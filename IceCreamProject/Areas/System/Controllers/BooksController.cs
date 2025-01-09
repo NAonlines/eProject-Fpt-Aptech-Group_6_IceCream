@@ -120,7 +120,7 @@ namespace IceCreamProject.Areas.System.Controllers
 
 
 
-             /* [HttpGet("Delete/{id:int}")]
+        [HttpGet("Delete/{id:int}")]
         public async Task<IActionResult> Delete(int? id)
         {
             var product = await _context.Books.FindAsync(id);
@@ -144,7 +144,7 @@ namespace IceCreamProject.Areas.System.Controllers
             {
                 return RedirectToAction("Index");
             }
-        }*/
+        }
         
 
 

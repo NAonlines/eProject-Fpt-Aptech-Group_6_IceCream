@@ -8,12 +8,13 @@
 * Website: https://github.com/alexis-luna/bootstrap-simple-admin-template
 -->
 <html lang="en">
+<link rel="shortcut icon" href="~/Images/logo.png">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dashboard | Bootstrap Simple Admin Template</title>
+    <title>Dashboard | Ice Cream Management</title>
     <link href="~/Backend/assets/vendor/fontawesome/css/fontawesome.min.css" rel="stylesheet">
     <link href="~/Backend/assets/vendor/fontawesome/css/solid.min.css" rel="stylesheet">
     <link href="~/Backend/assets/vendor/fontawesome/css/brands.min.css" rel="stylesheet">
@@ -24,22 +25,44 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <style>
-    .square-logo {
-        width: 160px; /* Adjust the width to your desired size */
-        height: 70px; /* Match the height to make it a square */
-        object-fit: cover; /* Ensures the image is cropped to fit the square */
-        border-radius: 10px; /* Optional: Add rounded corners */
-        display: block; /* Ensures proper rendering */
-        margin: 0 auto; /* Center the logo horizontally */
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f9f9f9; /* Màu nền nhạt để làm nổi bật chữ */
+        margin: 0;
     }
 
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff; /* Màu nền trắng đơn giản */
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+        font-family: 'Roboto', sans-serif; /* Font chữ hiện đại */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .sidebar-header h5 {
+            font-size: 20px;
+            color: #4A90E2; /* Màu xanh nhạt tươi mát */
+            font-weight: 600; /* Tăng độ đậm một chút để nổi bật */
+            margin: 0;
+        }
 
 </style>
 <body>
     <div class="wrapper">
         <nav id="sidebar" class="#">
             <div class="sidebar-header">
-                <img src="~/Images/logo3.png" alt="logo" class="square-logo">
+                <h5>Ice Cream Management</h5>
+
+
             </div>
             <ul class="list-unstyled components text-secondary">
 
