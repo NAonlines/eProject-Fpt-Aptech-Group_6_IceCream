@@ -559,7 +559,7 @@ namespace IceCreamProject.Controllers
 
                 if (membership == null || membership.MemberPriceData == null)
                 {
-                    return Json(new { success = false, message = "Membership details not found in database." });
+                    return Json(new { success = false, message = "Membership not active now" });
                 }
 
                 // Log details for debugging
