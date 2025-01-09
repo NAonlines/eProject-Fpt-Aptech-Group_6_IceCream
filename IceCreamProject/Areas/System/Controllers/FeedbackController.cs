@@ -70,5 +70,42 @@ namespace IceCreamProject.Areas.System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [HttpGet("Reply/{id:int}")]
+        public IActionResult Reply(int id)
+        {
+            var feedback = db.Feedbacks.Find(id); 
+            if (feedback == null)
+            {
+                return NotFound();
+            }
+
+            return View(feedback);
+        }
+
+        [HttpPost("Reply")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Reply(int id, string responseContent)
+        {
+            var feedback = db.Feedbacks.Find(id);
+            if (feedback == null)
+            {
+                return Json(new { success = false, message = "Feedbacks not found." });
+            }
+
+            var response = new FeedbackResponse
+            {
+                FeedbackId = id,
+                ResponseContent = responseContent,
+                RespondedDate = DateTime.Now,
+                RespondedBy = User.Identity.Name
+            };
+
+            db.FeedbackResponses.Add(response);
+            db.SaveChanges();
+
+            return Json(new { success = true, message = "User updated successfully." });
+        }
+
     }
 }

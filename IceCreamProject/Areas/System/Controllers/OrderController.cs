@@ -74,12 +74,33 @@ namespace IceCreamProject.Areas.System.Controllers
             {
                 return Json(new { success = false, message = "Order not found." });
             }
+            if (order.OrderStatus == "Completed" && model.OrderStatus == "Processing")
+            {
+                return Json(new { success = false, message = "Cannot change status from Shipped to Processing." });
+            }
+
+            if (order.OrderStatus == "Cancelled")
+            {
+                return Json(new { success = false, message = "Cancelled orders cannot be updated." });
+            }
             order.OrderStatus = model.OrderStatus;
             order.Address = model.Address;
             db.Orders.Update(order);
             await db.SaveChangesAsync();
             return Json(new { success = true, message = "User updated successfully." });
         }
+        [HttpGet("Details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var cartItems = db.CartItems.Where(u => u.OrderId == id).ToList();
+            if (!cartItems.Any())
+            {
+                return NotFound();
+            }
+
+            return View(cartItems);
+        }
+
     }
 
 

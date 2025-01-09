@@ -28,7 +28,7 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-2">Address<span class="text-danger">*</span></label>
                                 <div class="col-sm-10">
-                                    <input asp-for="Address" class="form-control" />
+                                    <input asp-for="Address" class="form-control" readonly />
                                 </div>
                             </div>
 
@@ -45,7 +45,7 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-2">Order Status<span class="text-danger">*</span></label>
                                 <div class="col-sm-10">
-                                    <select asp-for="OrderStatus" class="form-control">
+                                    <select asp-for="OrderStatus" class="form-control" >
                                         <option value="Processing">Processing</option>
                                         <option value="Completed">Shipped</option>
                                         <option value="Delivered">Delivered</option>
@@ -80,36 +80,54 @@
     </div>
 </div>
 
+<div id="notificationPopup" class="popup hidden">
+    <span id="notificationMessage"></span>
+    <button id="closePopup">Close</button>
+</div>
+
 <script>
     const baseUrl = '/System/Order';
-        document.getElementById('submitBtn').addEventListener('click', function () {
+
+    document.getElementById('submitBtn').addEventListener('click', function () {
         const form = document.getElementById('updateOrderForm');
         const formData = new FormData(form);
 
         fetch(`${baseUrl}/Edit`, {
-                method: 'POST',
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                },
-                body: formData
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                const popup = document.getElementById('notificationPopup');
+                const message = document.getElementById('notificationMessage');
+
+                if (data.success) {
+                    message.textContent = "User updated successfully!";
+                    message.className = 'text-success';
+                } else {
+                    message.textContent = data.message || "Failed to update user.";
+                    message.className = 'text-danger';
+                }
+
+                popup.classList.remove('hidden');
             })
-                .then(response => response.json())
-                .then(data => {
-                    const message = document.getElementById('responseMessage');
-                    if (data.success) {
-                        message.textContent = "User updated successfully!";
-                        message.classList.remove('text-danger');
-                        message.classList.add('text-success');
-                    } else {
-                        message.textContent = data.message || "Failed to update user.";
-                        message.classList.remove('text-success');
-                        message.classList.add('text-danger');
-                    }
-                })
-                .catch(() => {
-                    const message = document.getElementById('responseMessage');
-                    message.textContent = "An error occurred. Please try again.";
-                    message.classList.add('text-danger');
-                });
-        });
-    </script>
+            .catch(() => {
+                const popup = document.getElementById('notificationPopup');
+                const message = document.getElementById('notificationMessage');
+
+                message.textContent = "An error occurred. Please try again.";
+                message.className = 'text-danger';
+
+                popup.classList.remove('hidden');
+            });
+    });
+
+    document.getElementById('closePopup').addEventListener('click', function () {
+        const popup = document.getElementById('notificationPopup');
+        popup.classList.add('hidden');
+    });
+
+</script>

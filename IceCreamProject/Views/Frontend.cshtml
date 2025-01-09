@@ -98,7 +98,9 @@
 							<li class="@((ViewContext.RouteData.Values["controller"]?.ToString() == "Membership") ? "active" : "")">
 								<a asp-route="Membership">Membership</a>
 							</li>
-
+							<li class="@((ViewContext.RouteData.Values["controller"]?.ToString() == "ReadReplyFeedback") ? "active" : "")">
+								<a asp-route="ReadReplyFeedback">ReadReplyFeedback</a>
+							</li>
 
 						</ul>
 					</div>
