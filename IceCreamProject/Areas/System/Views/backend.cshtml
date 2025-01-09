@@ -218,3 +218,51 @@
 </body>
 
 </html>
+<style>
+
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+        .popup.hidden {
+            display: none;
+        }
+
+        .popup .text-success {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .popup .text-danger {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+    #closePopup {
+        margin-top: 15px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        #closePopup:hover {
+            background-color: #0056b3;
+        }
+
+</style>

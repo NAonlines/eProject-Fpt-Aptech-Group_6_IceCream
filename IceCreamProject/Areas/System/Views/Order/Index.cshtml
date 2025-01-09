@@ -60,9 +60,8 @@
                                         <td>@order.OrderStatus</td>
                                         <td>@order.TotalAmount.ToString("C")</td>
                                         <td>
-                                            <a asp-controller="Order" asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-info">View</a>
+                                            <a asp-controller="Order" asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-info">Details</a>
                                             <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">Edit</a>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOrder(@order.OrderId)">Delete</button>
                                         </td>
                                     </tr>
                                 }
@@ -75,30 +74,4 @@
     </div>
 </div>
 
-<script>
-    function deleteOrder(orderId) {
-        if (!orderId) {
-            Swal.fire('Warning!', 'Order ID is missing.', 'warning');
-            return;
-        }
 
-        $.ajax({
-            url: "/System/Order/Delete",
-            data: {
-                orderId: orderId
-            },
-            type: "POST",
-            success: function (data) {
-                if (data.error != null) {
-                    Swal.fire('Warning!', data.content, 'warning');
-                    return;
-                }
-                Swal.fire('Success!', 'Order deleted successfully.', 'success').then(() => location.reload());
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Error: ", xhr.responseText || error);
-                Swal.fire('Error!', 'An error occurred while deleting the order.', 'error');
-            }
-        });
-    }
-</script>

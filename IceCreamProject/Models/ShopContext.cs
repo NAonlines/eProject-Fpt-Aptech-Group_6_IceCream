@@ -25,7 +25,7 @@ public class ShopContext : IdentityDbContext<User, IdentityRole, string>
     public DbSet<MemberPrice> MemberPrice { get; set; }
     public DbSet<PaymentMember> PaymentMember { get; set; }
     public DbSet<Memberships> Memberships { get; set; }
-    //public DbSet<Checkout> Checkouts { get; set; }
+    public DbSet<FeedbackResponse> FeedbackResponses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,7 +44,15 @@ public class ShopContext : IdentityDbContext<User, IdentityRole, string>
            .Property(ci => ci.Price)
            .HasColumnType("decimal(18,2)");
 
+        modelBuilder.Entity<FeedbackResponse>(entity =>
+        {
+            entity.HasKey(e => e.ResponseId).HasName("PK__Feedback__1AAA646C43F50931");
 
+            entity.Property(e => e.RespondedBy).HasMaxLength(100);
+            entity.Property(e => e.RespondedDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
         //modelBuilder.Entity<Checkout>()
         //    .Property(c => c.TotalAmount)
         //    .HasColumnType("decimal(18,2)");
