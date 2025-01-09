@@ -519,46 +519,87 @@ namespace IceCreamProject.Controllers
             return View(order);
         }
 
-		//      [HttpGet("/orders", Name = "Orders")]
-		//public async Task<IActionResult> Orders()
-		//{
-		//          var user = await _userManager.GetUserAsync(User);
-		//          if(user == null) {
-		//		return RedirectToAction("Login", "Secure");
-		//	}else{
-		//		var orders = await _db.Orders.Where(o => o.UserId == user.Id).ToListAsync();
-		//		return View(orders);
-		//	}
+        //      [HttpGet("/orders", Name = "Orders")]
+        //public async Task<IActionResult> Orders()
+        //{
+        //          var user = await _userManager.GetUserAsync(User);
+        //          if(user == null) {
+        //		return RedirectToAction("Login", "Secure");
+        //	}else{
+        //		var orders = await _db.Orders.Where(o => o.UserId == user.Id).ToListAsync();
+        //		return View(orders);
+        //	}
 
 
-		//}
-		[Authorize]
-		[HttpGet("/order-detail")]
-		public async Task<IActionResult> OrderDetail(int orderId)
-		{
-			var order = await _db.Orders
-				.Include(o => o.CartItems)
-				.FirstOrDefaultAsync(o => o.OrderId == orderId);
+        //}
+        [Authorize]
+        [HttpGet("/order-detail")]
+        public async Task<IActionResult> OrderDetail(int orderId)
+        {
+            var order = await _db.Orders
+                .Include(o => o.CartItems)
+                .Include(o => o.PaymentMembers)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
-			if (order == null)
-			{
-				return Json(new { success = false, message = "Order not found." });
-			}
+            if (order == null)
+            {
+                return Json(new { success = false, message = "Order not found." });
+            }
 
-			var cartItems = order.CartItems.Select(item => new
-			{
-				name = item.Name,
-				quantity = item.Quantity,
-				price = item.Price
-			}).ToList();
+            // Check if the order includes a membership payment
+            var membershipPayment = order.PaymentMembers
+                .FirstOrDefault(payment => payment.PriceMemberID != 0);
 
-			return Json(new { success = true, cartItems });
-		}
+            if (membershipPayment != null)
+            {
+                // Retrieve Membership and NamePrice details
+                var membership = await _db.Memberships
+                    .Include(m => m.MemberPriceData) // Include the related MemberPriceData
+                    .FirstOrDefaultAsync(m => m.UserID == order.UserId && m.PriceMemberID == membershipPayment.PriceMemberID);
+
+                if (membership == null || membership.MemberPriceData == null)
+                {
+                    return Json(new { success = false, message = "Membership details not found in database." });
+                }
+
+                // Log details for debugging
+                Console.WriteLine($"MembershipName: {membership.MemberPriceData.NamePrice}, Price: {membership.MemberPriceData.Price}");
+
+                // Return the membership details
+                return Json(new
+                {
+                    success = true,
+                    isMembership = true,
+                    membershipDetails = new
+                    {
+                        MembershipName = membership.MemberPriceData.NamePrice,
+                        Price = membership.MemberPriceData.Price,
+                        PurchaseDate = membership.CreateDate.ToString("yyyy-MM-dd"),
+                        ExpiryDate = membership.EndDate.ToString("yyyy-MM-dd"),
+                        Status = membership.Status ? "Active" : "Expired"
+                    }
+                });
+            }
+
+            // Return cart details if no membership is found
+            var cartItems = order.CartItems.Select(item => new
+            {
+                name = item.Name,
+                quantity = item.Quantity,
+                price = item.Price
+            }).ToList();
+
+            return Json(new
+            {
+                success = true,
+                isMembership = false,
+                cartItems
+            });
+        }
 
 
 
-
-		[HttpGet("/free-recipes", Name = "FreeRecipes")]
+        [HttpGet("/free-recipes", Name = "FreeRecipes")]
         public async Task<IActionResult> FreeRecipes()
         {
             var freeCategory = await _db.Categories.FirstOrDefaultAsync(c => c.Name == "Free" && c.IsActive);

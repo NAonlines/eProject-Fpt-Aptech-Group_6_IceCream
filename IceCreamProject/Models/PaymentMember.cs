@@ -21,6 +21,7 @@ namespace IceCreamProject.Models
 
         [ForeignKey("PriceMemberID")]
         public virtual MemberPrice? MemberPriceData { get; set; }
+        public int? OrderId { get; set; }
 
     }
 }

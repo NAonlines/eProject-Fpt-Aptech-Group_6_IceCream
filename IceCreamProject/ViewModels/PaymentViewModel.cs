@@ -1,10 +1,10 @@
 ﻿namespace IceCreamProject.ViewModels
 {
-    //Copy
     public class PaymentViewModel
     {
-        public string OrderCode { get; set; }
-        public decimal PriceRecharge { get; set; }
-        public int PriceMemberID { get; set; }
+        public int PriceMemberID { get; set; } // ID của gói Membership
+        public string OrderCode { get; set; } // Mã giao dịch
+        public decimal PriceRecharge { get; set; } // Giá thanh toán
+        public int? OrderId { get; set; } // ID của đơn hàng, nếu có
     }
 }

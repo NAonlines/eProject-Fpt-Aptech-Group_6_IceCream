@@ -17,4 +17,8 @@ public class Order
 
 	// List of items in the cart
 	public List<CartItem> CartItems { get; set; } = new List<CartItem>();
+
+    public virtual ICollection<PaymentMember> PaymentMembers { get; set; }
+
+
 }

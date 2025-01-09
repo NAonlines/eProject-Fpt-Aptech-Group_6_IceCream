@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IceCreamProject.Controllers
 {
-    
     public class PaymentController : Controller
     {
         private readonly ShopContext _db;
@@ -35,6 +34,7 @@ namespace IceCreamProject.Controllers
             ViewBag.Price = price;
             return View();
         }
+
         [HttpPost("confirm/payment")]
         public async Task<IActionResult> ConfirmRecharge(PaymentViewModel model)
         {
@@ -43,31 +43,49 @@ namespace IceCreamProject.Controllers
             {
                 return Redirect("/login");
             }
+
             try
             {
+                var newOrder = new Order
+                {
+                    CustomerName = user.UserName,
+                    Address = user.Address ?? "N/A",
+                    PhoneNumber = user.PhoneNumber ?? "N/A",
+                    TotalAmount = model.PriceRecharge,
+                    PaymentMethod = "Bank Transfer",
+                    OrderDate = DateTime.UtcNow,
+                    UserId = user.Id,
+                    OrderStatus = "Processing" 
+                };
 
-                var napTien = new PaymentMember
+                _db.Orders.Add(newOrder);
+                await _db.SaveChangesAsync();
+
+                var payment = new PaymentMember
                 {
                     UserID = user.Id,
                     PriceMemberID = model.PriceMemberID,
                     PaymentCode = model.OrderCode,
                     Price = model.PriceRecharge,
-                    Status = false,
-                    CreateDate = DateTime.Now,
+                    Status = false, 
+                    CreateDate = DateTime.UtcNow,
+                    OrderId = newOrder.OrderId 
                 };
-                await _db.AddAsync(napTien);
-                await _db.SaveChangesAsync();
-                return Json(new { code = 200, message = "Payment confirmed" });
 
+                await _db.PaymentMember.AddAsync(payment);
+                await _db.SaveChangesAsync();
+
+                newOrder.OrderStatus = "Completed";
+                _db.Orders.Update(newOrder);
+                await _db.SaveChangesAsync();
+
+                return Json(new { code = 200, message = "Payment confirmed and order completed.", orderId = newOrder.OrderId });
             }
             catch (Exception ex)
             {
                 return Json(new { code = 400, message = ex.Message });
-
             }
-
-
-
         }
+
     }
 }

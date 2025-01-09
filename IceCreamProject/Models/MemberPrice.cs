@@ -2,7 +2,6 @@
 
 namespace IceCreamProject.Models
 {
-    
     public class MemberPrice
     {
         [Key]
@@ -11,6 +10,5 @@ namespace IceCreamProject.Models
         public decimal Price { get; set; }
         public string Duration { get; set; }
         public DateTime CreateDate { get; set; }
-
     }
 }

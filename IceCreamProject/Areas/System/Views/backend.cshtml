@@ -23,16 +23,28 @@
     <link href="~/Backend/toastify/toastify.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+<style>
+    .square-logo {
+        width: 160px; /* Adjust the width to your desired size */
+        height: 70px; /* Match the height to make it a square */
+        object-fit: cover; /* Ensures the image is cropped to fit the square */
+        border-radius: 10px; /* Optional: Add rounded corners */
+        display: block; /* Ensures proper rendering */
+        margin: 0 auto; /* Center the logo horizontally */
+    }
 
+
+</style>
 <body>
     <div class="wrapper">
         <nav id="sidebar" class="#">
             <div class="sidebar-header">
-                <img src="~/Backend/assets/img/bootstraper-logo.png" alt="bootraper logo" class="app-logo">
+                <img src="~/Images/logo3.png" alt="logo" class="square-logo">
             </div>
             <ul class="list-unstyled components text-secondary">
+
                 <li>
-                    <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a asp-route="DashBoard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                 </li>
                 <li>
                     <a asp-route="Category"><i class="fas fa-th-large"></i> Category</a>
@@ -62,7 +74,7 @@
                        
                     </ul>
                 </li>
-                <li>
+               @*  <li>
                     <a href="#authmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-user-shield"></i> Authentication</a>
                     <ul class="collapse list-unstyled" id="authmenu">
                         <li>
@@ -75,8 +87,8 @@
                             <a href="forgot-password.html"><i class="fas fa-user-lock"></i> Forgot password</a>
                         </li>
                     </ul>
-                </li>
-                <li>
+                </li> *@
+               @*  <li>
                     <a href="#pagesmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-copy"></i> Pages</a>
                     <ul class="collapse list-unstyled" id="pagesmenu">
                         <li>
@@ -89,16 +101,16 @@
                             <a href="500.html"><i class="fas fa-info-circle"></i> 500 Error page</a>
                         </li>
                     </ul>
-                </li>
-                <li>
+                </li>*@
+                <li> 
                     <a asp-area="System" asp-controller="Order" asp-action="Index"><i class="fas fa-user-friends"></i> Order</a>
                 </li>
                 <li>
                     <a asp-area="System" asp-controller="Users" asp-action="Index"><i class="fas fa-user-friends"></i> Users</a>
                 </li>
-                <li>
+               @*  <li>
                     <a href="settings.html"><i class="fas fa-cog"></i>Settings</a>
-                </li>
+                </li> *@
             </ul>
         </nav>
         <div id="body" class="active">
@@ -118,13 +130,13 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end nav-link-menu" aria-labelledby="nav1">
                                     <ul class="nav-list">
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-list"></i> Access Logs</a></li>
+                                        <li><a asp-route="Home" class="dropdown-item"><i class="fas fa-globe"></i> Website</a></li>
                                         <div class="dropdown-divider"></div>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-database"></i> Back ups</a></li>
+@*                                         <li><a href="" class="dropdown-item"><i class="fas fa-database"></i> Back ups</a></li>
                                         <div class="dropdown-divider"></div>
                                         <li><a href="" class="dropdown-item"><i class="fas fa-cloud-download-alt"></i> Updates</a></li>
                                         <div class="dropdown-divider"></div>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-user-shield"></i> Roles</a></li>
+                                        <li><a href="" class="dropdown-item"><i class="fas fa-user-shield"></i> Roles</a></li> *@
                                     </ul>
                                 </div>
                             </div>
@@ -140,9 +152,9 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end nav-link-menu">
                                     <ul class="nav-list">
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-address-card"></i> Profile</a></li>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-envelope"></i> Messages</a></li>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
+                                        <li><a asp-route="Profile" class="dropdown-item"><i class="fas fa-address-card"></i> Profile</a></li>
+@*                                         <li><a href="" class="dropdown-item"><i class="fas fa-envelope"></i> Messages</a></li>
+                                        <li><a href="" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li> *@
                                         <div class="dropdown-divider"></div>
                                         <li><a asp-route="Logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                                     </ul>

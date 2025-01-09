@@ -1,0 +1,222 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Areas/System/Views/backend.cshtml";
+}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    .dashboard-title {
+        font-size: 2rem; /* Modern font size */
+        font-weight: 700; /* Bold font */
+        color: #4e73df; /* A modern shade of blue */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        font-family: 'Poppins', sans-serif; /* Clean and modern font family */
+        letter-spacing: 0.5px; /* Slight spacing for a sleek effect */
+        margin-bottom: 1rem; /* Adds spacing below the title */
+    }
+
+</style>
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="dashboard-title">Dashboard</h1>
+        @*  <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+        </a> *@
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Total Orders -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Orders
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["TotalOrders"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Amount -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Amount
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">$@ViewData["TotalAmount"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Cart Items -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Total Cart Items
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["TotalCartItems"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shopping-basket fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Users -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Total Users
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["TotalUsers"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Row -->
+    <!-- Orders by Date Chart -->
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Orders by Day</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="ordersByDayChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Recent Orders Table -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Orders</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Total Amount</th>
+                                    <th>Order Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in (IEnumerable<IceCreamProject.Models.Order>)ViewData["MostRecentOrders"])
+                                {
+                                    <tr>
+                                        <td>@order.OrderId</td>
+                                        <td>@order.CustomerName</td>
+                                        <td>$@order.TotalAmount</td>
+                                        <td>@order.OrderDate.ToString("MM/dd/yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Chart Script -->
+<script>
+    // Data from the server (ViewData)
+    const orderDates = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["OrderDates"]));
+    const ordersCount = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["OrdersCount"]));
+
+    // Initialize the chart
+    const ctx = document.getElementById('ordersByDayChart').getContext('2d');
+    const ordersByDayChart = new Chart(ctx, {
+        type: 'line', // Change to 'line' chart type
+        data: {
+            labels: orderDates, // Dates
+            datasets: [{
+                label: 'Number of Orders',
+                data: ordersCount, // Orders count for each date
+                backgroundColor: 'rgba(78, 115, 223, 0.1)', // Line area fill color
+                borderColor: 'rgba(78, 115, 223, 1)', // Line color
+                pointBackgroundColor: 'rgba(78, 115, 223, 1)', // Point color
+                pointBorderColor: 'rgba(255, 255, 255, 1)', // Point border color
+                pointRadius: 4, // Point size
+                tension: 0.4, // Smoothing of the curve
+                fill: true // Fill area under the line
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false // Hide legend if not needed
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    },
+                    grid: {
+                        display: false // Hide grid lines on X-axis
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Orders Count'
+                    },
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.1)' // Lighter grid lines
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+

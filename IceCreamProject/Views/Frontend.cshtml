@@ -52,7 +52,8 @@
 			<div class="site-navigation">
 				<div class="row">
 					<div class="col-6 col-lg-3">
-						<a asp-route="Home" class="logo m-0 float-start">Ice Cream</a>
+
+						<a asp-route="Home" class="logo m-0 float-start"><i class="fas fa-ice-cream"></i>Ice Cream</a>
 					</div>
 					<div class="col-lg-6 d-none d-lg-inline-block text-center nav-center-wrap">
 						<ul class="js-clone-nav text-navcolor text-center site-menu p-0 m-0">
@@ -120,10 +121,15 @@
 										@User.Identity.Name
 									</a>
 									<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+										
 										<li><a class="dropdown-item" asp-route="Profile">Profile</a></li>
 										<li><a class="dropdown-item" href="/recipes-user">Recipes</a></li>
 										<li><hr class="dropdown-divider"></li>
 										<li><a class="dropdown-item" asp-route="Logout">Logout</a></li>
+										@if (User.IsInRole("Admin"))
+										{
+											<li><a class="dropdown-item" asp-route="DashBoard">Dashboard</a></li>
+										}
 									</ul>
 								</li>
 
