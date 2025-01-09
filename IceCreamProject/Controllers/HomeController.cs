@@ -4,6 +4,7 @@ using IceCreamProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 namespace IceCreamProject.Controllers
 {
@@ -703,6 +704,74 @@ namespace IceCreamProject.Controllers
             var books = await _db.Books.ToListAsync(); 
             return View(books);
         }
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> SubmitRecipe(RecipeViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                string imagePath = string.Empty;
 
+                // Xử lý upload ảnh
+                if (viewModel.ImageUrl != null)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
+                    string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
+                    imagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
+                    string filePath = Path.Combine(uploadsFolder, imagePath);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewModel.ImageUrl.CopyToAsync(stream);
+                    }
+                }
+
+                // Lấy thông tin người dùng hiện tại
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    TempData["Error"] = "Không tìm thấy thông tin người dùng.";
+                    return RedirectToAction("Index");
+                }
+
+                // Tạo đối tượng Recipe
+                var recipe = new Recipe
+                {
+                    Name = viewModel.Name,
+                    Ingredients = viewModel.Ingredients,
+                    ImageUrl = imagePath,
+                    IsApproved = viewModel.IsApproved,
+                    CategoryId = viewModel.CategoryId,
+                    BookId = viewModel.BookId,
+                    CreatedById = user.Id // Lấy ID của người dùng
+                };
+
+                // Lưu công thức vào cơ sở dữ liệu
+                _db.Recipes.Add(recipe);
+                await _db.SaveChangesAsync();
+                TempData["Message"] = "Recipe created successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Nạp lại danh sách Category và Book nếu ModelState không hợp lệ
+            viewModel.Categories = _db.Categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.Name
+            }).ToList();
+
+            viewModel.Books = _db.Books.Select(b => new SelectListItem
+            {
+                Value = b.BookId.ToString(),
+                Text = b.Title
+            }).ToList();
+
+            return View(viewModel);
+        }
     }
 }
