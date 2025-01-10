@@ -60,14 +60,14 @@
 
                         <!-- Recipe Name -->
                         <div class="form-group">
-                            <label asp-for="Name">Recipe Name</label>
+                            <label asp-for="Name"><span class="text-danger">*</span>Recipe Name</label>
                             <input asp-for="Name" class="form-control" />
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
                         <!-- Ingredients (Using CKEditor) -->
                         <div class="form-group">
-                            <label asp-for="Ingredients">Ingredients</label>
+                            <label asp-for="Ingredients"><span class="text-danger">*</span>Ingredients</label>
                             <textarea asp-for="Ingredients" class="form-control" id="editor"></textarea>
                             <span asp-validation-for="Ingredients" class="text-danger"></span>
                         </div>

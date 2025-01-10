@@ -54,8 +54,8 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="h5">Shopping Bag</th>
-                                    <th scope="col">Format</th>
-                                    <th scope="col">Quantity</th>
+@*                                     <th scope="col">Format</th>
+ *@                                    <th scope="col">Quantity</th>
                                     <th scope="col">Total Price</th>
                                 </tr>
                             </thead>
@@ -77,9 +77,9 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <td class="align-middle">
+                                            @* <td class="align-middle">
                                                 <p class="mb-0" style="font-weight: 500;">Digital</p>
-                                            </td>
+                                            </td> *@
                                             <td class="align-middle">
                                                 <form method="post" action="/update-cart" class="d-flex flex-row align-items-center">
                                                     <input type="hidden" name="productId" value="@item.ProductId" />

@@ -154,7 +154,7 @@
                         <form asp-action="UpdateProfile" asp-controller="Home" method="post" enctype="multipart/form-data">
                             <div class="form-floating mb-3">
                                 <input type="email" asp-for="Email" class="form-control" id="floatingEmail" placeholder="Email" readonly />
-                                <label for="floatingEmail">Email</label>
+                                <label for="floatingEmail"><span class="text-danger">*</span>Email</label>
                             </div>
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="Phone" class="form-control" id="floatingPhone" placeholder="Phone" />
@@ -162,7 +162,7 @@
                             </div>
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="Address" class="form-control" id="floatingAddress" placeholder="Address" />
-                                <label for="floatingAddress">Address</label>
+                                <label for="floatingAddress"><span class="text-danger">*</span>Address</label>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Profile Image</label>
@@ -177,7 +177,7 @@
                         <form asp-action="ChangePassword" asp-controller="Home" method="post">
                             <div class="form-floating mb-3">
                                 <input type="password" name="currentPassword" class="form-control" id="floatingCurrentPassword" placeholder="Current Password" required />
-                                <label for="floatingCurrentPassword">Current Password</label>
+                                <label for="floatingCurrentPassword"><span class="text-danger">*</span>Current Password</label>
                             </div>
                             <div class="form-floating mb-3">
                                 <input type="password" name="newPassword" class="form-control" id="floatingNewPassword" placeholder="New Password"
@@ -185,9 +185,17 @@
                                        pattern="(?=.*[A-Z]).{6,}"
                                        title="Password must be at least 6 characters long and contain at least one uppercase letter."
                                        required />
-                                <label for="floatingNewPassword">New Password</label>
+                                <label for="floatingNewPassword"><span class="text-danger">*</span>New Password</label>
                             </div>
-                            <button type="submit" class="btn btn-primary">Change Password</button>
+                            <div class="form-floating mb-3">
+                                <input type="password" name="confirmPassword" class="form-control" id="floatingConfirmPassword" placeholder="Confirm Password"
+                                       minlength="6"
+                                       required
+                                       oninput="validatePassword()" />
+                                <label for="floatingConfirmPassword"><span class="text-danger">*</span>Confirm Password</label>
+                            </div>
+                            <div id="passwordMismatchMessage" class="text-danger" style="display: none;">Passwords do not match.</div>
+                            <button type="submit" class="btn btn-primary" id="submitButton" disabled>Change Password</button>
                         </form>
                     </div>
                 </div>
@@ -264,6 +272,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function validatePassword() {
+            const newPassword = document.getElementById('floatingNewPassword').value;
+            const confirmPassword = document.getElementById('floatingConfirmPassword').value;
+            const mismatchMessage = document.getElementById('passwordMismatchMessage');
+            const submitButton = document.getElementById('submitButton');
+
+            if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+                mismatchMessage.style.display = 'block';
+                submitButton.disabled = true;
+            } else {
+                mismatchMessage.style.display = 'none';
+                submitButton.disabled = false;
+            }
+        }
+    </script>
     <script>
         const btnToggle = document.getElementById('btnTransactionHistory');
 

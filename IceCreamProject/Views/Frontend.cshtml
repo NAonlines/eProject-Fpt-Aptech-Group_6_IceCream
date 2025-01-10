@@ -123,9 +123,12 @@
 									</a>
 									<ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
 										<li><a class="dropdown-item" asp-route="Profile">Profile</a></li>
-										<li>
-											<a class="dropdown-item" asp-route="MyRecipes">Upload Recipe</a>
-										</li>
+										@if (User.IsInRole("User"))
+										{
+											<li>
+												<a class="dropdown-item" asp-route="MyRecipes">Upload Recipe</a>
+											</li>
+										}
 										<li><a class="dropdown-item" asp-route="RecipesUser">Recipes Pay</a></li>
 
 										<li><hr class="dropdown-divider"></li>
