@@ -35,21 +35,13 @@ namespace IceCreamProject.Controllers
         {
             // Tạo danh sách các URL tĩnh
             var urls = new List<string>
-    {
-        Url.Action("Index", "Home", null, Request.Scheme), // Trang chủ
-        Url.Action("AboutUs", "Home", null, Request.Scheme), // Giới thiệu
-        Url.Action("ContactUs", "Home", null, Request.Scheme), // Liên hệ
-        Url.Action("FreeRecipes", "Home", null, Request.Scheme), // Công thức miễn phí
-        Url.RouteUrl("Membership", null, Request.Scheme)
-    };
-
-            // Thêm URL cho danh mục (Category)
-            //var categories = await _db.Categories.Where(c => c.IsActive).ToListAsync();
-            //foreach (var category in categories)
-            //{
-            //    var categoryUrl = Url.Action("Category", "Product", new { id = category.CategoryId, name = UrlHelper.seoweb(category.Name) }, Request.Scheme);
-            //    urls.Add(categoryUrl);
-            //}
+            {
+                Url.Action("Index", "Home", null, Request.Scheme), // Trang chủ
+                Url.Action("AboutUs", "Home", null, Request.Scheme), // Giới thiệu
+                Url.Action("ContactUs", "Home", null, Request.Scheme), // Liên hệ
+                Url.Action("FreeRecipes", "Home", null, Request.Scheme), // Công thức miễn phí
+                Url.RouteUrl("Membership", null, Request.Scheme)
+            };
 
             // Thêm URL cho các sản phẩm (Books)
             var books = await _db.Books.Where(b => b.IsActive).ToListAsync();
@@ -75,42 +67,46 @@ namespace IceCreamProject.Controllers
                 urls.Select(url => new XElement(ns + "url",
                     new XElement(ns + "loc", url),
                     new XElement(ns + "lastmod", DateTime.UtcNow.ToString("yyyy-MM-dd")),
-                    new XElement(ns + "changefreq", "daily"), // Set changefreq là daily
+                    new XElement(ns + "changefreq", "daily"),
                     new XElement(ns + "priority", "0.8")
                 ))
             );
 
-            // Trả về sitemap XML dưới dạng chuỗi
-            return sitemap.ToString();
+            // Thêm khai báo XSL vào đầu tệp XML
+            var xslDeclaration = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
+            <?xml-stylesheet type=""text/xsl"" href=""/sitemap.xsl""?>";
+
+            // Kết hợp khai báo XSL và nội dung sitemap
+            return $"{xslDeclaration}\n{sitemap}";
         }
 
         // Endpoint để hiển thị sitemap dưới dạng HTML (có sử dụng XSLT)
-        [HttpGet("/sitemap-view", Name = "SitemapView")]
-        public async Task<IActionResult> SitemapView()
-        {
-            var sitemapXml = await GenerateSitemapXml(); // Tạo XML sitemap từ cơ sở dữ liệu
+        //[HttpGet("/sitemap-view", Name = "SitemapView")]
+        //public async Task<IActionResult> SitemapView()
+        //{
+        //    var sitemapXml = await GenerateSitemapXml(); // Tạo XML sitemap từ cơ sở dữ liệu
 
-            // Đường dẫn đến file XSLT trong thư mục wwwroot
-            var xsltFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "sitemap.xsl");
+        //    // Đường dẫn đến file XSLT trong thư mục wwwroot
+        //    var xsltFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "sitemap.xsl");
 
-            // Tạo một XmlDocument từ XML sitemap
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(sitemapXml);
+        //    // Tạo một XmlDocument từ XML sitemap
+        //    var xmlDoc = new XmlDocument();
+        //    xmlDoc.LoadXml(sitemapXml);
 
-            // Tạo XslCompiledTransform để xử lý XSLT
-            var xslt = new XslCompiledTransform();
-            xslt.Load(xsltFilePath); // Load file XSLT từ wwwroot
+        //    // Tạo XslCompiledTransform để xử lý XSLT
+        //    var xslt = new XslCompiledTransform();
+        //    xslt.Load(xsltFilePath); // Load file XSLT từ wwwroot
 
-            // Tạo StringWriter để lưu kết quả HTML
-            using (var writer = new StringWriter())
-            {
-                // Áp dụng XSLT transformation vào XML sitemap
-                xslt.Transform(xmlDoc, null, writer);
+        //    // Tạo StringWriter để lưu kết quả HTML
+        //    using (var writer = new StringWriter())
+        //    {
+        //        // Áp dụng XSLT transformation vào XML sitemap
+        //        xslt.Transform(xmlDoc, null, writer);
 
-                // Trả về kết quả HTML
-                return Content(writer.ToString(), "text/html");
-            }
-        }
+        //        // Trả về kết quả HTML
+        //        return Content(writer.ToString(), "text/html");
+        //    }
+        //}
 
     }
 }

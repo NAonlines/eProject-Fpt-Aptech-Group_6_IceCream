@@ -38,11 +38,11 @@
                                width="100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>UserName</th>
+@*                                     <th>ID</th>
+ *@                                    <th>UserName</th>
                                     <th>Email</th>
-                                    <th>Is Registered</th>
-                                    <th>Profile Image</th>
+@*                                     <th>Is Registered</th>
+ *@                                    <th>Profile Image</th>
                                     <th>Phone Number</th>
                                     <th>Action</th>
                                 </tr>
@@ -52,10 +52,10 @@
 
                                 {
                                     <tr>
-                                        <td>@item.Id</td>
-                                        <td>@item.UserName</td>
+@*                                         <td>@item.Id</td>
+ *@                                        <td>@item.UserName</td>
                                         <td>@item.Email</td>
-                                        <td>
+                                       @*  <td>
                                             @if (item.IsRegistered)
 
                                             {
@@ -67,7 +67,7 @@
                                             {
                                                 <i class="fa fa-times text-danger"></i>
                                             }
-                                        </td>
+                                        </td> *@
                                         <td>
                                             @if (!string.IsNullOrEmpty(item.ProfileImageUrl))
 
@@ -87,8 +87,8 @@
                                         <input type="hidden" name="userId" value="@item.Id" id="userId" />
                                         <td>
                                             <a asp-controller="Users" asp-action="Update" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Update</a>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" id="deleteBtn" onclick="deleteUser()">Delete User</button>
-                                            <div id="responseMessage"></div>
+@*                                             <button type="button" class="btn btn-sm btn-outline-danger" id="deleteBtn" onclick="deleteUser()">Delete User</button>
+ *@                                            <div id="responseMessage"></div>
                                         </td>
                                     </tr>
                                 }

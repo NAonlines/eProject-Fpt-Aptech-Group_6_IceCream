@@ -37,8 +37,8 @@
                                 <tr>
                                     <th>Order ID</th>
                                     <th>Customer Name</th>
-                                    <th>User ID</th>
-                                    <th>Order Date</th>
+@*                                     <th>User ID</th>
+ *@                                    <th>Order Date</th>
                                     <th>Address</th>
                                     <th>Payment Method</th>
                                     <th>Status</th>
@@ -53,16 +53,16 @@
                                     <tr>
                                         <td>@order.OrderId</td>
                                         <td>@order.CustomerName</td>
-                                        <td>@order.UserId</td>
-                                        <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+@*                                         <td>@order.UserId</td>
+ *@                                        <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
                                         <td>@order.Address</td>
                                         <td>@order.PaymentMethod</td>
                                         <td>@order.OrderStatus</td>
                                         <td>@order.TotalAmount.ToString("C")</td>
                                         <td>
                                             <a asp-controller="Order" asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-info">Details</a>
-                                            <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">Edit</a>
-                                        </td>
+@*                                             <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">Edit</a>
+ *@                                        </td>
                                     </tr>
                                 }
                             </tbody>
