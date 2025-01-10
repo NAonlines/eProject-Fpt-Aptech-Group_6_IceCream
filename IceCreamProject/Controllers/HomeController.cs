@@ -640,13 +640,14 @@ namespace IceCreamProject.Controllers
             }
 
             var freeRecipes = await _db.Recipes
-                .Include(r => r.Book)
+                .Include(r => r.Book) 
                 .Include(r => r.Category)
-                .Where(r => r.CategoryId == freeCategory.CategoryId)
+                .Where(r => r.CategoryId == freeCategory.CategoryId && r.IsApproved) 
                 .ToListAsync();
 
             return View(freeRecipes);
         }
+
 
         [HttpGet("/recipe-details/{name}-{id}", Name = "RecipeDetails")]
         public async Task<IActionResult> RecipeDetails(int id)
@@ -698,20 +699,45 @@ namespace IceCreamProject.Controllers
 
             return View(recipe);
         }
-        public async Task<IActionResult> BestSelling()
-        {
-            
-            var books = await _db.Books.ToListAsync(); 
-            return View(books);
-        }
+
+
+
+
+
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> SubmitRecipe(RecipeViewModel viewModel)
+        [HttpGet("/my-recipes", Name = "MyRecipes")]
+        public async Task<IActionResult> MyRecipes()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var recipes = await _db.Recipes
+                .Where(r => r.CreatedById == user.Id) 
+                .ToListAsync();
+
+            return View(recipes);
+        }
+
+
+
+        [Authorize(Roles = "User")]
+        [HttpGet("/submit-recipe", Name = "SubmitRecipe")]
+        public IActionResult SubmitRecipe()
+        {
+            return View();
+        }
+
+        [HttpPost("/submit-recipe")]
+        public async Task<IActionResult> SubmitRecipe(SubmitRecipeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 string imagePath = string.Empty;
 
-                // Xử lý upload ảnh
                 if (viewModel.ImageUrl != null)
                 {
                     string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
@@ -731,47 +757,161 @@ namespace IceCreamProject.Controllers
                     }
                 }
 
-                // Lấy thông tin người dùng hiện tại
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
-                    TempData["Error"] = "Không tìm thấy thông tin người dùng.";
+                    TempData["Error"] = "User not found.";
                     return RedirectToAction("Index");
                 }
 
-                // Tạo đối tượng Recipe
                 var recipe = new Recipe
                 {
                     Name = viewModel.Name,
                     Ingredients = viewModel.Ingredients,
                     ImageUrl = imagePath,
-                    IsApproved = viewModel.IsApproved,
-                    CategoryId = viewModel.CategoryId,
-                    BookId = viewModel.BookId,
-                    CreatedById = user.Id // Lấy ID của người dùng
+                    IsApproved = false, 
+                    CategoryId = 1, 
+                    BookId = null,
+                    CreatedById = user.Id 
                 };
 
-                // Lưu công thức vào cơ sở dữ liệu
                 _db.Recipes.Add(recipe);
                 await _db.SaveChangesAsync();
-                TempData["Message"] = "Recipe created successfully!";
-                return RedirectToAction(nameof(Index));
+
+                TempData["Success"] = "Recipe created successfully!";
+                return RedirectToAction("MyRecipes");
             }
 
-            // Nạp lại danh sách Category và Book nếu ModelState không hợp lệ
-            viewModel.Categories = _db.Categories.Select(c => new SelectListItem
-            {
-                Value = c.CategoryId.ToString(),
-                Text = c.Name
-            }).ToList();
+            return View(viewModel); 
+        }
 
-            viewModel.Books = _db.Books.Select(b => new SelectListItem
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRecipe(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                Value = b.BookId.ToString(),
-                Text = b.Title
-            }).ToList();
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
+            var recipe = await _db.Recipes.FirstOrDefaultAsync(r => r.RecipeId == id && r.CreatedById == user.Id);
+            if (recipe == null)
+            {
+                TempData["Error"] = "Recipe not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
+            _db.Recipes.Remove(recipe);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "Recipe deleted successfully!";
+            return RedirectToAction("MyRecipes");
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("/update-recipe/{id}", Name = "UpdateRecipe")]
+        public async Task<IActionResult> UpdateRecipe(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
+            var recipe = await _db.Recipes.FirstOrDefaultAsync(r => r.RecipeId == id && r.CreatedById == user.Id);
+            if (recipe == null)
+            {
+                TempData["Error"] = "Recipe not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
+            var viewModel = new UpdateRecipeViewModel
+            {
+                RecipeId = recipe.RecipeId,
+                Name = recipe.Name,
+                Ingredients = recipe.Ingredients,
+                ImagePath = recipe.ImageUrl
+            };
 
             return View(viewModel);
         }
+
+        [Authorize(Roles = "User")]
+        [HttpPost("/update-recipe/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateRecipe(int id, UpdateRecipeViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                foreach (var key in ModelState.Keys)
+                {
+                    foreach (var error in ModelState[key].Errors)
+                    {
+                        Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                    }
+                }
+                return View(viewModel);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
+            var recipe = await _db.Recipes.FirstOrDefaultAsync(r => r.RecipeId == id && r.CreatedById == user.Id);
+            if (recipe == null)
+            {
+                TempData["Error"] = "Recipe not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
+            string imagePath = recipe.ImageUrl;
+
+            if (viewModel.ImageUrl != null)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                string fileName = Path.GetFileNameWithoutExtension(viewModel.ImageUrl.FileName);
+                string extension = Path.GetExtension(viewModel.ImageUrl.FileName);
+                imagePath = $"{fileName}_{Guid.NewGuid()}{extension}";
+                string filePath = Path.Combine(uploadsFolder, imagePath);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await viewModel.ImageUrl.CopyToAsync(stream);
+                }
+
+                if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                {
+                    string oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "ImageUrl", recipe.ImageUrl);
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+            }
+
+            recipe.Name = viewModel.Name;
+            recipe.Ingredients = viewModel.Ingredients;
+            recipe.ImageUrl = imagePath;
+
+            _db.Recipes.Update(recipe);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "Recipe updated successfully!";
+            return RedirectToAction("MyRecipes");
+        }
+
+
+
     }
 }

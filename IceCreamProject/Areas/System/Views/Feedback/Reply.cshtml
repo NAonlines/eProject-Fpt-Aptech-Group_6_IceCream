@@ -13,19 +13,21 @@
             @Html.AntiForgeryToken()
             <input type="hidden" name="id" value="@Model.FeedbackId" />
             <div class="card">
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
                     Feedback Details
                 </div>
                 <div class="card-body">
-                    <p><strong>Name:</strong> @Model.Name</p>
-                    <p><strong>Email:</strong> @Model.Email</p>
-                    <p><strong>Content:</strong> @Model.Content</p>
+                    <div class="mb-3">
+                        <p><strong>Name:</strong> @Model.Name</p>
+                        <p><strong>Email:</strong> @Model.Email</p>
+                        <p><strong>Content:</strong> @Model.Content</p>
+                    </div>
                     <div class="form-group">
-                        <label for="responseContent">Your Response</label>
-                        <textarea id="responseContent" name="responseContent" class="form-control" rows="5" required></textarea>
+                        <label for="responseContent" class="form-label">Your Response</label>
+                        <textarea id="responseContent" name="responseContent" class="form-control" rows="5" placeholder="Enter your response here..." required></textarea>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer text-end">
                     <button type="button" class="btn btn-success" id="submitBtn">Send Response</button>
                     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
                 </div>
@@ -33,14 +35,61 @@
         </form>
     </div>
 </div>
+
+<!-- Notification Popup -->
 <div id="notificationPopup" class="popup hidden">
-    <span id="notificationMessage"></span>
-    <button id="closePopup">Close</button>
+    <div class="popup-content">
+        <span id="notificationMessage"></span>
+        <button id="closePopup" class="btn btn-primary">Close</button>
+    </div>
 </div>
+
+<!-- Styles for Popup -->
+<style>
+    .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.3s;
+    }
+
+        .popup.hidden {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+        .popup-content .text-success {
+            color: green;
+        }
+
+        .popup-content .text-danger {
+            color: red;
+        }
+</style>
+
+<!-- Script for AJAX and Popup -->
 <script>
     const baseUrl = '/System/Feedback';
 
     document.getElementById('submitBtn').addEventListener('click', function () {
+        const submitBtn = this; // Lấy nút hiện tại
+        submitBtn.disabled = true; // Vô hiệu hóa nút
+
         const form = document.getElementById('ReplyFeedbackForm');
         const formData = new FormData(form);
 
@@ -59,6 +108,9 @@
                 if (data.success) {
                     message.textContent = "Feedback replied successfully!";
                     message.className = 'text-success';
+                    setTimeout(() => {
+                        window.location.href = `${baseUrl}`;
+                    }, 2000); // Điều hướng về trang Index sau 2 giây
                 } else {
                     message.textContent = data.message || "Failed to reply to feedback.";
                     message.className = 'text-danger';
@@ -74,6 +126,12 @@
                 message.className = 'text-danger';
 
                 popup.classList.remove('hidden');
+            })
+            .finally(() => {
+                // Bật lại nút sau 3 giây
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                }, 3000);
             });
     });
 

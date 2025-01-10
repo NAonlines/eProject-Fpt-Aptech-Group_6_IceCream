@@ -1,13 +1,14 @@
-﻿@model IceCreamProject.ViewModels.SubmitRecipeViewModel
+﻿@model IceCreamProject.ViewModels.UpdateRecipeViewModel
 
 @{
-    ViewData["Title"] = "Upload Recipe";
+    ViewData["Title"] = "Update Recipe";
     Layout = "~/Views/Secure.cshtml";
 }
 <style>
-    .btn{
-        border-radius: 5px
+    .btn {
+        border-radius: 5px;
     }
+
     .form-wrapper {
         background: rgba(255, 255, 255, 0.9); /* Tạo hiệu ứng nền trắng mờ */
         padding: 30px;
@@ -23,7 +24,7 @@
             font-weight: bold;
         }
 
-    /* Làm nổi bật chữ "Upload Recipe" */
+    /* Làm nổi bật chữ "Update Recipe" */
     .highlight-title {
         font-size: 2.5rem; /* Tăng kích thước chữ */
         font-weight: bold;
@@ -49,13 +50,13 @@
         <div class="row d-flex justify-content-center">
             <div class="col col-lg-9 col-xl-8 position-relative">
 
-                <!-- Tiêu đề nổi bật -->
-                <div class="highlight-title">Upload Recipe</div>
+                <div class="highlight-title">Update Recipe</div>
 
-                <!-- Form Upload Recipe -->
+                <!-- Form Update Recipe -->
                 <div class="form-wrapper">
-                    <form asp-action="SubmitRecipe" method="post" enctype="multipart/form-data">
+                    <form asp-action="UpdateRecipe" asp-route-id="@Model.RecipeId" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="RecipeId" />
 
                         <!-- Recipe Name -->
                         <div class="form-group">
@@ -73,14 +74,23 @@
 
                         <!-- Upload Image -->
                         <div class="form-group">
-                            <label asp-for="ImageUrl">Upload Image</label>
+                            <label asp-for="ImageUrl">Upload New Image</label>
                             <input asp-for="ImageUrl" type="file" class="form-control" />
                             <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                            @if (!string.IsNullOrEmpty(Model.ImagePath))
+                            {
+                                <div class="mt-3">
+                                    <img src="~/ImageUrl/@Model.ImagePath" alt="Current Recipe Image" style="max-height: 150px; object-fit: cover;" />
+                                    <p class="text-muted">Current Image</p>
+                                </div>
+                            }
                         </div>
 
                         <!-- Submit Button -->
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-pencil"></i> Update
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -89,12 +99,14 @@
         </div>
     </div>
 </section>
+
 <!-- CKEditor Script -->
 <script src="~/Backend/ckeditor/ckeditor.js"></script>
 
 <script>
     CKEDITOR.replace('editor', {
         height: 300,
+        extraPlugins: 'notification,notificationaggregator,uploadwidget,clipboard', // Thêm các plugin cần thiết
         toolbar: [
             { name: 'document', items: ['Source', '-', 'Preview'] },
             { name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo'] },
@@ -110,11 +122,12 @@
         ]
     });
 
+
     CKEDITOR.on('instanceReady', function (ev) {
         var editor = ev.editor;
         editor.on('notificationShow', function (event) {
             if (event.data.message.includes('version is not secure')) {
-                event.cancel(); 
+                event.cancel();
             }
         });
     });

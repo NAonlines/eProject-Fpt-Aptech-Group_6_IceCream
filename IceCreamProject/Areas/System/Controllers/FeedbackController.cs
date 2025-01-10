@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Net.Mail;
 
 namespace IceCreamProject.Areas.System.Controllers
 {
@@ -42,7 +44,7 @@ namespace IceCreamProject.Areas.System.Controllers
 
             var feedbacks = await feedbacksQuery.ToListAsync();
 
-            ViewBag.SearchQuery = search; 
+            ViewBag.SearchQuery = search;
             return View(feedbacks);
         }
 
@@ -74,7 +76,7 @@ namespace IceCreamProject.Areas.System.Controllers
         [HttpGet("Reply/{id:int}")]
         public IActionResult Reply(int id)
         {
-            var feedback = db.Feedbacks.Find(id); 
+            var feedback = db.Feedbacks.Find(id);
             if (feedback == null)
             {
                 return NotFound();
@@ -83,16 +85,18 @@ namespace IceCreamProject.Areas.System.Controllers
             return View(feedback);
         }
 
+
         [HttpPost("Reply")]
         [ValidateAntiForgeryToken]
-        public IActionResult Reply(int id, string responseContent)
+        public async Task<IActionResult> Reply(int id, string responseContent)
         {
-            var feedback = db.Feedbacks.Find(id);
+            var feedback = await db.Feedbacks.FindAsync(id);
             if (feedback == null)
             {
-                return Json(new { success = false, message = "Feedbacks not found." });
+                return Json(new { success = false, message = "Feedback not found." });
             }
 
+            // Tạo phản hồi
             var response = new FeedbackResponse
             {
                 FeedbackId = id,
@@ -102,10 +106,41 @@ namespace IceCreamProject.Areas.System.Controllers
             };
 
             db.FeedbackResponses.Add(response);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
-            return Json(new { success = true, message = "User updated successfully." });
+            if (!string.IsNullOrEmpty(feedback.Email))
+            {
+                try
+                {
+                    var smtpClient = new SmtpClient("smtp.gmail.com") 
+                    {
+                        Port = 587,
+                        Credentials = new NetworkCredential("pnamanh98@gmail.com", "nxap fxrk lisx nrfl"), 
+                        EnableSsl = true, 
+                    };
+
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress("pnamanh98@gmail.com", "Ice Cream Response"), 
+                        Subject = "Feedback Response",
+                        Body = $"Dear {feedback.Name},\n\n" +
+                               $"Thank you for your feedback. Here is our response:\n\n" +
+                               $"{responseContent}\n\n" +
+                               "Best regards,\nYour Team",
+                        IsBodyHtml = false,
+                    };
+
+                    mailMessage.To.Add(feedback.Email); 
+
+                    await smtpClient.SendMailAsync(mailMessage);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = "Failed to send email: " + ex.Message });
+                }
+            }
+
+            return Json(new { success = true, message = "Feedback responded and email sent successfully." });
         }
-
     }
 }

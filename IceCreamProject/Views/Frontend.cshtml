@@ -34,6 +34,8 @@
 	@RenderSection("Styles", required: false)
 
 </head>
+
+
 <body>
 
 	<div class="site-mobile-menu site-navbar-target">
@@ -98,9 +100,7 @@
 							<li class="@((ViewContext.RouteData.Values["controller"]?.ToString() == "Membership") ? "active" : "")">
 								<a asp-route="Membership">Membership</a>
 							</li>
-							<li class="@((ViewContext.RouteData.Values["controller"]?.ToString() == "ReadReplyFeedback") ? "active" : "")">
-								<a asp-route="ReadReplyFeedback">ReadReplyFeedback</a>
-							</li>
+
 
 						</ul>
 					</div>
@@ -121,10 +121,13 @@
 									<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 										@User.Identity.Name
 									</a>
-									<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-										
+									<ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
 										<li><a class="dropdown-item" asp-route="Profile">Profile</a></li>
-										<li><a class="dropdown-item" href="/recipes-user">Recipes</a></li>
+										<li>
+											<a class="dropdown-item" asp-route="MyRecipes">Upload Recipe</a>
+										</li>
+										<li><a class="dropdown-item" asp-route="RecipesUser">Recipes Pay</a></li>
+
 										<li><hr class="dropdown-divider"></li>
 										<li><a class="dropdown-item" asp-route="Logout">Logout</a></li>
 										@if (User.IsInRole("Admin"))
@@ -132,6 +135,7 @@
 											<li><a class="dropdown-item" asp-route="DashBoard">Dashboard</a></li>
 										}
 									</ul>
+
 								</li>
 
 							}

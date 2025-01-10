@@ -1,0 +1,161 @@
+﻿@model IEnumerable<IceCreamProject.Models.Recipe>
+
+@{
+    ViewData["Title"] = "My Recipes";
+    Layout = "~/Views/Secure.cshtml";
+}
+<style>
+    .btn {
+        border-radius: 5px;
+    }
+
+    .table-wrapper {
+        height: 800px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .table-fixed {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+        .table-fixed th,
+        .table-fixed td {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+            .table-fixed th:nth-child(1),
+            .table-fixed td:nth-child(1) {
+                width: 50%;
+            }
+
+            .table-fixed th:nth-child(2),
+            .table-fixed td:nth-child(2) {
+                width: 20%;
+            }
+
+            .table-fixed th:nth-child(3),
+            .table-fixed td:nth-child(3) {
+                width: 30%;
+                text-align: center;
+            }
+
+    /* Định dạng để căn chỉnh tiêu đề và nút Upload Recipe */
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .header-actions h4 {
+            margin: 0;
+        }
+
+        .header-actions .btn-upload {
+            margin-left: auto;
+        }
+</style>
+
+<section class="h-100 gradient-custom-2" style="background-image: url('@Url.Content("~/Frontend/images/Myrecipe.jpg")');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                min-height: 100vh;">
+    <div class="container py-5 h-100">
+        <div class="mb-3">
+            <a asp-route="Home" class="btn btn-primary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <div class="row d-flex justify-content-center">
+            <div class="col col-lg-9 col-xl-8 position-relative">
+
+                <!-- Tiêu đề và nút Upload Recipe -->
+                <div class="header-actions">
+                    <h4 class="text-white fw-bold">My Recipes</h4>
+                    <a asp-action="SubmitRecipe" class="btn btn-success btn-upload">
+                        <i class="bi bi-plus-circle"></i> Upload Recipe
+                    </a>
+                </div>
+
+                <!-- Bảng hiển thị danh sách Recipe -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrapper">
+                            <table class="table table-hover table-fixed">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Image</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var recipe in Model)
+                                    {
+                                        <tr>
+                                            <td>@recipe.Name</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(recipe.ImageUrl))
+                                                {
+                                                    <img src="@Url.Content($"~/ImageUrl/{recipe.ImageUrl}")" alt="Recipe Image" style="width: 100px; height: 100px; object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <span>No Image</span>
+                                                }
+                                            </td>
+                                            <td>
+                                               
+
+                                                <a asp-action="UpdateRecipe" asp-route-id="@recipe.RecipeId" class="btn btn-sm btn-warning">Update</a>
+                                                <form asp-action="DeleteRecipe" method="post" class="d-inline">
+                                                    <input type="hidden" name="id" value="@recipe.RecipeId" />
+                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Script for Notyf Notifications -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Success Notification
+    @if (TempData["Success"] != null)
+    {
+        <text>
+                    new Notyf().success({
+                        message: '@TempData["Success"]',
+                        duration: 4000, // 4 seconds
+                        position: { x: "right", y: "bottom" } // Góc phải dưới
+                    });
+        </text>
+    }
+
+        // Error Notification
+    @if (TempData["Error"] != null)
+    {
+        <text>
+                    new Notyf().error({
+                        message: '@TempData["Error"]',
+                        duration: 4000, // 4 seconds
+                        position: { x: "right", y: "bottom" } // Góc phải dưới
+                    });
+        </text>
+    }
+    });
+</script>

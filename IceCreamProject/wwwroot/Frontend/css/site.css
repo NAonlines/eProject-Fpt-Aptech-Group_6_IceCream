@@ -372,3 +372,16 @@ a.btn-link.text-light:after {
     left: 50%;
     transform: translateX(-50%);
 }
+
+
+/*
+    menu profile
+*/
+
+.dropdown-menu.text-center .dropdown-item {
+    text-align: center; /* Căn giữa văn bản */
+}
+
+.dropdown-menu.text-center {
+    text-align: center; /* Đảm bảo các thành phần con trong dropdown đều căn giữa */
+}
