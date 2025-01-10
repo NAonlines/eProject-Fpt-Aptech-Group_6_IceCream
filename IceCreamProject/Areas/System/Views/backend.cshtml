@@ -83,7 +83,9 @@
                 </li>
 
                 <li>
-                    <a href="#uielementsmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-layer-group"></i>Price package</a>
+                    <a href="#uielementsmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down">
+                        <i class="fas fa-tags"></i> Membership
+                    </a>
                     <ul class="collapse list-unstyled" id="uielementsmenu">
                         <li>
                             <a href="/system/list-price"><i class="fas fa-angle-right"></i> List Price</a>
@@ -125,8 +127,10 @@
                         </li>
                     </ul>
                 </li>*@
-                <li> 
-                    <a asp-area="System" asp-controller="Order" asp-action="Index"><i class="fas fa-user-friends"></i> Order</a>
+                <li>
+                    <a asp-area="System" asp-controller="Order" asp-action="Index">
+                        <i class="fas fa-shopping-cart"></i> Orders List
+                    </a>
                 </li>
                 <li>
                     <a asp-area="System" asp-controller="Users" asp-action="Index"><i class="fas fa-user-friends"></i> Users</a>
