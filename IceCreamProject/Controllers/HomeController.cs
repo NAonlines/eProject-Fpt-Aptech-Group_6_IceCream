@@ -200,7 +200,8 @@ namespace IceCreamProject.Controllers
 
             if (product == null)
             {
-                return Json(new { success = false, message = "This book is currently out of stock.", redirectUrl = Url.Action("Index", "Home") });
+                //return Json(new { success = false, message = "This book is currently out of stock.", redirectUrl = Url.Action("Index", "Home") });
+                return (RedirectToAction("Index", "Home"));
             }
 
             var user = await _userManager.GetUserAsync(User);

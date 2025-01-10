@@ -68,28 +68,35 @@
 										@if (item.IsActive == true)
 										{
 											<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
-												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
+												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image @(item.IsActive ? "" : "grayscale")" />
 											</a>
 										}
 										else
 										{
 											<a href="javascript:void(0);" data-id="@item.BookId" onclick="viewProductDetails(@item.BookId)">
-												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
+												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image @(item.IsActive ? "" : "grayscale")" />
 											</a>
+
 										}
 									</figure>
+
 									<div class="d-flex flex-column text-center">
 										<h3 class="fs-6 fw-normal text-truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; margin: 0 auto;">
 											@item.Title
 										</h3>
 										<div class="d-flex justify-content-center align-items-center gap-2">
-											@if (item.Price > 20)
+											@if (item.IsActive)
 											{
-												<del>$24.00</del>
+												<span class="text-success fw-semibold">@item.Price.ToString("C")</span>
+
 											}
-											<span class="text-dark fw-semibold">@item.Price.ToString("C")</span>
+											else
+											{
+												<span class="text-danger fw-semibold">Sold Out</span>
+
+											}
 										</div>
-										<div class="button-area p-3 pt-0">
+										@* <div class="button-area p-3 pt-0">
 											<div class="row g-1 mt-2">
 												<div class="col-3">
 													@if (item.IsActive == true)
@@ -109,7 +116,7 @@
 														<a href="javascript:void(0);"
 														   data-id="@item.BookId"
 														   data-url="@Url.Action("AddToCart", "Home")"
-														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart">
+														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart add-cart-all">
 															Add to Cart
 														</a>
 													}
@@ -138,7 +145,7 @@
 													}
 												</div>
 											</div>
-										</div>
+										</div> *@
 									</div>
 								</div>
 							</div>
@@ -272,13 +279,19 @@
 									@item.Title
 								</h3>
 								<div class="d-flex justify-content-center align-items-center gap-2">
-									@if (item.Price > 20)
+									
+									@if (item.IsActive)
 									{
-										<del>$24.00</del>
+										<span class="text-success fw-semibold">@item.Price.ToString("C")</span>
+
 									}
-									<span class="text-dark fw-semibold">@item.Price.ToString("C")</span>
+									else
+									{
+										<span class="text-dark fw-semibold">Sold Out</span>
+
+									}
 								</div>
-								<div class="button-area p-3 pt-0">
+								@* <div class="button-area p-3 pt-0">
 									<div class="row g-1 mt-2">
 										<div class="col-3">
 											<input type="number" name="quantity" id="quantity-@item.BookId"  id="quantity-best-@item.BookId"
@@ -288,7 +301,7 @@
 											<a href="javascript:void(0);"
 														   data-id="@item.BookId"
 														   data-url="@Url.Action("AddToCart", "Home")"
-														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart">
+														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart ad-cart-best">
 															Add to Cart
 														</a>
 										</div>
@@ -309,7 +322,7 @@
 											}
 										</div>
 									</div>
-								</div>
+								</div> *@
 							</div>
 						</div>
 					</div>
@@ -323,7 +336,7 @@
 
 
 
-<div class="section bg-light">
+<div class="section custom-section bg-light">
 
 
 	<h2 class="heading mb-5 text-center"> New Products</h2>
@@ -340,14 +353,14 @@
 
 	</div>
 
-	<div class="wide-slider-testimonial">
+	<div class="wide-slider-testimonial custom-wide-slider-testimonial">
 		@foreach (var item in Model.NewProducts.Where(p => p.IsActive))
 		{
 			<div class="item">
 				<blockquote class="block-testimonial">
 					<div class="destination mb-5">
 						<div class="col">
-							<div class="product-item" data-group="new" data-id="@item.BookId">
+							<div class="product-item custom-product-item" data-group="new" data-id="@item.BookId">
 								<figure>
 									@if (item.IsActive)
 									{
@@ -361,19 +374,16 @@
 											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
 										</a>
 									}
-								</figure>	
-								<div class="d-flex flex-column text-center">
-									<h3 class="fs-6 fw-normal text-truncate" style="max-width: 150px; overflow: hidden; white-space: nowrap; margin: 0 auto;">
+								</figure>
+								<div class="d-flex flex-column custom-d-flex-column text-center">
+									<h3 class="fs-6 fw-normal text-truncate custom-product-title" style="max-width: 150px; overflow: hidden; white-space: nowrap; margin: 0 auto;">
 										@item.Title
 									</h3>
-									<div class="d-flex justify-content-center align-items-center gap-2">
-										@if (item.Price > 20)
-										{
-											<del>$24.00</del>
-										}
-										<span class="text-dark fw-semibold">@item.Price.ToString("C")</span>
+									<div class="d-flex custom-price-wrapper justify-content-center align-items-center gap-2">
+									
+										<span class="text-success fw-semibold">@item.Price.ToString("C")</span>
 									</div>
-									<div class="button-area p-3 pt-0">
+									@* <div class="button-area p-3 pt-0">
 										<div class="row g-1 mt-2">
 											<div class="col-3">
 												<input type="number" name="quantity" id="quantity-@item.BookId" id="quantity-new-@item.BookId"
@@ -383,7 +393,7 @@
 												<a href="javascript:void(0);"
 														   data-id="@item.BookId"
 														   data-url="@Url.Action("AddToCart", "Home")"
-														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart">
+														   class="btn btn-primary rounded-1 p-2 fs-7 btn-cart add-to-cart ad-cart-new">
 															Add to Cart
 														</a>
 											</div>
@@ -404,7 +414,7 @@
 												}
 											</div>
 										</div>
-									</div>
+									</div> *@
 								</div>
 							</div>
 						</div>
@@ -456,64 +466,3 @@
 		});
 	});
 </script>
-
-
-
-<script>
-	$(document).ready(function () {
-    const notyf = new Notyf();
-
-    // Cập nhật số lượng giỏ hàng
-    function updateCartCount() {
-        $.get("/count-cart", function (data) {
-            $(".count-item-only").text(data.totalItems);
-        }).fail(function () {
-            notyf.error("Failed to fetch cart count.");
-        });
-    }
-
-    // Xử lý sự kiện khi nhấn nút "Add to Cart"
-    $(document).on("click", ".add-to-cart", function () {
-        const $button = $(this); // Nút Add to Cart
-        const $productItem = $button.closest(".product-item"); // Lấy sản phẩm liên quan
-        const bookId = $productItem.data("id"); // Lấy ID sản phẩm
-        const url = $button.data("url"); // URL để gửi request
-        const group = $productItem.data("group"); // Nhóm sản phẩm (all, best, new)
-
-        // Xác định input số lượng dựa vào nhóm sản phẩm
-        let $quantityInput;
-        if (group === "all") {
-            $quantityInput = $(`#quantity-all-${bookId}`);
-        } else if (group === "best") {
-            $quantityInput = $(`#quantity-best-${bookId}`);
-        } else if (group === "new") {
-            $quantityInput = $(`#quantity-new-${bookId}`);
-        }
-
-        // Lấy giá trị số lượng từ input
-        const quantity = parseInt($quantityInput.val());
-
-        // Kiểm tra tính hợp lệ của số lượng
-        if (isNaN(quantity) || quantity <= 0) {
-            notyf.error("Quantity must be a number greater than 0.");
-            return;
-        }
-
-        // Gửi yêu cầu AJAX để thêm sản phẩm vào giỏ hàng
-        $.post(url, { BookId: bookId, quantity: quantity }, function (response) {
-            if (response.success) {
-                updateCartCount(); // Cập nhật giỏ hàng
-                notyf.success(response.message || "Product added to cart successfully!");
-            } else {
-                notyf.error(response.message || "An error occurred while adding the product.");
-            }
-        }).fail(function () {
-            notyf.error("An error occurred while adding the product.");
-        });
-    });
-
-    // Cập nhật giỏ hàng khi tải trang
-    updateCartCount();
-});
-
-	</script>

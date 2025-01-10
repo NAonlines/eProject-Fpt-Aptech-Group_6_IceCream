@@ -385,3 +385,49 @@ a.btn-link.text-light:after {
 .dropdown-menu.text-center {
     text-align: center; /* Đảm bảo các thành phần con trong dropdown đều căn giữa */
 }
+
+.section.bg-light {
+    padding: 20px 0; /* Adjust padding to shrink height */
+    margin: 0 auto; /* Optional: Ensure it's centered */
+}
+.wide-slider-testimonial {
+    height: auto; /* Automatically fits content */
+    max-height: 365px; /* Optional: Set a maximum height */
+    overflow: hidden; /* To hide overflow if necessary */
+}
+/* Unique styling with custom prefix `custom-` */
+@media (max-width: 768px) {
+    .custom-section.bg-light {
+        padding: 10px 0; /* Reduce padding for smaller screens */
+    }
+
+    .custom-wide-slider-testimonial {
+        max-height: none; /* Allow it to grow based on content */
+        height: auto; /* Auto height for mobile screens */
+    }
+
+    .custom-product-item {
+        max-width: 100%; /* Ensure full width for product cards */
+        margin: 0 auto; /* Center product cards */
+    }
+
+        .custom-product-item figure img {
+            width: 100%; /* Ensure the image scales correctly */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+    .custom-d-flex-column.text-center {
+        padding: 10px 0; /* Adjust spacing for text inside product cards */
+    }
+
+    .custom-product-title {
+        font-size: 14px; /* Adjust font size for titles */
+        white-space: normal; /* Allow multi-line text on mobile */
+        overflow: visible; /* No text truncation */
+    }
+
+    .custom-price-wrapper {
+        flex-direction: column; /* Stack price elements */
+        gap: 5px; /* Adjust spacing */
+    }
+}

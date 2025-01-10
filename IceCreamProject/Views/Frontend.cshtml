@@ -474,83 +474,87 @@
 
 	
 	<script>
-		$(document).ready(function () {
-    // Khởi tạo Notyf
-    const notyf = new Notyf();
+				$(document).ready(function () {
+			// Khởi tạo Notyf
+			const notyf = new Notyf();
 
-    // Hàm cập nhật số lượng giỏ hàng
-    function updateCartCount() {
-        $.get("/count-cart", function (data) {
-            $(".count-item-only").text(data.totalItems);
-        }).fail(function () {
-            console.error("Failed to fetch cart count.");
-            notyf.error("Failed to fetch cart count.");
-        });
-    }
+			// Hàm cập nhật số lượng giỏ hàng
+			function updateCartCount() {
+				$.get("/count-cart", function (data) {
+					$(".count-item-only").text(data.totalItems);
+				}).fail(function () {
+					console.error("Failed to fetch cart count.");
+					notyf.error("Failed to fetch cart count.");
+				});
+			}
 
-    // Xử lý khi nhấn nút "Add to Cart"
-    $(document).on("click", ".add-to-cart", function () {
-        const $button = $(this); // Nút được nhấn
-        const BookId = $button.data("id"); // Lấy BookId từ data-id
-        const $quantityInput = $button.closest("body").find(`#quantity-${BookId}`); // Tìm input quantity tương ứng
-        const quantity = $quantityInput.val(); // Lấy giá trị số lượng
-        const url = $button.data("url"); // Lấy URL từ data-url
+			// Xử lý khi nhấn nút "Add to Cart"
+			$(document).on("click", ".add-to-cart", function () {
+				const $button = $(this); // Nút được nhấn
+				const BookId = $button.data("id"); // Lấy BookId từ data-id
+				const $quantityInput = $button.closest("body").find(`#quantity-${BookId}`); // Tìm input quantity tương ứng
+				const quantity = $quantityInput.val(); // Lấy giá trị số lượng
+				const url = $button.data("url"); // Lấy URL từ data-url
 
-        // Kiểm tra tính hợp lệ của số lượng
-        if (isNaN(quantity) || quantity <= 0) {
-            notyf.error("Quantity must be a number greater than 0.");
-            return;
-        }
+				// Kiểm tra tính hợp lệ của số lượng
+				if (isNaN(quantity) || quantity <= 0) {
+					notyf.error("Quantity must be a number greater than 0.");
+					return;
+				}
 
-        // Gửi yêu cầu POST để thêm sản phẩm vào giỏ
-        $.post(url, { bookId: BookId, quantity: quantity }, function (response) {
-            if (response.success) {
-                updateCartCount(); // Cập nhật số lượng giỏ hàng
-                notyf.success(response.message || "Product added to cart successfully!");
-            } else {
-                notyf.error(response.message || "An error occurred!");
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.error("AJAX failed:", textStatus, errorThrown);
-            notyf.error("An error occurred while adding the product.");
-        });
-    });
+				// Gửi yêu cầu POST để thêm sản phẩm vào giỏ
+				$.post(url, { bookId: BookId, quantity: quantity }, function (response) {
+					if (response.success) {
+						updateCartCount(); // Cập nhật số lượng giỏ hàng
+						notyf.success(response.message || "Product added to cart successfully!");
+					} else {
+						notyf.error(response.message || "An error occurred!");
+					}
+				}).fail(function (jqXHR, textStatus, errorThrown) {
+					console.error("AJAX failed:", textStatus, errorThrown);
+					notyf.error("An error occurred while adding the product.");
+				});
+			});
 
-    // Cập nhật số lượng giỏ hàng khi trang tải
-    updateCartCount();
-});
+			// Cập nhật số lượng giỏ hàng khi trang tải
+			updateCartCount();
+		});
 
 	</script>
 	<script>
-		// Khởi tạo Notyf
-		const notyf = new Notyf();
+		document.addEventListener('DOMContentLoaded', function () {
+			const notyf = new Notyf();
 
-		function viewProductDetails(productId) {
-			var url = '/product-details/' + productId;
+			// Hàm xử lý thông báo khi sản phẩm hết hàng
+			function showOutOfStockNotification() {
+				notyf.error('This book is currently out of stock.');
+			}
 
-			$.ajax({
-				url: url,
-				method: "GET",
-				success: function (response) {
-					if (!response.success) {
-						// Hiển thị thông báo lỗi bằng Notyf
-						notyf.error(response.message || "This product is currently out of stock.");
+			// Thêm sự kiện cho các nút "Add to Cart" và "Image" khi sản phẩm hết hàng
+			const addToCartButtons = document.querySelectorAll('.add-to-cart');
+			addToCartButtons.forEach(button => {
+				button.addEventListener('click', function (e) {
+					const productId = button.getAttribute('data-id');
+					const isActive = button.closest('.product-item').querySelector('img').classList.contains('grayscale');
 
-						// Nếu có URL chuyển hướng, thực hiện chuyển hướng
-						// if (response.redirectUrl) {
-						// 	window.location.href = response.redirectUrl;
-						// }
-					} else {
-						// Nếu sản phẩm tồn tại, chuyển hướng đến trang chi tiết sản phẩm
-						window.location.href = '/product-details/' + productId;
-					}
-				},
-				error: function () {
-					// Hiển thị thông báo lỗi khi xảy ra lỗi AJAX
-					notyf.error("An error occurred while fetching product details.");
-				}
+					if (!isActive) return; // Nếu sản phẩm đang còn hàng thì không làm gì
+
+					// Nếu sản phẩm hết hàng, hiển thị thông báo
+					showOutOfStockNotification();
+				});
 			});
-		}
+
+			const productImages = document.querySelectorAll('.product-item img');
+			productImages.forEach(image => {
+				image.addEventListener('click', function () {
+					const isActive = image.classList.contains('grayscale');
+					if (isActive) {
+						showOutOfStockNotification();
+					}
+				});
+			});
+		});
+
 	</script>
 
 </body>
