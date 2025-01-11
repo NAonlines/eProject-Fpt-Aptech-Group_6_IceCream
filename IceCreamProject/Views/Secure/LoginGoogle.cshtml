@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script>
+        // Function to open Google Login in a popup window
+        function openGoogleLogin() {
+            const popupWidth = 500; // Set the width of the popup window
+            const popupHeight = 600; // Set the height of the popup window
+            const left = (screen.width - popupWidth) / 2; // Center horizontally
+            const top = (screen.height - popupHeight) / 2; // Center vertically
+
+            const googleLoginUrl = "/login-google"; // Endpoint for Google Login
+            const windowOptions = `width=${popupWidth},height=${popupHeight},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`;
+
+            // Open a new popup window for Google Login
+            const popupWindow = window.open(googleLoginUrl, "Google Login", windowOptions);
+
+            // Check if the popup window is closed by the user or after login
+            const interval = setInterval(() => {
+                if (popupWindow.closed) {
+                    clearInterval(interval);
+                    window.location.reload(); // Reload the parent page after popup closes
+                }
+            }, 500); // Check every 500ms
+        }
+    </script>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="post" action="/login">
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+    </form>
+
+    <!-- Google Login Button -->
+    <button type="button" onclick="openGoogleLogin()">Login with Google</button>
+</body>
+</html>

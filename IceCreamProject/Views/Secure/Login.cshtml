@@ -91,14 +91,11 @@
                                     </div>
                                     <div class="text-center">
                                         <p>or sign up with:</p>
-
-                                        <a asp-route="LoginGoogle" type="button" class="btn btn-link btn-floating mx-1">
+                                        <button type="button" class="btn btn-link btn-floating mx-1" onclick="openGoogleLogin()">
                                             <img src="~/Frontend/images/svg/Google__G__logo.svg" alt="Google Icon" style="width: 24px; height: 24px;" />
-                                        </a>
-
-
-
+                                        </button>
                                     </div>
+
 
                                     <a class="small text-muted" asp-route="ForgotPassword">Forgot password?</a>
                                     <p class="mb-5 pb-lg-2">
@@ -115,3 +112,24 @@
         </div>
     </div>
 </section>
+<script>
+    function openGoogleLogin() {
+        const popupWidth = 500;
+        const popupHeight = 600;
+        const left = (screen.width - popupWidth) / 2; 
+        const top = (screen.height - popupHeight) / 2; 
+
+        const googleLoginUrl = "/login-google"; 
+
+        const windowOptions = `width=${popupWidth},height=${popupHeight},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`;
+
+        const popupWindow = window.open(googleLoginUrl, "Google Login", windowOptions);
+
+        const interval = setInterval(() => {
+            if (popupWindow.closed) {
+                clearInterval(interval);
+                window.location.reload(); 
+            }
+        }, 500); 
+    }
+</script>

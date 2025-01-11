@@ -42,63 +42,82 @@ namespace IceCreamProject.Controllers
 			return View();
 		}
 
+        [HttpGet("/login-google", Name = "LoginGoogle")]
+        public IActionResult LoginGoogle(string returnUrl = "/")
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleResponse", "Secure"),
+                Items = { { "returnUrl", returnUrl } }
+            };
 
-		[HttpGet("/login-google", Name = "LoginGoogle")]
-		public IActionResult LoginGoogle(string returnUrl = "/")
-		{
-			var properties = new AuthenticationProperties
-			{
-				RedirectUri = Url.Action("GoogleResponse", "Secure"),
-				Items = { { "returnUrl", returnUrl } }
-			};
-			return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-		}
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
 
 
         [HttpGet("/google-response", Name = "GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            if (!result.Succeeded) return RedirectToAction("Login");
-
-            var email = result.Principal.FindFirstValue(ClaimTypes.Email);
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
+            if (Request.Query.ContainsKey("error"))
             {
-                // Register a new user if not found
-                user = new User
-                {
-                    Email = email,
-                    UserName = result.Principal.FindFirstValue(ClaimTypes.Name) ?? email,
-                    EmailConfirmed = true
-                };
+                return RedirectToAction("ClosePopup", "Secure");
+            }
 
-                foreach (var claim in result.Principal.Claims)
+            try
+            {
+                var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                if (!result.Succeeded)
                 {
-                    Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                    return RedirectToAction("ClosePopup", "Secure");
                 }
 
-                var createResult = await _userManager.CreateAsync(user);
-                if (!createResult.Succeeded)
+                var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user == null)
                 {
-                    TempData["Error"] = "Failed to create user account.";
-                    return RedirectToAction("Login");
+                    user = new User
+                    {
+                        Email = email,
+                        UserName = result.Principal.FindFirstValue(ClaimTypes.Name) ?? email,
+                        EmailConfirmed = true
+                    };
+
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (!createResult.Succeeded)
+                    {
+                        TempData["Error"] = "Failed to create user account.";
+                        return RedirectToAction("ClosePopup", "Secure");
+                    }
+                }
+
+                if (!await _roleManager.RoleExistsAsync("User"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("User"));
                 }
 
                 await _userManager.AddToRoleAsync(user, "User");
+
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                HttpContext.Session.SetString("UserId", user.Id);
+                HttpContext.Session.SetString("UserName", user.UserName ?? string.Empty);
+                HttpContext.Session.SetString("Email", user.Email ?? string.Empty);
+                return Content("<script>window.opener.location.reload(); window.close();</script>", "text/html");
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during Google login: {ex.Message}");
+                return RedirectToAction("ClosePopup", "Secure");
+            }
+        }
 
-            // Sign in the user
-            await _signInManager.SignInAsync(user, isPersistent: false);
 
-            // Store user data in session after login
-            HttpContext.Session.SetString("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.UserName ?? string.Empty);
-            HttpContext.Session.SetString("Email", user.Email ?? string.Empty);
-
-            return Redirect(result.Properties.Items["returnUrl"] ?? "/");
+        [HttpGet("/close-popup", Name = "ClosePopup")]
+        public IActionResult ClosePopup()
+        {
+            return View(); 
         }
 
 
@@ -121,10 +140,13 @@ namespace IceCreamProject.Controllers
 
                 if (result.Succeeded)
                 {
+                  
                     HttpContext.Session.SetString("UserId", user.Id);
                     HttpContext.Session.SetString("UserName", user.UserName ?? string.Empty);
                     HttpContext.Session.SetString("Email", user.Email ?? string.Empty);
                     return RedirectToAction("Index", "Home");
+                   
+
                 }
                 else if (result.IsLockedOut)
                 {

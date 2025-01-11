@@ -153,6 +153,37 @@ namespace IceCreamProject.Migrations
                     b.ToTable("Feedbacks");
                 });
 
+            modelBuilder.Entity("IceCreamProject.Models.FeedbackResponse", b =>
+                {
+                    b.Property<int>("ResponseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResponseId"));
+
+                    b.Property<int>("FeedbackId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RespondedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("RespondedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("ResponseContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ResponseId")
+                        .HasName("PK__Feedback__1AAA646C43F50931");
+
+                    b.ToTable("FeedbackResponses");
+                });
+
             modelBuilder.Entity("IceCreamProject.Models.MemberPrice", b =>
                 {
                     b.Property<int>("IDMemberShipPrice")
