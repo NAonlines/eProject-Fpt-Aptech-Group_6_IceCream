@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IceCreamProject.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20250111041041_newdatabase")]
+    [Migration("20250112143832_newdatabase")]
     partial class newdatabase
     {
         /// <inheritdoc />

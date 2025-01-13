@@ -223,7 +223,7 @@ namespace IceCreamProject.Controllers
                     await _userManager.AddToRoleAsync(user, "User");
                     // Automatically log in
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    TempData["Success"] = "Registration successful!";
+                    //TempData["Success"] = "Registration successful!";
                     return RedirectToAction("Index", "Home");
                 }
                 else
