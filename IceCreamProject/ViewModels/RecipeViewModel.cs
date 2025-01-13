@@ -29,7 +29,6 @@ namespace IceCreamProject.ViewModels
 
         public List<SelectListItem>? Categories { get; set; }
 
-        [Required(ErrorMessage = "Book is required.")]
         [Display(Name = "Book")]
         public int? BookId { get; set; }
 

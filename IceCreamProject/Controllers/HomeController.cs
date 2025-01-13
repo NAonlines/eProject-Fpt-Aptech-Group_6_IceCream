@@ -771,7 +771,7 @@ namespace IceCreamProject.Controllers
                     Ingredients = viewModel.Ingredients,
                     ImageUrl = imagePath,
                     IsApproved = false, 
-                    CategoryId = 1, 
+                    CategoryId = 7, 
                     BookId = null,
                     CreatedById = user.Id 
                 };

@@ -20,7 +20,7 @@
 
                             <!-- Recipe Name -->
                             <div class="mb-3 row">
-                                <label class="col-sm-2"> <span class="text-danger">*</span> Name</label>
+                                <label class="col-sm-2"><span class="text-danger">*</span> Name</label>
                                 <div class="col-sm-10">
                                     <input asp-for="Name" class="form-control" />
                                     <span asp-validation-for="Name" class="text-danger"></span>
@@ -56,6 +56,17 @@
                                 </div>
                             </div>
 
+                            <!-- Book -->
+                            <div class="mb-3 row">
+                                <label class="col-sm-2">Book (Optional)</label>
+                                <div class="col-sm-10">
+                                    <select asp-for="BookId" class="form-control" asp-items="Model.Books">
+                                        <option value="">-- Select Book (Optional) --</option>
+                                    </select>
+                                    <span asp-validation-for="BookId" class="text-danger"></span>
+                                </div>
+                            </div>
+
                             <!-- Submit Button -->
                             <div class="mb-3 row">
                                 <div class="col-sm-4 offset-sm-2">
@@ -79,7 +90,7 @@
 <script src="~/Backend/ckeditor/ckeditor.js"></script>
 
 <script>
-    // Khởi tạo CKEditor
+    // Initialize CKEditor
     CKEDITOR.replace('editor', {
         height: 300,
         toolbar: [
@@ -97,12 +108,11 @@
         ]
     });
 
-    // Xử lý thông báo khi CKEditor khởi tạo
     CKEDITOR.on('instanceReady', function (ev) {
         var editor = ev.editor;
         editor.on('notificationShow', function (event) {
             if (event.data.message.includes('version is not secure')) {
-                event.cancel(); // Hủy hiển thị thông báo
+                event.cancel(); // Cancel insecure notification
             }
         });
     });
