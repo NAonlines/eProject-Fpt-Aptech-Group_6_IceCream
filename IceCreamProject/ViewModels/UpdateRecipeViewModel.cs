@@ -1,5 +1,6 @@
 ﻿    using System.ComponentModel.DataAnnotations;
-    using Microsoft.AspNetCore.Http;
+using IceCreamProject.Models;
+using Microsoft.AspNetCore.Http;
 
     namespace IceCreamProject.ViewModels
     {
@@ -21,5 +22,9 @@
 
             public string? ImagePath { get; set; }
 
-        }
+            [Display(Name = "Category")]
+            public int? SelectedCategoryId { get; set; }
+
+            public List<Category>? AvailableCategories { get; set; }
     }
+}

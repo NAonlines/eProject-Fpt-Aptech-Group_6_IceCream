@@ -70,7 +70,13 @@
                             <textarea asp-for="Ingredients" class="form-control" id="editor"></textarea>
                             <span asp-validation-for="Ingredients" class="text-danger"></span>
                         </div>
-
+                        <!-- Category Dropdown -->
+                        <div class="form-group">
+                            <label asp-for="SelectedCategoryId">Category</label>
+                            <select asp-for="SelectedCategoryId" class="form-control" asp-items="@(new SelectList(Model.AvailableCategories, "CategoryId", "Name"))" disabled>
+                            </select>
+                            <input type="hidden" asp-for="SelectedCategoryId" />
+                        </div>
                         <!-- Upload Image -->
                         <div class="form-group">
                             <label asp-for="ImageUrl">Upload Image</label>

@@ -729,8 +729,25 @@ namespace IceCreamProject.Controllers
         [HttpGet("/submit-recipe", Name = "SubmitRecipe")]
         public IActionResult SubmitRecipe()
         {
-            return View();
+            var freeCategory = _db.Categories
+                                  .Where(c => c.Name == "Free" && c.IsActive)
+                                  .FirstOrDefault();
+
+            if (freeCategory == null)
+            {
+                TempData["Error"] = "Free category not found.";
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = new SubmitRecipeViewModel
+            {
+                AvailableCategories = new List<Category> { freeCategory },
+                SelectedCategoryId = freeCategory.CategoryId 
+            };
+
+            return View(viewModel);
         }
+
 
         [HttpPost("/submit-recipe")]
         public async Task<IActionResult> SubmitRecipe(SubmitRecipeViewModel viewModel)
@@ -765,15 +782,24 @@ namespace IceCreamProject.Controllers
                     return RedirectToAction("Index");
                 }
 
+                var freeCategory = _db.Categories
+                                      .FirstOrDefault(c => c.Name == "Free" && c.IsActive);
+
+                if (freeCategory == null)
+                {
+                    TempData["Error"] = "Free category not found.";
+                    return RedirectToAction("Index");
+                }
+
                 var recipe = new Recipe
                 {
                     Name = viewModel.Name,
                     Ingredients = viewModel.Ingredients,
                     ImageUrl = imagePath,
-                    IsApproved = false, 
-                    CategoryId = 7, 
+                    IsApproved = false,
+                    CategoryId = freeCategory.CategoryId, 
                     BookId = null,
-                    CreatedById = user.Id 
+                    CreatedById = user.Id
                 };
 
                 _db.Recipes.Add(recipe);
@@ -783,8 +809,15 @@ namespace IceCreamProject.Controllers
                 return RedirectToAction("MyRecipes");
             }
 
-            return View(viewModel); 
+            var freeCategoryForInvalid = _db.Categories
+                                            .FirstOrDefault(c => c.Name == "Free" && c.IsActive);
+
+            viewModel.AvailableCategories = new List<Category> { freeCategoryForInvalid };
+            viewModel.SelectedCategoryId = freeCategoryForInvalid?.CategoryId; 
+
+            return View(viewModel);
         }
+
 
 
         [HttpPost]
@@ -811,6 +844,8 @@ namespace IceCreamProject.Controllers
             return RedirectToAction("MyRecipes");
         }
 
+
+
         [Authorize(Roles = "User")]
         [HttpGet("/update-recipe/{id}", Name = "UpdateRecipe")]
         public async Task<IActionResult> UpdateRecipe(int id)
@@ -829,31 +864,43 @@ namespace IceCreamProject.Controllers
                 return RedirectToAction("MyRecipes");
             }
 
+            var freeCategory = await _db.Categories.FirstOrDefaultAsync(c => c.Name == "Free" && c.IsActive);
+            if (freeCategory == null)
+            {
+                TempData["Error"] = "Free category not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
             var viewModel = new UpdateRecipeViewModel
             {
                 RecipeId = recipe.RecipeId,
                 Name = recipe.Name,
                 Ingredients = recipe.Ingredients,
-                ImagePath = recipe.ImageUrl
+                ImagePath = recipe.ImageUrl,
+                SelectedCategoryId = freeCategory.CategoryId,
+                AvailableCategories = new List<Category> { freeCategory }
             };
 
             return View(viewModel);
         }
+
+
 
         [Authorize(Roles = "User")]
         [HttpPost("/update-recipe/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateRecipe(int id, UpdateRecipeViewModel viewModel)
         {
+            var freeCategory = await _db.Categories.FirstOrDefaultAsync(c => c.Name == "Free" && c.IsActive);
+            if (freeCategory == null)
+            {
+                TempData["Error"] = "Free category not found.";
+                return RedirectToAction("MyRecipes");
+            }
+
             if (!ModelState.IsValid)
             {
-                foreach (var key in ModelState.Keys)
-                {
-                    foreach (var error in ModelState[key].Errors)
-                    {
-                        Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
-                    }
-                }
+                viewModel.AvailableCategories = new List<Category> { freeCategory };
                 return View(viewModel);
             }
 
@@ -904,6 +951,7 @@ namespace IceCreamProject.Controllers
             recipe.Name = viewModel.Name;
             recipe.Ingredients = viewModel.Ingredients;
             recipe.ImageUrl = imagePath;
+            recipe.CategoryId = freeCategory.CategoryId; 
 
             _db.Recipes.Update(recipe);
             await _db.SaveChangesAsync();
@@ -911,7 +959,6 @@ namespace IceCreamProject.Controllers
             TempData["Success"] = "Recipe updated successfully!";
             return RedirectToAction("MyRecipes");
         }
-
 
 
     }
