@@ -287,10 +287,11 @@ namespace IceCreamProject.Controllers
                 // Generate token and email link
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action(
-                    "ResetPassword",
-                    "Sucre",
-                    new { userId = user.Id, token = token },
-                    protocol: HttpContext.Request.Scheme);
+    "ResetPassword",
+    "Secure",
+    new { userId = user.Id, token = token },
+    protocol: HttpContext.Request.Scheme);
+
 
                 await _emailService.SendEmailAsync(user.Email, "Reset Password",
                     $"Click the link to reset your password: {callbackUrl}");

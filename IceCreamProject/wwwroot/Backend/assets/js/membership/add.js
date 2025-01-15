@@ -5,7 +5,7 @@ $(document).ready(function () {
     function formatCurrency(amount) {
         const formatter = new Intl.NumberFormat('vi-VN', {
             style: 'currency',
-            currency: 'VND'
+            currency: 'USD'
         });
 
         return formatter.format(amount);

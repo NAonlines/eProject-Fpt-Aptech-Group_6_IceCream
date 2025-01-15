@@ -27,7 +27,7 @@ namespace IceCreamProject.ViewModels
         public string? Address { get; set; }
 
         [Phone(ErrorMessage = "Invalid phone number.")]
-        [StringLength(15, ErrorMessage = "Phone number can't be longer than 15 characters.")]
+        [StringLength(15, MinimumLength = 10, ErrorMessage = "Phone number must be at least 10 digits and no more than 15 digits.")]
         public string? PhoneNumber { get; set; }
 
         public string? ProfileImageUrl { get; set; }

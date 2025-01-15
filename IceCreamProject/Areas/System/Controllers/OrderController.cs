@@ -68,27 +68,43 @@ namespace IceCreamProject.Areas.System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(OrderViewModel model)
         {
-
+            var allowedTransitions = new Dictionary<string, List<string>>()
+    {
+        { "Processing", new List<string> { "Shipped", "Cancelled" } },
+        { "Shipped", new List<string> { "Delivered", "Cancelled" } },
+        { "Delivered", new List<string>() },
+        { "Cancelled", new List<string>() }
+    };
             var order = await db.Orders.FirstOrDefaultAsync(u => u.OrderId == model.OrderId);
             if (order == null)
             {
                 return Json(new { success = false, message = "Order not found." });
             }
-            if (order.OrderStatus == "Completed" && model.OrderStatus == "Processing")
-            {
-                return Json(new { success = false, message = "Cannot change status from Shipped to Processing." });
-            }
 
+            if (!allowedTransitions.ContainsKey(order.OrderStatus) || !allowedTransitions[order.OrderStatus].Contains(model.OrderStatus))
+            {
+                return Json(new { success = false, message = $"Invalid status transition from '{order.OrderStatus}' to '{model.OrderStatus}'." });
+            }
             if (order.OrderStatus == "Cancelled")
             {
                 return Json(new { success = false, message = "Cancelled orders cannot be updated." });
             }
+            //if (order.OrderStatus == "Completed" && model.OrderStatus == "Processing")
+            //{
+            //    return Json(new { success = false, message = "Cannot change status from Shipped to Processing." });
+            //}
+
+            //if (order.OrderStatus == "Cancelled")
+            //{
+            //    return Json(new { success = false, message = "Cancelled orders cannot be updated." });
+            //}
             order.OrderStatus = model.OrderStatus;
             order.Address = model.Address;
             db.Orders.Update(order);
             await db.SaveChangesAsync();
             return Json(new { success = true, message = "User updated successfully." });
         }
+
         [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
