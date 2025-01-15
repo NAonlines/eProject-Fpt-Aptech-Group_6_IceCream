@@ -25,9 +25,7 @@ namespace IceCreamProject.Controllers
 		{
 			// AllProduct
 			var allProducts = _db.Books
-								 .OrderBy(b => b.IsActive ? 0 : 1)
-								 .Take(8)
-								 .ToList();
+								 .OrderBy(b => b.IsActive ? 0 : 1).ToList();
 
 			// Best Selling
 			var bestSellingProducts = _db.CartItems
