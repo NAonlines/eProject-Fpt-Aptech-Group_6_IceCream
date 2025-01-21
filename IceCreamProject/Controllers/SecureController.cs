@@ -53,6 +53,20 @@ namespace IceCreamProject.Controllers
 
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
+        private async Task<string> GenerateUniqueGoogleUserNameAsync()
+        {
+            var baseUserName = "usergoogle";
+            var count = 1;
+
+            string userName = baseUserName + count;
+            while (await _userManager.FindByNameAsync(userName) != null)
+            {
+                count++;
+                userName = baseUserName + count;
+            }
+
+            return userName;
+        }
 
 
         [HttpGet("/google-response", Name = "GoogleResponse")]
@@ -77,10 +91,13 @@ namespace IceCreamProject.Controllers
 
                 if (user == null)
                 {
+                    // Generate a unique username for the new user (usergoogle1, usergoogle2, etc.)
+                    var userName = await GenerateUniqueGoogleUserNameAsync();
+
                     user = new User
                     {
                         Email = email,
-                        UserName = result.Principal.FindFirstValue(ClaimTypes.Name) ?? email,
+                        UserName = userName,
                         EmailConfirmed = true
                     };
 
@@ -104,6 +121,7 @@ namespace IceCreamProject.Controllers
                 HttpContext.Session.SetString("UserId", user.Id);
                 HttpContext.Session.SetString("UserName", user.UserName ?? string.Empty);
                 HttpContext.Session.SetString("Email", user.Email ?? string.Empty);
+
                 return Content("<script>window.opener.location.reload(); window.close();</script>", "text/html");
             }
             catch (Exception ex)
@@ -112,6 +130,7 @@ namespace IceCreamProject.Controllers
                 return RedirectToAction("ClosePopup", "Secure");
             }
         }
+
 
 
         [HttpGet("/close-popup", Name = "ClosePopup")]

@@ -5,12 +5,27 @@
     Layout = "~/Areas/System/Views/backend.cshtml";
     var count = 1;
 }
+<link href="~/Backend/css/memberactive.css" rel="stylesheet" />
 <div class="content">
     <div class="container">
         <div class="page-title">
             <h3>Memberships List</h3>
         </div>
+        @if (TempData["Message"] != null)
+        {
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Initialize Notyf
+                    const notyf = new Notyf({
+                        duration: 3000, // Notification duration in milliseconds
+                        position: { x: 'right', y: 'bottom' }, // Position of the notification
+                    });
 
+                    // Trigger the Notyf success notification
+                    notyf.success('@TempData["Message"]');
+                });
+            </script>
+        }
 
         <div class="row">
             <div class="col-md-12 col-lg-12">
@@ -47,11 +62,11 @@
                                             <td>
                                                 @if (item.Status)
                                                 {
-                                                    <button class="btn btn-success">Active</button>
+                                                    <button class="btn btn-outline-success">Active</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-danger" >
+                                                    <button class="btn btn-outline-danger">
                                                         Expired
                                                     </button>
 

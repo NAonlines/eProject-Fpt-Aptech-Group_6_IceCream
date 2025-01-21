@@ -1,0 +1,74 @@
+﻿/* General container styles */
+.container {
+    padding: 15px;
+}
+
+.page-title h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Table styles */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.table {
+    font-size: 0.9rem;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+    }
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.badge {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: black;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .page-title h3 {
+        font-size: 1.2rem;
+    }
+
+    .table th, .table td {
+        font-size: 0.8rem;
+        padding: 5px;
+    }
+
+    .btn {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+}

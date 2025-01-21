@@ -2,17 +2,38 @@
 using IceCreamProject.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using System.Security.Claims;
+using System.IO.Compression; // Dành cho cấu hình Brotli/Gzip
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Thêm dịch vụ nén
+builder.Services.AddResponseCompression(options =>
+{
+	options.EnableForHttps = true; // Bật nén cả khi dùng HTTPS
+	options.Providers.Add<BrotliCompressionProvider>();
+	options.Providers.Add<GzipCompressionProvider>();
+	options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+	{
+		"application/json",          // JSON
+        "application/javascript",   // JavaScript
+        "text/css",                 // CSS
+        "image/svg+xml"             // SVG
+    });
+});
 
-
-
-
-
-
+// Cấu hình mức độ nén cho Brotli và Gzip
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+	options.Level = CompressionLevel.Optimal;
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+	options.Level = CompressionLevel.Optimal;
+});
 
 
 
@@ -55,12 +76,14 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
 });
 
-
-//Cấu hình phần quyền 
-builder.Services.AddAuthorization(options =>
+// cấu hình giới hạn file upload
+builder.WebHost.ConfigureKestrel(options =>
 {
-    options.AddPolicy("CheckAdmin", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+	options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // Giới hạn 10 MB
 });
+
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -73,8 +96,18 @@ builder.Services.AddAuthentication(options =>
     options.AccessDeniedPath = "/";
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
+}).AddGoogle(options =>
+{
+	options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+	options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+	options.CallbackPath = "/signin-google"; // hoặc "/Secure/GoogleResponse" 
+
 });
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // Giới hạn 10 MB
+});
 
 
 
@@ -107,6 +140,7 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseCors("AllowAll");
 
+app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

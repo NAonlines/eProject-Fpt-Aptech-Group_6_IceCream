@@ -18,22 +18,33 @@ namespace IceCreamProject.Controllers
 			_webHostEnvironment = webHostEnvironment;
 		}
 
-		[HttpGet("/payment-membership",Name = "Membership")]
-		public async Task<IActionResult> Index()
-		{
+        [HttpGet("/payment-membership", Name = "Membership")]
+        public async Task<IActionResult> Index()
+        {
+            var package = await _db.MemberPrice.OrderByDescending(x => x.CreateDate).ToListAsync();
+            var user = await _userManager.GetUserAsync(User);
 
-			var package = await _db.MemberPrice.OrderByDescending(x => x.CreateDate).ToListAsync();
-			var user = await _userManager.GetUserAsync(User);
-			if (user != null)
-			{
-				var checkMember = await _db.Memberships.Where(x => x.UserID == user.Id).ToListAsync();
-				ViewBag.DataOrder = checkMember;
+            if (user != null)
+            {
+                var checkMember = await _db.Memberships.Where(x => x.UserID == user.Id).ToListAsync();
 
-			}
-			return View(package);
-		}
+                // Cập nhật trạng thái của Membership nếu hết hạn
+                foreach (var membership in checkMember)
+                {
+                    if (membership.EndDate <= DateTime.UtcNow)
+                    {
+                        membership.Status = false;
+                    }
+                }
+                await _db.SaveChangesAsync(); // Lưu thay đổi trạng thái
+                ViewBag.DataOrder = checkMember;
+            }
 
-		[HttpGet("/recipes-user",Name = "RecipesUser")]
+            return View(package);
+        }
+
+
+        [HttpGet("/recipes-user",Name = "RecipesUser")]
 		public async Task<IActionResult> RecipesUser()
 		{
 			var user = await _userManager.GetUserAsync(User);

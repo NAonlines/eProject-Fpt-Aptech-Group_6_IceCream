@@ -5,8 +5,7 @@ namespace IceCreamProject.ViewModels
     public class RegisterViewModel
     {
         [Required(ErrorMessage = "Username is required.")]
-        [StringLength(100, ErrorMessage = "Username must be at least {2} characters long.", MinimumLength = 3)]
-        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Username can only contain letters and numbers.")]
+        [StringLength(20, ErrorMessage = "Username must be at least {2} characters long.", MinimumLength = 3)]
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]

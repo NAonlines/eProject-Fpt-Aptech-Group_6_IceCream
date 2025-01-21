@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 namespace IceCreamProject.Controllers
 {
     public class HomeController : Controller
@@ -76,6 +77,7 @@ namespace IceCreamProject.Controllers
 
             var model = new ProfileViewModel
             {
+                Username = user.UserName,
                 Email = user.Email,
                 Phone = user.PhoneNumber,
                 Address = user.Address,
@@ -93,7 +95,9 @@ namespace IceCreamProject.Controllers
         {
             var phone = Request.Form["Phone"];
             var address = Request.Form["Address"];
+            var username = Request.Form["Username"]; 
             var profileImage = Request.Form.Files["ProfileImage"];
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -101,9 +105,12 @@ namespace IceCreamProject.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            // Update the user's phone number, address, and username
             user.PhoneNumber = phone;
             user.Address = address;
+            user.UserName = username; 
 
+            // Profile image handling (if a new image is uploaded)
             if (profileImage != null && profileImage.Length > 0)
             {
                 var uploads = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
@@ -135,6 +142,7 @@ namespace IceCreamProject.Controllers
                 user.ProfileImageUrl = "/Images/" + uniqueFileName;
             }
 
+            // Update the user in the database
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -227,6 +235,21 @@ namespace IceCreamProject.Controllers
             {
                 ViewData["Recipes"] = new List<Recipe>(); // If no "Payment" category exists, pass an empty list
             }
+
+            // Tạo JSON-LD Schema.org cho SEO
+            var jsonLd = new
+            {
+                @context = "https://schema.org",
+                @type = "Book",
+                name = product.Title,
+                image = Url.Content($"~/ImageUrl/{product.ImageUrl}"),
+                description = product.Description,
+                author = "Ice Cream Project", // Bạn có thể thay đổi thành tên tác giả thực
+                category = product.Category?.Name,
+                price = product.Price.ToString("C")
+            };
+
+            ViewData["JsonLd"] = JsonConvert.SerializeObject(jsonLd); // Lưu vào ViewData
 
             return View(product);
         }
@@ -644,6 +667,20 @@ namespace IceCreamProject.Controllers
                 .Where(r => r.CategoryId == freeCategory.CategoryId && r.IsApproved) 
                 .ToListAsync();
 
+            var jsonLdList = freeRecipes.Select(recipe => new
+            {
+                @context = "https://schema.org",
+                @type = "Recipe",
+                name = recipe.Name,
+                image = Url.Content($"~/ImageUrl/{(string.IsNullOrEmpty(recipe.ImageUrl) ? "default-recipe.jpg" : recipe.ImageUrl)}"),
+                description = recipe.Ingredients ?? "Delicious recipe for ice cream lovers!",
+                category = recipe.Category?.Name ?? "Uncategorized",
+                author = "Ice Cream Project" // Tác giả mặc định
+            }).ToList();
+
+            // Truyền JSON-LD vào ViewData
+            ViewData["JsonLd"] = JsonConvert.SerializeObject(jsonLdList);
+
             return View(freeRecipes);
         }
 
@@ -696,6 +733,22 @@ namespace IceCreamProject.Controllers
             }
             ViewBag.CategoryName = "Free";
 
+
+            // Tạo JSON-LD
+            var jsonLd = new
+            {
+                @context = "https://schema.org",
+                @type = "Recipe",
+                name = recipe.Name,
+                image = Url.Content($"~/ImageUrl/{(string.IsNullOrEmpty(recipe.ImageUrl) ? "default-recipe.jpg" : recipe.ImageUrl)}"),
+                description = recipe.Ingredients ?? "Delicious recipe for ice cream lovers!",
+                recipeCategory = recipe.Category?.Name ?? "Uncategorized",
+                recipeIngredient = recipe.Ingredients?.Split('\n').ToList() ?? new List<string>(), // Tách nguyên liệu thành danh sách
+                author = recipe.CreatedBy?.UserName ?? "Ice Cream Project",
+                keywords = $"{recipe.Name}, {recipe.Category?.Name}, Ice Cream Recipes",
+            };
+
+            ViewData["JsonLd"] = JsonConvert.SerializeObject(jsonLd);
             return View(recipe);
         }
 

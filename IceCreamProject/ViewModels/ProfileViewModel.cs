@@ -7,6 +7,10 @@ namespace IceCreamProject.ViewModels
 {
     public class ProfileViewModel
     {
+        [Required(ErrorMessage = "Username is required.")]
+        [StringLength(20, ErrorMessage = "Username must not exceed 20 characters.")]
+        public string Username { get; set; }
+
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         public string Email { get; set; }
@@ -20,7 +24,7 @@ namespace IceCreamProject.ViewModels
         [StringLength(250, ErrorMessage = "Address must not exceed 250 characters.")]
         public string Address { get; set; }
 
-        public string ProfileImageUrl { get; set; } 
+        public string ProfileImageUrl { get; set; }
 
         public IFormFile ProfileImage { get; set; }
 

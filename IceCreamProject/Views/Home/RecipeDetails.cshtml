@@ -14,26 +14,46 @@
             height: 200px;
             border: 3px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;">
+            border-radius: 10px;" loading="lazy">
         <div class="container h-100 d-flex flex-column align-items-center justify-content-center">
-            <nav aria-label="breadcrumb" class="pt-5">
+            <nav aria-label="breadcrumb" class="pt-5" itemscope itemtype="https://schema.org/BreadcrumbList">
                 <ol class="breadcrumb">
+                    <!-- Breadcrumb Item 1: Home -->
+                    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a class="text-white" href="@Url.Action("Index", "Home")" itemprop="item">
+                            <span itemprop="name">Home</span>
+                        </a>
+                        <meta itemprop="position" content="1" />
+                    </li>
+
+                    <!-- Breadcrumb Item 2: Category (Payment/Free) -->
                     @if (ViewBag.CategoryName == "Payment")
                     {
-                        <li class="breadcrumb-item">
-                            <a href="/recipes-user" class="text-white">@ViewBag.CategoryName Recipes</a>
+                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                            <a class="text-white" href="/recipes-user" itemprop="item">
+                                <span itemprop="name">@ViewBag.CategoryName Recipes</span>
+                            </a>
+                            <meta itemprop="position" content="2" />
                         </li>
                     }
                     else
                     {
-                        <li class="breadcrumb-item">
-                            <a href="@Url.Action("FreeRecipes", "Home")" class="text-white">@ViewBag.CategoryName Recipes</a>
+                        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                            <a class="text-white" href="@Url.Action("FreeRecipes", "Home")" itemprop="item">
+                                <span itemprop="name">@ViewBag.CategoryName Recipes</span>
+                            </a>
+                            <meta itemprop="position" content="2" />
                         </li>
                     }
 
-                    <li class="breadcrumb-item active text-white" aria-current="page">Recipe Detail</li>
+                    <!-- Breadcrumb Item 3: Recipe Detail -->
+                    <li class="breadcrumb-item active text-white" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <span itemprop="name">Recipe Detail</span>
+                        <meta itemprop="position" content="3" />
+                    </li>
                 </ol>
             </nav>
+
             <h5 class="pt-1 text-white fw-bold">@Model.Name</h5>
         </div>
     </div>
@@ -59,7 +79,12 @@
                                 <p class="mb-3">Category: @Model.Category?.Name</p>
                                 @if (!string.IsNullOrEmpty(Model.Book?.Title))
                                 {
-                                    <p class="mb-3">From Book: <a href="@Url.Action("ProductDetails", "Home", new { id = Model.Book.BookId })">@Model.Book.Title</a></p>
+                                    <p class="mb-3">
+                                        From Book:
+                                        <a href="@Url.Action("ProductDetails", "Home", new { name = Model.Book.Title.ToLower().Replace(" ", "-"), id = Model.Book.BookId })">
+                                            @Model.Book.Title
+                                        </a>
+                                    </p>
                                 }
                             </div>
                         </div>
@@ -99,3 +124,8 @@
         </div>
     </div>
 </section>
+@section Scripts {
+    <script type="application/ld+json">
+        @Html.Raw(ViewData["JsonLd"])
+    </script>
+}

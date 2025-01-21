@@ -4,6 +4,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Frontend.cshtml";
 }
+
 <style>
 	.tns-nav button {
     display: none;
@@ -31,7 +32,7 @@
 <div class="hero overlay">
 
 	<div class="img-bg rellax">
-		<img src="~/Frontend/images/ice_cream_wallpaper.jpg" alt="Image" class="img-fluid">
+		<img src="~/Frontend/images/ice_cream_wallpaper.jpg" alt="Image" class="img-fluid" loading="lazy">
 	</div>
 
 	<div class="container">
@@ -85,14 +86,15 @@
 										@if (item.IsActive == true)
 										{
 											<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
-												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image @(item.IsActive ? "" : "grayscale")" />
+												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title - Ice Cream" class="tab-image @(item.IsActive ? "" : "grayscale")" loading="lazy" />
 											</a>
 										}
 										else
 										{
-											<a href="javascript:void(0);" data-id="@item.BookId" onclick="viewProductDetails(@item.BookId)">
-												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image @(item.IsActive ? "" : "grayscale")" />
+											<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
+												<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title - Ice Cream" class="tab-image @(item.IsActive ? "" : "grayscale")" loading="lazy" />
 											</a>
+
 
 										}
 									</figure>
@@ -278,14 +280,15 @@
 								@if (item.IsActive)
 								{
 									<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
-										<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
+										<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title - Ice Cream" class="tab-image" loading="lazy" />
 									</a>
 								}
 								else
 								{
-									<a href="javascript:void(0);" data-id="@item.BookId" onclick="viewProductDetails(@item.BookId)">
-										<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
+									<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
+										<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title - Ice Cream" class="tab-image @(item.IsActive ? "" : "grayscale")" loading="lazy" />
 									</a>
+
 								}
 							</figure>
 							<div class="d-flex flex-column text-center">
@@ -379,14 +382,15 @@
 									@if (item.IsActive)
 									{
 										<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
-											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image" />
+											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title - Ice Cream" class="tab-image" loading="lazy" />
 										</a>
 									}
 									else
 									{
-										<a href="javascript:void(0);" data-id="@item.BookId" onclick="viewProductDetails(@item.BookId)">
-											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title" class="tab-image grayscale" />
+										<a asp-route="ProductDetails" asp-route-id="@item.BookId" asp-route-name="@UrlHelper.seoweb(@item.Title)" title="@item.Title">
+											<img src="/ImageUrl/@item.ImageUrl" alt="@item.Title - Ice Cream" class="tab-image @(item.IsActive ? "" : "grayscale")" loading="lazy" />
 										</a>
+
 									}
 								</figure>
 								<div class="d-flex flex-column custom-d-flex-column text-center">
@@ -445,7 +449,7 @@
 	<div class="container">
 		<div class="row justify-content-between align-items-center">
 			<div class="col-lg-5 mb-4 mb-lg-0 order-lg-2" data-aos="fade-up">
-				<img src="~/Frontend/images/snapedit_1736131230703.jpeg" alt="Image" class="img-fluid">
+				<img src="~/Frontend/images/snapedit_1736131230703.jpeg" alt="Image" class="img-fluid" loading="lazy">
 			</div>
 			<div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
 				<h2 class="heading mb-4">Mr Amber </h2>

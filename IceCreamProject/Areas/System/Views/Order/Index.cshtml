@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<IceCreamProject.Models.Order>
+
 @{
     ViewData["Title"] = "Order List";
-
     Layout = "~/Areas/System/Views/backend.cshtml";
 }
-
+<link href="~/Backend/css/order.css" rel="stylesheet" />
 <div class="content">
     <div class="container">
         <div class="page-title">
@@ -12,61 +12,67 @@
         </div>
 
         @if (TempData["Message"] != null)
-
         {
-            <div class="toast-container position-fixed p-3" style="position: fixed; bottom: 1rem; right: 1rem; z-index: 1050" id="toast-container">
-                <div class="toast align-items-center border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header">
-                        <strong class="me-auto">Notification</strong>
-                        <small>just now</small>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body">
-                        @TempData["Message"]
-                    </div>
-                </div>
-            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Initialize Notyf
+                    const notyf = new Notyf({
+                        duration: 3000, // Notification duration in milliseconds
+                        position: { x: 'right', y: 'bottom' }, // Position of the notification
+                    });
+
+                    // Trigger the Notyf success notification
+                    notyf.success('@TempData["Message"]');
+                });
+            </script>
         }
 
         <div class="row">
-            <div class="col-md-12 col-lg-12">
+            <div class="col-12">
                 <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="m-0">Orders</h5>
+                        <a asp-action="Create" class="btn btn-sm btn-outline-success">Create Order</a>
+                    </div>
                     <div class="card-body">
-                        <table class="table table-hover" id="dataTables-example" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer Name</th>
-@*                                     <th>User ID</th>
- *@                                    <th>Order Date</th>
-                                    <th>Address</th>
-                                    <th>Payment Method</th>
-                                    <th>Status</th>
-                                    <th>Total Amount</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var order in Model)
-
-                                {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle" id="dataTables-example">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>@order.OrderId</td>
-                                        <td>@order.CustomerName</td>
-@*                                         <td>@order.UserId</td>
- *@                                        <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                        <td>@order.Address</td>
-                                        <td>@order.PaymentMethod</td>
-                                        <td>@order.OrderStatus</td>
-                                        <td>@order.TotalAmount.ToString("C")</td>
-                                        <td>
-                                            <a asp-controller="Order" asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-info">Details</a>
-                                            <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">Edit</a>
-                                    </td>
+                                        <th>Order ID</th>
+                                        <th>Customer Name</th>
+                                        <th>Order Date</th>
+                                        <th>Address</th>
+                                        <th>Payment Method</th>
+                                        <th>Status</th>
+                                        <th>Total Amount</th>
+                                        <th>Actions</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model)
+                                    {
+                                        <tr>
+                                            <td>@order.OrderId</td>
+                                            <td>@order.CustomerName</td>
+                                            <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>@order.Address</td>
+                                            <td>@order.PaymentMethod</td>
+                                            <td>
+                                                <span class="badge @GetOrderStatusClass(order.OrderStatus)">
+                                                    @order.OrderStatus
+                                                </span>
+                                            </td>
+                                            <td>@order.TotalAmount.ToString("C")</td>
+                                            <td>
+                                                <a asp-controller="Order" asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-info">Details</a>
+                                                <a asp-controller="Order" asp-action="Edit" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">Edit</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,3 +81,17 @@
 </div>
 
 
+
+<!-- Utility Method for Status Badge -->
+@functions {
+    public string GetOrderStatusClass(string status)
+    {
+        return status switch
+        {
+            "Completed" => "badge-success",
+            "Pending" => "badge-warning",
+            "Cancelled" => "badge-danger",
+            _ => "badge-secondary"
+        };
+    }
+}

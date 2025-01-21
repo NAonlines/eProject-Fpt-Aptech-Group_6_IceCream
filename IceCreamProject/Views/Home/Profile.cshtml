@@ -76,7 +76,7 @@
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
-                min-height: 100vh;">
+                min-height: 100vh;" loading="lazy">
 
 
     <!-- Success Toast Notification -->
@@ -153,34 +153,46 @@
 
                         <form asp-action="UpdateProfile" asp-controller="Home" method="post" enctype="multipart/form-data" class="p-4 border rounded shadow bg-light">
                             <h3 class="text-center mb-4">Update Profile</h3>
+
+                            <!-- Username Field -->
+                            <div class="form-floating mb-3">
+                                <input type="text" asp-for="Username" class="form-control" id="floatingUsername" placeholder="Username" />
+                                <label for="floatingUsername"><span class="text-danger">*</span> Username</label>
+                            </div>
+
                             <!-- Email Field -->
                             <div class="form-floating mb-3">
                                 <input type="email" asp-for="Email" class="form-control" id="floatingEmail" placeholder="Email" readonly />
                                 <label for="floatingEmail"><span class="text-danger">*</span> Email</label>
                             </div>
+
                             <!-- Phone Field -->
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="Phone" class="form-control" id="floatingPhone" placeholder="Phone" />
                                 <label for="floatingPhone"><span class="text-danger">*</span> Phone</label>
                                 <span class="text-danger" asp-validation-for="Phone"></span>
                             </div>
+
                             <!-- Address Field -->
                             <div class="form-floating mb-3">
                                 <input type="text" asp-for="Address" class="form-control" id="floatingAddress" placeholder="Address" />
                                 <label for="floatingAddress"><span class="text-danger">*</span> Address</label>
                                 <span class="text-danger" asp-validation-for="Address"></span>
                             </div>
+
                             <!-- Profile Image Field -->
                             <div class="mb-3">
                                 <label class="form-label"><span class="text-danger">*</span> Profile Image</label>
                                 <input type="file" asp-for="ProfileImage" class="form-control" />
                                 <span class="text-danger" asp-validation-for="ProfileImage"></span>
                             </div>
+
                             <!-- Submit Button -->
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary px-4">Save Changes</button>
                             </div>
                         </form>
+
 
 
                         <hr />

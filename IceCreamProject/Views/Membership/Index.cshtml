@@ -12,6 +12,18 @@
 @section Scripts{
     <link href="~/frontend/css/package.css" rel="stylesheet" />
 }
+
+<style>
+    .btn {
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+        .btn:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional hover shadow */
+        }
+</style>
 <!-- Top Background Section -->
 <div class="position-relative"
      style="background-image: url('@Url.Content("~/Frontend/images/banner-3.jpg")');
@@ -20,7 +32,7 @@
             height: 200px;
             border: 3px solid rgba(255, 255, 255, 0.8); /* Light border for contrast */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
-            border-radius: 10px; /* Rounded corners for a polished look */">
+            border-radius: 10px; /* Rounded corners for a polished look */" loading="lazy">
     <div class="container h-100 d-flex flex-column align-items-center justify-content-center">
         <nav aria-label="breadcrumb" class="pt-5">
             <ol class="breadcrumb">
@@ -74,18 +86,20 @@
                                 {
                                     @if (listMember != null && isPurchased != null && isPurchased.Status)
                                     {
-                                        <span class="btn btn-secondary">Purchased (Expired: @isPurchased.EndDate.ToString("dd/MM/yyyy"))</span>
+                                        <span class="btn btn-secondary">
+                                            Purchased (Expired: @isPurchased.EndDate.ToString("dd/MM/yyyy"))
+                                        </span>
                                     }
                                     else
                                     {
-                                        <a href="/payment/@item.IDMemberShipPrice/@item.Price" class="buy-button">Buy Now </a>
+                                        <a href="/payment/@item.IDMemberShipPrice/@item.Price" class="buy-button">Buy Now</a>
                                     }
                                 }
                                 else
                                 {
                                     <a href="/login" class="buy-button">Buy Now</a>
-
                                 }
+
 
 
                             </div>

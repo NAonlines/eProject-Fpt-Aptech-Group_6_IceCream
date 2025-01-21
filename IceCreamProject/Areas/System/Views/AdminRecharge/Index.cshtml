@@ -5,6 +5,7 @@
     Layout = "~/Areas/System/Views/backend.cshtml";
     var count = 1;
 }
+<link href="~/Backend/css/membercharge.css" rel="stylesheet" />
 <div class="content">
     <div class="container">
         <div class="page-title">
@@ -17,62 +18,58 @@
                 <div class="card">
                   
                     <div class="card-body">
-                        <table class="table table-hover" id="dataTables-example" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Payment Code</th>
-                                    <th>Name User</th>
-                                    <th>Name Price</th>
-                                    <th>Price</th>
-                                    <th>Create Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.Any())
-                                {
-                                    @foreach (var item in Model)
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="dataTables-example" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Payment Code</th>
+                                        <th>Name User</th>
+                                        <th>Name Price</th>
+                                        <th>Price</th>
+                                        <th>Create Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Any())
+                                    {
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@(count++)</td>
+                                                <td>@item.PaymentCode</td>
+                                                <td>@item.UserData?.UserName</td>
+                                                <td>@item.MemberPriceData?.NamePrice</td>
+                                                <td>@item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                                <td>@item.CreateDate.ToString("hh:mm dd/MM/yyyy")</td>
+                                                <td>
+                                                    @if (item.Status)
+                                                    {
+                                                        <button class="btn btn-outline-success btn-sm">Approved</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-outline-danger btn-sm change-active" data-id="@item.IDPayment">
+                                                            Not approved yet
+                                                        </button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
                                     {
                                         <tr>
-                                            <td>@(count++)</td>
-                                            <td>@item.PaymentCode</td>
-                                            <td>@item.UserData?.UserName</td>
-                                            <td>@item.MemberPriceData?.NamePrice</td>
-                                            <td>
-                                                @item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
-
-                                            </td>
-                                            <td>
-                                                @item.CreateDate.ToString("hh:mm dd/MM/yyyy")
-                                            </td>
-                                            <td>
-                                                @if (item.Status)
-                                                {
-                                                    <button class="btn btn-success">Approved</button>
-                                                }
-                                                else
-                                                {
-                                                    <button class="btn btn-danger change-active" data-id="@item.IDPayment">
-                                                        Not approved yet
-                                                    </button>
-
-                                                }
+                                            <td colspan="7" class="text-center">
+                                                No data
                                             </td>
                                         </tr>
                                     }
-                                }
-                                else
-                                {
-                                <tr>
-                                    <td colspan="7" class="text-center">
-                                            No data
-                                    </td>
-                                </tr>
-                                }
+                                </tbody>
+                            </table>
+                        </div>
 
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>

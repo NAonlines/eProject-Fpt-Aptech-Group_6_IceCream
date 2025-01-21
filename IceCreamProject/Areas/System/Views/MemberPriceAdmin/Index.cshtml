@@ -6,55 +6,65 @@
     var count = 1;
 }
 
+<link href="~/backend/css/memberprice.css" rel="stylesheet" />
 <div class="content">
     <div class="container">
         <div class="page-title">
             <h3>Price List</h3>
         </div>
 
+        @if (TempData["Message"] != null)
+        {
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const notyf = new Notyf({
+                        duration: 3000,
+                        position: { x: 'right', y: 'bottom' },
+                                    });
+                    notyf.success('@TempData["Message"]');
+                                });
+            </script>
+        }
 
         <div class="row">
             <div class="col-md-12 col-lg-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="m-0">Price List</h5>
                         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addModal" class="btn btn-sm btn-outline-success">Add Price</a>
                     </div>
+
                     <div class="card-body">
-                        <table class="table table-hover" id="dataTables-example" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Name Price</th>
-                                    <th>Type Price</th>
-                                    <th>Price</th>
-                                    <th>Create Date</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="dataTables-example" width="100%">
+                                <thead>
                                     <tr>
-                                        <td>@(count++)</td>
-                                        <td>@item.NamePrice</td>
-                                        <td>@item.Duration</td>
-                                        <td>
-                                            @item.Price.ToString("C")
-                                            
-                                        </td>
-                                        <td>
-                                            @item.CreateDate.ToString("hh:mm dd/MM/yyyy")
-                                            </td>
-                                        <td>
-                                            <a class="btn btn-sm btn-outline-primary" href="/system/get-price/@item.IDMemberShipPrice">Edit</a>
-                                            <a class="btn btn-sm btn-outline-danger remove-price" data-id="@item.IDMemberShipPrice" >
-                                                Delete
-                                            </a>
-                                        </td>
+                                        <th>STT</th>
+                                        <th>Name Price</th>
+                                        <th>Type Price</th>
+                                        <th>Price</th>
+                                        <th>Create Date</th>
+                                        <th></th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@(count++)</td>
+                                            <td>@item.NamePrice</td>
+                                            <td>@item.Duration</td>
+                                            <td>@item.Price.ToString("C")</td>
+                                            <td>@item.CreateDate.ToString("hh:mm dd/MM/yyyy")</td>
+                                            <td>
+                                                <a class="btn btn-sm btn-outline-primary" href="/system/get-price/@item.IDMemberShipPrice">Edit</a>
+                                                <a class="btn btn-sm btn-outline-danger remove-price" data-id="@item.IDMemberShipPrice">Delete</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -62,6 +72,7 @@
     </div>
 </div>
 
+<!-- Add Price Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -70,33 +81,22 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="NameCategory">Price Type</label>
-                            <select class="form-control" name="Duration" id="durationSelect">
-                                <option value="1 day">1 day</option>
-                                <option value="1 month">1 month</option>
-                                <option value="1 year">1 year</option>
-                            </select>
-
-
-                        </div>
-                        <div class="mb-3">
-                            <label for="ShortDecription">
-                                Name Price
-                            </label>
-                            <input type="text" class="form-control" placeholder="Name Price" name="NamePrice" id="namePrice" />
-
-                        </div>
-                        <div class="mb-3">
-                            <label for="NameCategory">Price</label>
-                            <input type="number" class="form-control mb-2" placeholder="Price" name="Price" id="priceInput" />
-                            <span id="formattedPrice" class="text-success mt-2"></span>
-                        </div>
-
-                    </div>
-
+                <div class="mb-3">
+                    <label for="NameCategory">Price Type</label>
+                    <select class="form-control" name="Duration" id="durationSelect">
+                        <option value="1 day">1 day</option>
+                        <option value="1 month">1 month</option>
+                        <option value="1 year">1 year</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="NamePrice">Name Price</label>
+                    <input type="text" class="form-control" name="NamePrice" id="namePrice" placeholder="Name Price" />
+                </div>
+                <div class="mb-3">
+                    <label for="Price">Price</label>
+                    <input type="number" class="form-control mb-2" name="Price" id="priceInput" placeholder="Price" />
+                    <span id="formattedPrice" class="text-success mt-2"></span>
                 </div>
             </div>
             <div class="modal-footer">
@@ -108,5 +108,5 @@
 </div>
 
 @section Scripts {
-   <script src="~/backend/assets/js/membership/add.js"></script>
+    <script src="~/backend/assets/js/membership/add.js"></script>
 }

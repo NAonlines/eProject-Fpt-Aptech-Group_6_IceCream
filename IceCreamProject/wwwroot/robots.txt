@@ -2,4 +2,4 @@ User-agent: *
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: http://thenshi.online/sitemap.xml
+Sitemap: https://thenshi.online/sitemap.xml
